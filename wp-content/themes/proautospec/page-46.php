@@ -1,0 +1,69 @@
+<?php
+// korea
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+get_header();
+?>
+<section class="pb-0">
+<div class="container">
+	<h1 class="mb-4">Статистика продаж автомобилей из Японии</h1>
+	<div class="b-cars-catalog-filter b-cars-catalog-filter--goto">
+		<form method="get">
+			<input type="hidden" name="pn" value="1">
+			<?php
+			get_template_part( 'template-parts/catalog-form-filter' );
+			?>			
+		</form>
+	</div>
+</div>
+</section>
+<?php
+$models = $wp_filesystem->get_contents( get_home_path().'/api/cache/MODEL_ST.js');
+echo "<script>".$models."</script>";
+?>
+
+<script src="/wp-content/themes/proautospec/js/pagination/pagination.js"></script>
+
+<link href="/wp-content/themes/proautospec/js/pagination/pagination.css" rel="stylesheet">
+<script>
+var statistics = 1;
+</script>
+<script src="/wp-content/themes/proautospec/js/api/cars-catalog-filter.js"></script>
+<script src="/wp-content/themes/proautospec/js/api/cars-catalog-japan.js?v=1"></script>
+<script src="/wp-content/themes/proautospec/js/api/cars-catalog.js?v=1"></script>
+
+<section id="cars-listing" class="container mt-0 pt-4">
+	<p class="cars-listing__total mb-3">Всего найдено автомобилей: <var></var></p>
+	<div class="row">
+		<div class="col-lg-3 d-none" id="car-item">
+			<div class="car-item">
+				<div class="car-item__pic">
+					<a class="car-link" href="" target="_blank"><img class="car-img" src="" alt="Купить"></a>
+				</div>
+				<div class="car-item__desc">
+					<h3><a href="" class="car-model-name car-link"></a>
+					<span class="car-model-specification"></span> </h3>
+					<dl class="car-item__params">
+
+
+					</dl>
+					<a class="btn car-link" href="#" target="_blank">Подробнее</a>
+					<div class="car-item__price">
+						<span>Цена</span> <var class="car-price-value"><?php //echo number_format( $car->cena1, 0, '.', ' ' );?></var>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt-lg-4"><div class="col text-center w-100"  id="car-listing-pagination">
+
+
+	</div></div>
+
+</section>
+
+
+
+<?php get_footer();

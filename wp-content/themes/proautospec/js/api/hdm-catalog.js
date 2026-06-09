@@ -1,0 +1,399 @@
+
+
+Promise.all([domLoaded]).then((results) => {
+
+
+	let apiParams = new URLSearchParams();
+	
+	
+	if (routerParams.hasOwnProperty('hdm_group') && routerParams.hdm_group != 'catalog' ){
+		console.log('group exists in catalog');
+	
+		if (routerParams.hasOwnProperty('hdm_type')){
+			console.log('type exists catalog');
+			var category = routerParams.hdm_type.toUpperCase().replace(/-/g, ' ');;
+			apiParams.append( 'category', category);
+
+		}else{
+			try{
+				var categories = getGroupBySlug(routerParams.hdm_group)[0].types;
+				if (categories.length > 0){
+					categories.forEach((item, i) => {
+					  apiParams.append( 'category[]', item.name_en);
+					});
+				}else{
+					apiParams.append( 'category', '-1');
+					//apiParams.delete( 'category');
+				}
+			} catch (error) {
+				apiParams.append( 'category', '-1');
+				//apiParams.delete( 'category');
+			}
+		}		
+
+	}
+
+	
+	
+	
+	if(urlParams.has('group-id')){
+		//apiParams.append( 'group_id', urlParams.get('group-id'));
+		
+		
+	}
+	if(urlParams.has('type-id')){
+		//apiParams.append( 'type_id', urlParams.get('type-id'));
+		//apiParams.append( 'category', urlParams.get('type'));
+		
+	}
+	if(urlParams.has('year-start')){
+		apiParams.append( 'year_start', urlParams.get('year-start'));
+	}
+	if(urlParams.has('year-end')){
+		apiParams.append( 'year_end', urlParams.get('year-end'));
+	}
+	if(urlParams.has('mileage-start')){
+		apiParams.append( 'mileage_start', urlParams.get('mileage-start'));
+	}
+	if(urlParams.has('mileage-end')){
+		apiParams.append( 'mileage_end', urlParams.get('mileage-end'));
+	}
+	if(urlParams.has('pn')){
+		apiParams.append( 'pn', urlParams.get('pn'));
+	}
+
+	console.log ('initial API request: ?' + apiParams.toString());
+	loadData(apiParams.toString(), 1);
+
+
+	function loadData(params, pageNumber){
+
+
+		console.log('api request: ' + '/api/get-hdm.php?'+params);
+		jQuery.ajax({
+			url: API_URL + '/api/get-hdm.php?'+params,
+			method: 'get',
+			dataType: 'json',
+			success: function(data){
+
+
+				console.log('rendering');
+				console.log(data);
+				renderListing(data.autos);
+
+				//jQuery('.cars-listing__total').html( 'Всего найдено автомобилей марки ' + data.autos[0].marka_name + ': <var>' + data.count + '</var>');
+				if ( data.count != 0 ){
+					//jQuery('#cars-listing').show();
+					jQuery('.cars-listing__total').html( 'Всего по запросу найдено <var>' + data.count +'</var> единиц спецтехники: ');
+					if ( data.count > 20 ){
+						jQuery('#car-listing-pagination').show();
+					}else{
+						jQuery('#car-listing-pagination').hide();
+					}
+				}else{
+					jQuery('.cars-listing__total').html( 'Всего по запросу на онлайн-аукционах найдено <var>' + data.count +'</var> единиц спецтехники. Попробуйте позже. ');
+					
+					jQuery('#car-listing-pagination').hide();
+				}
+
+
+				
+				
+				if (jQuery('#car-listing-pagination').length > 0 ){
+					jQuery('#car-listing-pagination').empty();
+					renderPagination(data.count, 20);
+					
+					
+					jQuery('html, body').animate({
+						scrollTop: jQuery("#cars-listing").first().offset().top - 200
+					}, 10);				
+
+				}
+				
+				//if (pageNumber != 1) { pagination.goToPage(pageNumber);}
+
+
+
+
+
+			},
+			error: function(){
+				
+			}
+		});
+
+
+
+	};
+
+	
+	jQuery('.b-cars-catalog-filter:not(.b-cars-catalog-filter--goto) .btn').on('click', function(e){
+		jQuery('#car-listing-pagination').empty();
+
+		var params = parseFilterParams();
+		params.apiParams.delete('pn');
+		params.filterParams.delete('pn');
+		loadData( params.apiParams.toString(),1  );
+
+		//should add new params to url
+		window.history.pushState({href: params.filterParams.toString() }, '', '?' + params.filterParams.toString());
+		e.preventDefault();
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	function renderListing(data){
+		//console.log(data);
+		jQuery('#cars-listing .car-loaded').remove();
+		//var course = 12.3668;
+
+		for (var i = 0; i < data.length; i++) {
+			car = data[i];
+			
+			let itemHtml = jQuery('#car-item.d-none').clone().removeClass('d-none').removeAttr('id').addClass('car-loaded');
+			let name = nameInUrl = car.marka_name + ' ' + car.model_name;
+			if (car.grade) nameInUrl = nameInUrl + '-' + car.grade.replace(/&#(\d+);/g, function(match, number){ console.log(match + ' ' + number); return String.fromCharCode(number); });
+			nameInUrl = nameInUrl
+				.replace(/[^a-zA-Z0-9\s-]/g,'')
+				.trim()
+				.replace(/\s+/g, '-')
+				.replace(/-+/g, '-')
+				.toLowerCase();
+			
+			let itemDetailedUrl = '/spectehnika/' + nameInUrl + '_' + car.id + '/';
+	
+			
+			itemHtml.find('.car-model-name').html(name);
+			let itemTitleFull = name;
+			itemHtml.find('.car-link').attr({'href': itemDetailedUrl});
+			if (car.grade){
+				itemHtml.find('.car-model-specification').html(car.grade);
+				itemTitleFull += ' ' + car.grade.replace(/&#(\d+);/g, function(match, number){ console.log(match + ' ' + number); return String.fromCharCode(number); });
+			}
+			itemHtml.find('h3').attr('title', itemTitleFull);
+			
+			
+
+			if (car.category)
+				itemHtml.find('.car-item__params').append('<dt class="d-none">Категория</dt><dd style="flex:100%;text-align:left;font-size:.75rem">' + car.category + '</dd>');
+				
+
+						
+
+			if (car.year && !isNaN(car.year) && car.year > 0) 
+				itemHtml.find('.car-item__params').append('<dt>Год</dt><dd>' + car.year + '</dd>');
+
+			
+			if (car.kpp)
+				itemHtml.find('.car-item__params').append('<dt>Привод</dt><dd>' + car.kpp + '</dd>');
+
+			if (car.eng_v)
+				itemHtml.find('.car-item__params').append('<dt>Объём</dt><dd>' + car.eng_v + ' см<sup>3</sup></dd>');
+
+			if (car.mileage > 0)
+				itemHtml.find('.car-item__params').append('<dt>Пробег</dt><dd>' + number_format(car.mileage, 0) + ' км</dd>');
+
+			/*if (car.mileage)
+				itemHtml.find('.car-item__params').append('<dt>Пробег</dt><dd>' + number_format(car.mileage, 0) + ' км</dd>');
+			*/
+
+			if (car.auction){
+				
+				itemHtml.find('.car-item__params').append('<dt>Аукцион</dt><dd>' + car.auction + '</dd>');
+			}
+			
+			if (car.auction_date){
+				var d = Date.parse(car.auction_date);
+
+				var today = new Date();
+				if (d > today.setHours(0,0,0,0)) {
+					d = car.auction_date.split(' ')[0];
+					itemHtml.find('.car-item__params').append('<dt>Дата торгов</dt><dd>' + d + '</dd>');
+				}
+			}
+			
+			
+			//itemHtml.find('.car-price-value').html('~ '+number_format(car.finish, 0) + ' ₩')
+			/*
+			if (car.price > 0){
+				//itemHtml.find('.car-item__price span').html(':');
+				itemHtml.find('.car-price-value').html( number_format(car.price, 0) + ' ¥')
+			}else{
+				itemHtml.find('.car-price-value').html('по запросу')
+			}
+			*/
+			itemHtml.find('.car-price-value').html('по запросу')
+			
+
+
+			images = car.images.split('#');
+			images = [...new Set(images)];
+			if(images.length > 1){
+				
+				let $imgHtml = jQuery(itemHtml).find('.car-img');
+				jQuery(itemHtml).find('.car-img').first().remove();
+				for (let j=1; j < ( 6 < images.length ? 6 : images.length); j++){
+					let $curItem = $imgHtml.clone();
+					$curItem.attr({'src': images[j].replace('http://', 'https://').replace('&h=50', '') + "&w=320"});
+					$curItem.attr({'onerror': "this.src='/images/no-photo.png'"});
+					
+					
+					jQuery(itemHtml).find('.car-item__pic .car-link').append($curItem);
+				}
+				//console.log($div.prop('outerHTML'));
+				
+				
+				//jQuery(itemHtml.find('.cart-img-2')[0]).css({'background-image': 'url("'+images[1].replace('&h=50', '')+'")'});
+			}else{
+				jQuery(itemHtml.find('.car-img')).attr({'src': images[0].replace('&h=50', '' + "&w=320")});
+				
+				//jQuery(cart.find('.card-line__img')[1]).remove();
+			}
+			
+			
+			
+			jQuery('#cars-listing .row').first().append(itemHtml);
+
+
+
+		}
+		jQuery('.car-loaded .car-link').HoverMouseCarousel();
+
+	}
+
+	function parseFilterParams(){
+
+		let filterParams = new URLSearchParams();
+		let apiParams = new URLSearchParams();
+		
+		if(jQuery('#group-id').val() && typeof(jQuery('#group-id').val()) !== "undefined"){
+			//filterParams.append ('group-id', jQuery('#group-id').val());
+			apiParams.append ('group_id', jQuery('#group-id').val());
+		}
+		
+		if(jQuery('#type-id').val() && typeof(jQuery('#type-id').val()) !== "undefined"){
+			//filterParams.append ('type-id', jQuery('#type-id').val());
+			var pgroup = getGroupById(jQuery('#group-id').val())[0];
+			var pcategory = getTypeById( jQuery('#type-id').val(), pgroup.types)[0];
+			console.log(pgroup);
+			console.log(pcategory);
+			apiParams.append ('category', pcategory.name_en);
+			
+			
+		}else{
+			try{ 
+				var categories = getGroupBySlug(routerParams.hdm_group)[0].types;
+				
+				categories.forEach((item, i) => {
+				  apiParams.append( 'category[]', item.name_en);
+				});
+				console.log(apiParams);
+			} catch (error){
+				
+			}
+		}	
+		
+		
+		if(jQuery('#mark-id').val() && typeof(jQuery('#mark-id').val()) !== "undefined"){
+			filterParams.append ('mark-id', jQuery('#mark-id').val());
+			apiParams.append ('marka_id', jQuery('#mark-id').val());
+		}
+		if(jQuery('#model-id').val() && typeof(jQuery('#model-id').val()) !== "undefined"){
+			filterParams.append ('model-id', jQuery('#model-id').val());
+			apiParams.append ('model_id', jQuery('#model-id').val());
+		}
+		if(jQuery('#mileage-start').val() && typeof(jQuery('#mileage-start').val()) !== "undefined"){
+			filterParams.append ('mileage-start', jQuery('#mileage-start').val());
+			apiParams.append ('mileage_start', jQuery('#mileage-start').val());
+
+		}
+		if(jQuery('#mileage-end').val() && typeof(jQuery('#mileage-end').val()) !== "undefined"){
+			filterParams.append ('mileage-end', jQuery('#mileage-end').val());
+			apiParams.append ('mileage_end', jQuery('#mileage-end').val());
+		}
+		if(jQuery('#year-start').val() && typeof(jQuery('#year-start').val()) !== "undefined"){
+			filterParams.append ('year-start', jQuery('#year-start').val());
+			apiParams.append ('year_start', jQuery('#year-start').val());
+		}
+		if(jQuery('#year-end').val() && typeof(jQuery('#year-end').val()) !== "undefined"){
+			filterParams.append ('year-end', jQuery('#year-end').val());
+			apiParams.append ('year_end', jQuery('#year-end').val());
+		}
+		let curUrlParams = new URLSearchParams(window.location.search);
+		if(curUrlParams.has('pn')){
+			console.log('pn found while parsing in url:' + curUrlParams.get('pn'));
+
+			filterParams.append( 'pn', curUrlParams.get('pn'));
+			apiParams.append( 'pn', curUrlParams.get('pn'));
+		}
+		if(curUrlParams.has('category')){
+			filterParams.append( 'category', curUrlParams.get('category'));
+			apiParams.append( 'category', curUrlParams.get('category'));
+		}		
+
+		return { apiParams: apiParams, filterParams: filterParams };
+	}
+
+
+
+
+
+
+
+	let pagination; let params;
+	function renderPagination(count, page_size){
+
+		var itemsCount = count;
+		var itemsOnPage = page_size;
+		params = parseFilterParams();
+
+
+		var currentPage = 1;
+		if(params.filterParams.has('pn')){
+			currentPage = params.filterParams.get('pn');
+			params.filterParams.delete("pn");
+			params.filterParams.set("pn", currentPage);
+			console.log('and current page is:' + currentPage);
+		}else{
+			params.filterParams.set("pn", 1);
+			console.log('and current page is unset, so:' + currentPage);
+		}
+		var tmpPath = params.filterParams;
+	 	tmpPath.delete("pn");
+		tmpPath = tmpPath.toString();
+		//
+
+		pagination = new Pagination({
+			container: jQuery('#car-listing-pagination'),
+			pageClickUrl: '?' + ( tmpPath ? tmpPath + "&" : "") + "pn={{page}}",
+			callPageClickCallbackOnInit: true,
+			pageClickCallback: function (pageNumber, event) {
+				try{
+					event.preventDefault();
+					console.log('new page number is:' + pageNumber);
+					params.filterParams.set('pn', pageNumber);
+					params.apiParams.set('pn', pageNumber);
+					console.log('adding to history:' + params.filterParams.toString());
+
+					window.history.pushState({href: params.filterParams.toString()}, '', '?' + params.filterParams.toString());
+
+
+					loadData(params.apiParams.toString(), pageNumber);
+				}catch (e) {
+
+				}
+
+			}
+		});
+		pagination.make(itemsCount, itemsOnPage, currentPage);
+	}
+
+
+
+});

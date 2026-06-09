@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Contact Form 7 - amoCRM - Integration</title>
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">
+			&ldquo;Contact Form 7 - amoCRM - Integration&rdquo; Documentation by &ldquo;itgalaxycompany&rdquo; v2.0.0
+		</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;Contact Form 7 - amoCRM - Integration&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+					Created: 02/07/2020<br>
+					By: itgalaxycompany<br>
+					Site: <a href="https://codecanyon.net/user/itgalaxycompany">itgalaxycompany</a>
+					</strong>
+				</p>
+			</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">Thank you for purchasing my plugin. If you have any questions that are beyond the scope of this help file, please feel free to comments in plugin page <a href="https://codecanyon.net/item/contact-form-7-amocrm-lead-generation/20129763/comments">here</a>. Thanks so much!</p>
+			</div>
+		</div><!-- end div .borderTop -->
+
+		<hr>
+
+		<h2 id="top" class="alt">Table of Contents</h2>
+		<ol class="alpha">
+			<li><a href="#about">About</a></li>
+			<li><a href="#step-1">Step 1 - Integration</a></li>
+			<li><a href="#step-2">Step 2 - Form settings</a></li>
+		</ol>
+
+		<hr>
+
+		<h3 id="about"><strong>A) About</strong> - <a href="#top">top</a></h3>
+		<p>
+			The main task of this plugin is send your Contact Form 7 forms directly to your amoCRM account.
+        </p>
+
+		<p>
+			Generate leads from Contact Form 7 forms.
+		</p>
+
+		<p>
+			You can set up each form personally, specify which information your want to get.
+		</p>
+
+		<img src="assets/images/about.jpg" alt="about.jpg" />
+
+		<hr>
+
+		<h3 id="step-1"><strong>B) Step 1 - Integration</strong> - <a href="#top">top</a></h3>
+
+		<p>
+			Go to the Contact Form 7 -> Integration.
+		</p>
+
+		<p>
+			Find "Integration with amoCRM" and click the button "Go to setup".
+		</p>
+
+		<img src="assets/images/step1.jpg" alt="step1.jpg" />
+
+		<p>
+			Next. Go to your account amoCRM - Settings -> Integrations your_amoCRM_domain/settings/widgets/
+		</p>
+
+		<img src="assets/images/step1_1.1.jpg" alt="step1_1.1.jpg" />
+
+		<p>
+			Click "Create Integration"
+		</p>
+
+		<img src="assets/images/step1_1.2.jpg" alt="step1_1.2.jpg" />
+
+		<p>
+			Redirect URL - http://your.site/wp-admin/admin.php?page=wpcf7-integration&service=cf7-amocrm-integration&action=setup
+			<br>
+			Allow access: All
+			<br>
+			Integration name - example: Site integration
+			<br>
+			Description - example: This is integration with site
+		</p>
+
+		<img src="assets/images/step1_1.3.jpg" alt="step1_1.3.jpg" />
+
+		<p>
+			Click "Save" and open tab "Keys and scopes".
+		</p>
+
+		<img src="assets/images/step1_1.4.jpg" alt="step1_1.4.jpg" />
+
+		<p>
+			Now fill in the settings on the site
+		</p>
+
+		<p>
+			Enter the domain name of your account amoCRM (without http:// or https://).
+		</p>
+
+		<p>
+			Secret key, Integration ID and Authorization code - copy from the data from the tab.
+		</p>
+
+		<p>
+			<strong>(ONLY FOR DEALS)</strong> If your use Google Analytics for monitoring your statistics, your can get more data. Enter the Google Analytics Tracking ID.
+		</p>
+
+		<p>
+			Save settings.
+		</p>
+
+		<img src="assets/images/step1_1.jpg" alt="step1_1.jpg" />
+
+		<p>
+			<br>Add send data in AmoCRM. (your_amoCRM_domain/settings/pipeline/leads/). The setup of data transfer in Google Analytics can only be setup for one status of each pipeline.
+		</p>
+
+		<img src="assets/images/step1_2.jpg" alt="step1_2.jpg" />
+		<img src="assets/images/step1_3.jpg" alt="step1_3.jpg" />
+		<img src="assets/images/step1_4.jpg" alt="step1_4.jpg" />
+
+		<hr>
+
+		<h3 id="step-2"><strong>C) Step 2 - Form settings</strong> - <a href="#top">top</a></h3>
+
+		<p>
+			Go to the Contact Form 7. Open the form which your want to send to amoCRM.
+		</p>
+
+		<p>
+			Open tab amoCRM.
+		</p>
+
+		<img src="assets/images/step2.jpg" alt="step2.jpg" />
+
+		<p>
+			Set checkbox "Send the lead to amoCRM".
+		</p>
+
+		<p>
+			Choose the type of a lead that will be generated in CRM (Deal, Contact, Incoming lead).
+		</p>
+
+		<p>
+			Fill fields for the selected type. And click "Save" button.
+		</p>
+
+		<p>
+			When sending the form, the data will be transferred to amoCRM.
+		</p>
+
+		<p>
+			Below is an example of the filled-in fields for a deal type.
+		</p>
+
+		<img src="assets/images/step2_1.jpg" alt="step2_1.jpg" />
+
+		<p>
+			Another type is filled in by analogy.
+		</p>
+
+		<hr>
+
+		<p class="append-bottom alt large"><strong>itgalaxycompany</strong></p>
+		<p><a href="#top">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>

@@ -1,0 +1,14 @@
+@-webkit-keyframes chaty-animation-shockwave { 0% { transform: scale(1); box-shadow: 0 0 2px rgba(69,137,166, 0.30), inset 0 0 1px rgba(69,137,166, 0.30); } 95% { box-shadow: 0 0 50px rgba(69,137,166, 0), inset 0 0 30px rgba(69,137,166, 0); } 100% { transform: scale(2.25); } } @keyframes chaty-animation-shockwave { 0% { transform: scale(1); box-shadow: 0 0 2px rgba(69,137,166, 0.30), inset 0 0 1px rgba(69,137,166, 0.30); } 95% { box-shadow: 0 0 50px rgba(69,137,166, 0), inset 0 0 30px rgba(69,137,166, 0); } 100% { transform: scale(2.25); } }
+.chaty-tooltip.pos-left .on-hover-text:before {
+	right: calc(0em - 4px) !important;
+}
+@media (max-width: 768px){
+	#chaty-widget-0 .on-hover-text{
+	display:none !important;
+	}
+}
+body>svg{
+	position: absolute;
+    top: 0;
+    z-index: -9999;
+}

@@ -1,0 +1,14 @@
+# Large static dirs (sync from server separately)
+/assets/
+/api/
+
+# WordPress runtime
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-config.php
+.htaccess
+
+# Logs and deps
+*.log
+node_modules/

@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'Jost';
+    src: local('Jost Light Italic'), local('Jost-LightItalic'),
+        url('../fonts/Jost-LightItalic.woff2') format('woff2'),
+        url('../fonts/Jost-LightItalic.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Jost';
+    src: local('Jost Light'), local('Jost-Light'),
+        url('../fonts/Jost-Light.woff2') format('woff2'),
+        url('../fonts/Jost-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Jost';
+    src: local('Jost SemiBold'), local('Jost-SemiBold'),
+        url('../fonts/Jost-SemiBold.woff2') format('woff2'),
+        url('../fonts/Jost-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Jost';
+    src: local('Jost Regular'), local('Jost-Regular'),
+        url('../fonts/Jost-Regular.woff2') format('woff2'),
+        url('../fonts/Jost-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Jost';
+    src: local('Jost Medium'), local('Jost-Medium'),
+        url('../fonts/Jost-Medium.woff2') format('woff2'),
+        url('../fonts/Jost-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Stapel';
+    src: local('Stapel Medium'), local('Stapel-Medium'),
+        url('../fonts/Stapel-Medium.woff2') format('woff2'),
+        url('../fonts/Stapel-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}

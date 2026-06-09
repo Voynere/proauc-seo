@@ -1,0 +1,484 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Contact Form 7 - amoCRM - Lead Generation\n"
+"POT-Creation-Date: 2021-02-15 20:10+0300\n"
+"PO-Revision-Date: 2021-02-15 20:14+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: esc_html__;esc_html_e;esc_attr_e\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
+"X-Poedit-SearchPathExcluded-1: node_modules\n"
+
+#: admin/CF7.php:52
+msgid "Contact Form 7 - amoCRM - Integration"
+msgstr "Contact Form 7 - amoCRM - Integration"
+
+#: admin/CF7.php:54
+msgid "Please verify the purchase code on the plugin settings page - "
+msgstr "Пожалуйста, укажите код покупки на странице настроек плагина - "
+
+#: admin/CF7.php:58 admin/CF7.php:475
+msgid "open"
+msgstr "открыть"
+
+#: admin/CF7.php:89
+msgid "Integration with amoCRM"
+msgstr "Интеграция с amoCRM"
+
+#: admin/CF7.php:241
+msgid "ERROR"
+msgstr "ОШИБКА"
+
+#: admin/CF7.php:242
+msgid "To integrate with amoCRM, you must fill in all fields."
+msgstr "Для интеграции с amoCRM необходимо заполнить все поля."
+
+#: admin/CF7.php:247
+msgid "Settings successfully updated."
+msgstr "Настройки успешно обновлены."
+
+#: admin/CF7.php:257
+msgid "Fields cache updated successfully."
+msgstr "Кеш полей успешно обновлен."
+
+#: admin/CF7.php:274
+msgid ""
+"Formation of leads in amoCRM from the hits that users leave on your site, "
+"using the Contact Form 7 plugin."
+msgstr ""
+"Формирование лидов в amoCRM из обращений, которые оставляют пользователи на "
+"Вашем сайте, с помощью плагина Contact Form 7."
+
+#: admin/CF7.php:290
+msgid "Redirect URL"
+msgstr "Ссылка для редиректа"
+
+#: admin/CF7.php:308 admin/CF7.php:560
+msgid "Domain Name"
+msgstr "Домен"
+
+#: admin/CF7.php:326
+msgid "domain of your amoCRM account (without http:// or https://)."
+msgstr "домен вашего аккаунта amoCRM (без http:// или https://)."
+
+#: admin/CF7.php:336
+msgid "Secret key"
+msgstr "Секретный ключ"
+
+#: admin/CF7.php:355 admin/CF7.php:564
+msgid "Integration ID"
+msgstr "ID интеграции"
+
+#: admin/CF7.php:374
+msgid "Authorization code"
+msgstr "Код авторизации"
+
+#: admin/CF7.php:388
+msgid ""
+"Authorization code - will remain empty after saving the settings, as it is "
+"used once to get the first token"
+msgstr ""
+"Код авторизации - останется пустым после сохранения настроек, так как он "
+"используется один раз для получения первого токена"
+
+#: admin/CF7.php:396 admin/CF7.php:568
+msgid "Google Analytics Tracking ID"
+msgstr ""
+
+#: admin/CF7.php:415
+msgid "Enable logging"
+msgstr "Включить логирование"
+
+#: admin/CF7.php:431
+msgid "Download log"
+msgstr "Скачать лог"
+
+#: admin/CF7.php:435
+msgid "Clear log"
+msgstr "Очистить лог"
+
+#: admin/CF7.php:442
+msgid "Send type"
+msgstr "Тип отправки"
+
+#: admin/CF7.php:450
+msgid "WP Cron"
+msgstr "WP Cron"
+
+#: admin/CF7.php:455
+msgid "Immediately upon submitting the form"
+msgstr "Сразу при отправке формы"
+
+#: admin/CF7.php:460
+msgid "The number of registered form submit events pending"
+msgstr "Количество ожидающих зарегистрированных событий отправки"
+
+#: admin/CF7.php:473
+msgid "Plugin documentation: "
+msgstr "Документация плагина:"
+
+#: admin/CF7.php:476
+msgid "Or open the folder `documentation` in the plugin and open index.html"
+msgstr "Или откройте папку `documentation` в плагине и откройте index.html"
+
+#: admin/CF7.php:482
+msgid "Save settings"
+msgstr "Сохранить настройки"
+
+#: admin/CF7.php:493
+msgid "Reload fields data from CRM"
+msgstr "Перезагрузить данные полей из CRM"
+
+#: admin/CF7.php:499
+msgid "License verification"
+msgstr "Проверка лицензии"
+
+#: admin/CF7.php:502
+msgid "verified"
+msgstr "проверен"
+
+#: admin/CF7.php:506
+msgid "please verify your purchase code"
+msgstr "пожалуйста, укажите код покупки"
+
+#: admin/CF7.php:516
+msgid "Purchase code"
+msgstr "Код покупки"
+
+#: admin/CF7.php:534
+msgid "Where Is My Purchase Code?"
+msgstr "Где найти код покупки?"
+
+#: admin/CF7.php:543
+msgid "Verify"
+msgstr "Активировать"
+
+#: admin/CF7.php:548
+msgid "Unverify"
+msgstr "Деактивировать"
+
+#: admin/CF7.php:575
+msgid "Change settings"
+msgstr "Изменить настройки"
+
+#: admin/CF7.php:584
+msgid "To work with the plugin, you must configure integration with amoCRM."
+msgstr "Для работы плагина необходимо настроить интеграцию с amoCRM."
+
+#: admin/CF7.php:591
+msgid "Go to setup"
+msgstr "Перейти к настройке"
+
+#: admin/CF7.php:597
+msgid ""
+"The fields sent to the CRM are configured on the form editing page, on the "
+"\"amoCRM\" tab."
+msgstr ""
+"Поля передаваемые в CRM настраиваются на странице редактирования формы, на "
+"вкладке \"amoCRM\"."
+
+#: admin/CF7.php:610
+msgid "amoCRM"
+msgstr "amoCRM"
+
+#: admin/CF7.php:627 admin/CF7.php:628
+msgid "Send the lead to amoCRM"
+msgstr "Отправлять лид в amoCRM"
+
+#: admin/CF7.php:630
+msgid "In the following fields, you can use these mail-tags:"
+msgstr ""
+
+#: admin/CF7.php:655
+msgid "Choose the type of lead that will be generated in CRM:"
+msgstr "Выберите тип лида который будет формироваться в CRM:"
+
+#: admin/CF7.php:660
+msgid "Lead"
+msgstr "Имя сделки"
+
+#: admin/CF7.php:662
+msgid "Deal (use fields contact, company, lead and task)"
+msgstr "Сделка (используются поля контакта, компании, сделки и задачи)"
+
+#: admin/CF7.php:667 admin/CF7.php:669
+msgid "Contact"
+msgstr "Контакт"
+
+#: admin/CF7.php:674
+msgid "Incoming Leads"
+msgstr "Неразобранное"
+
+#: admin/CF7.php:676
+msgid "Incoming Leads (use fields contact and lead)"
+msgstr "Неразобранное (используются поля сделки и контакта)"
+
+#: admin/CF7.php:683
+msgid "Lead fields"
+msgstr "Поля сделки"
+
+#: admin/CF7.php:688
+msgid "Contact fields"
+msgstr "Поля контакта"
+
+#: admin/CF7.php:693
+msgid "Company fields"
+msgstr "Поля компании"
+
+#: admin/CF7.php:698
+msgid "Note fields"
+msgstr "Поля примечания"
+
+#: admin/CF7.php:703
+msgid "Task fields"
+msgstr "Поля задачи"
+
+#: admin/CF7.php:838 admin/CF7.php:1005 admin/CF7.php:1169
+msgid "Default value"
+msgstr "По умолчанию"
+
+#: admin/CF7.php:869 admin/CF7.php:1036 admin/CF7.php:1200
+msgid "Form value (optional)"
+msgstr "Значение из формы"
+
+#: admin/CF7.php:915
+msgid "Update contact"
+msgstr "Обновлять контакт"
+
+#: admin/CF7.php:918
+msgid ""
+"Update data in an existing contact (be careful, as this can change the data "
+"you specified through CRM)"
+msgstr ""
+"Обновлять данные в существующем контакте (будьте аккуратны, это может "
+"изменить данные, которые вы указали через CRM)"
+
+#: admin/CF7.php:1068 admin/CF7.php:1070
+msgid "Write phone as mobile (work by default)"
+msgstr "Записывать телефон как мобильный (по умолчанию рабочий)"
+
+#: admin/CF7.php:1242
+msgid "Note text"
+msgstr "Текст примечания"
+
+#: admin/CF7.php:1255
+msgid "ip, user agent, date and time, referrer - added auto"
+msgstr "ip, user agent, date and time, referrer - добавляются автоматически"
+
+#: admin/CF7.php:1267 admin/CF7.php:1269
+msgid "Disable auto add - ip, user agent, date and time, referrer"
+msgstr "Выключить добавление - ip, user agent, date and time, referrer"
+
+#: admin/LogHelper.php:88
+msgid "Log file has been cleared successfully."
+msgstr "Файл лога успешно очищен"
+
+#: includes/Bootstrap.php:120
+msgid ""
+"To run the plug-in, you must first install and activate the Contact Form 7 "
+"plugin."
+msgstr ""
+"Для работы плагина сначала необходимо установить и активировать плагин "
+"Contact Form 7."
+
+#: includes/Bootstrap.php:124
+msgid ""
+"Error while activating the Contact Form 7 plugin - amoCRM - Lead Generation"
+msgstr "Ошибка при активации плагина Contact Form 7 - amoCRM - Lead Generation"
+
+#: includes/CF7.php:379
+msgid ""
+"Please verify the purchase code on the plugin integration settings page - "
+msgstr "Пожалуйста, укажите код покупки на странице настройки интеграции - "
+
+#: includes/CRM.php:250 includes/CRM.php:254
+msgid "Unverified purchase code"
+msgstr "Нет кода покупки"
+
+#: includes/CRM.php:774
+#, php-format
+msgid "Response amoCRM: Error code (%d): %s. Check the settings."
+msgstr "Ответ amoCRM: Код ошибки (%d): %s. Проверьте настройки."
+
+#: includes/CRM.php:781
+msgid "An error occurred while verifying the connection to the amoCRM."
+msgstr "Ошибка при проверке соединения с amoCRM."
+
+#: includes/CRM.php:800
+msgid "Uploaded files:"
+msgstr "Загруженные файлы:"
+
+#: includes/CRM.php:818 includes/CRM.php:821
+msgid "Additional information about the sender:"
+msgstr "Дополнительная информация об отправителе:"
+
+#: includes/CRM.php:826
+msgid "IP-address: "
+msgstr "IP-адрес:"
+
+#: includes/CRM.php:837
+msgid "Date and time: "
+msgstr "Дата и время:"
+
+#: includes/CRM.php:842
+msgid "Referrer: "
+msgstr "Реферер:"
+
+#: includes/CrmFields.php:14 includes/CrmFields.php:49
+#: includes/CrmFields.php:58 includes/CrmFields.php:72
+#: includes/CrmFields.php:78 includes/CrmFields.php:86
+#: includes/CrmFields.php:101 includes/CrmFields.php:109
+#: includes/CrmFields.php:124
+msgid "String"
+msgstr "Строка"
+
+#: includes/CrmFields.php:15
+msgid "Lead name"
+msgstr "Имя сделки"
+
+#: includes/CrmFields.php:21 includes/CrmFields.php:27
+#: includes/CrmFields.php:32 includes/CrmFields.php:38
+#: includes/CrmFields.php:66 includes/CrmFields.php:94
+#: includes/CrmFields.php:117 includes/CrmFields.php:133
+msgid "Numeric"
+msgstr "Число"
+
+#: includes/CrmFields.php:22
+msgid "Pipeline / Status"
+msgstr "Воронка / Статус"
+
+#: includes/CrmFields.php:28
+msgid "Deal budget"
+msgstr "Бюджет сделки"
+
+#: includes/CrmFields.php:33 includes/CrmFields.php:67
+#: includes/CrmFields.php:95 includes/CrmFields.php:118
+msgid "Responsible (ID)"
+msgstr "Ответственный (ID)"
+
+#: includes/CrmFields.php:34
+msgid ""
+"you can specify several, separated by commas, then the requests will be "
+"distributed sequentially"
+msgstr ""
+"вы можете указать несколько, через запятую, тогда обращения будут "
+"распределяться последовательно"
+
+#: includes/CrmFields.php:39
+msgid "Contact ID"
+msgstr "ID контакта"
+
+#: includes/CrmFields.php:41
+msgid ""
+"you can specify the contact id, which will always be assigned to the lead - "
+"only type deal"
+msgstr ""
+"вы можете указать id контакта, чтобы назначать все сделки ему - только для "
+"типа сделка"
+
+#: includes/CrmFields.php:50 includes/CrmFields.php:79
+#: includes/CrmFields.php:102
+msgid "Tags"
+msgstr "Тэги"
+
+#: includes/CrmFields.php:59
+msgid "Contact name"
+msgstr "Имя контакта"
+
+#: includes/CrmFields.php:73 includes/CrmFields.php:87
+msgid "Company name"
+msgstr "Имя компании"
+
+#: includes/CrmFields.php:110
+msgid "Text"
+msgstr "Текст"
+
+#: includes/CrmFields.php:125
+msgid "Type"
+msgstr "Тип"
+
+#: includes/CrmFields.php:127
+msgid "Call"
+msgstr "Связаться с клиентом"
+
+#: includes/CrmFields.php:128
+msgid "Meeting"
+msgstr "Встреча"
+
+#: includes/CrmFields.php:135
+msgid "Number of minutes for deadline"
+msgstr "Количество минут до крайнего срока"
+
+#: includes/CrmFields.php:139
+msgid "after how many minutes after creation the task should be completed"
+msgstr "через сколько минут после создания задачи, она должна быть завершена"
+
+#: includes/Helper.php:31
+#, php-format
+msgid "Error code (%s): %s."
+msgstr "Код ошибки (%s): %s."
+
+#: includes/Helper.php:38
+msgid "An error occurred while writing the log file."
+msgstr "Произошла ошибка при записи лог файла."
+
+#~ msgid "Login"
+#~ msgstr "Логин"
+
+#~ msgid "API key"
+#~ msgstr "API ключ"
+
+#~ msgid "Responsible"
+#~ msgstr "Ответственный"
+
+#~ msgid "Deal (use fields contact, lead and task)"
+#~ msgstr "Сделка (используются поля сделки, контакта и задачи)"
+
+#~ msgid "Fields for the \"Lead\""
+#~ msgstr "Поля для \"Сделки\""
+
+#~ msgid "Fields for \"Contact\""
+#~ msgstr "Поля для \"Контакта\""
+
+#~ msgid "Fields for a \"Note\" to a \"Contact\""
+#~ msgstr "Поля примечания для контакта"
+
+#~ msgid "Fields for a \"Task\" to a \"Lead\""
+#~ msgstr "Поля для \"Задачи\" к \"Сделке\""
+
+#~ msgid "Deal (use fields contact and lead)"
+#~ msgstr "Сделка (используются поля сделки и контакта)"
+
+#~ msgid "Status"
+#~ msgstr "Статус"
+
+#~ msgid "Deal"
+#~ msgstr "Сделка"
+
+#~ msgid "Fields for a \"Note\" to a \"Contact\" (ONLY INCOMING LEADS)"
+#~ msgstr "Поля примечания для контакта (ТОЛЬКО ДЛЯ НЕРАЗОБРАННОГО)"
+
+#~ msgid "User Agent: "
+#~ msgstr "Б"
+
+#~ msgid "Allows you to create leads in amoCRM"
+#~ msgstr "Позволяет создавать лиды в amoCRM"
+
+#~ msgid "Response amoCRM: Error (%d): %s. Check the settings."
+#~ msgstr "Ответ amoCRM: Код ошибки (%d): %s. Проверьте настройки."
+
+#~ msgid ""
+#~ "Formation of leads in amoCRM from the hits that users leave on your site, "
+#~ "using the Contact From 7 plugin."
+#~ msgstr ""
+#~ "Формирование лидов в amoCRM из обращений, которые оставляют пользователи "
+#~ "на Вашем сайте, с помощью плагина Contact Form 7."
