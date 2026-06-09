@@ -69,3 +69,22 @@ scp -r proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/api ~/Projects/proauc-se
 ## Лицензия
 
 Ядро WordPress и большинство плагинов распространяются под GPL. См. `license.txt` в корне и лицензии отдельных компонентов.
+
+## Память агента (RAG)
+
+Локальный поиск по знаниям проекта (без внешних зависимостей, SQLite FTS5):
+
+```bash
+# Поиск
+python3 .cursor/rag/rag.py query "деплой на proauc.ru"
+
+# Сохранить решение для следующих сессий
+python3 .cursor/rag/rag.py remember "Текст" --tag decision
+
+# Пересобрать индекс
+python3 .cursor/rag/rag.py index
+```
+
+- `.cursor/memory/` — факты и решения
+- `.cursor/knowledge/` — документация (SEO, сервер, тема)
+- `.cursor/rules/agent-memory.mdc` — правило для Cursor Agent

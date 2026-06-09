@@ -1,0 +1,49 @@
+---
+description: RAG-память проекта — ищи контекст перед задачами, сохраняй решения после
+alwaysApply: true
+---
+
+# Agent Memory (RAG)
+
+У проекта есть локальная память в `.cursor/memory/` и база знаний в `.cursor/knowledge/`.
+
+## Перед задачей
+
+Для SEO, деплоя, темы, сервера или неочевидной логики — **сначала** поиск:
+
+```bash
+python3 .cursor/rag/rag.py query "ваш вопрос"
+```
+
+При необходимости читай найденные файлы целиком.
+
+## После решения
+
+Сохраняй факты, которые нужны в следующих сессиях:
+
+```bash
+python3 .cursor/rag/rag.py remember "Краткая формулировка" --tag decision
+```
+
+Теги: `fact`, `decision`, `seo`, `deploy`, `bugfix`, `note`.
+
+## Индекс
+
+После правок в `.cursor/memory/` или `.cursor/knowledge/`:
+
+```bash
+python3 .cursor/rag/rag.py index
+```
+
+Статус: `python3 .cursor/rag/rag.py status`
+
+## Ключевые пути
+
+| Что | Где |
+|-----|-----|
+| SEO-фильтры | `wp-content/themes/proautospec/rank-math.php` |
+| Тема | `wp-content/themes/proautospec/` |
+| robots | `robots.txt` |
+| Продакшен | `ssh proauc`, root `/var/www/proauc_ru_usr/data/www/proauc.ru` |
+
+Не коммить `wp-config.php`, `.htaccess`, `assets/`, `api/`, uploads.

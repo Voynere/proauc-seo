@@ -12,3 +12,6 @@ wp-config.php
 # Logs and deps
 *.log
 node_modules/
+
+# Agent RAG index (rebuilt locally)
+.cursor/rag/store.sqlite
