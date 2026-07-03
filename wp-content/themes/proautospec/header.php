@@ -181,8 +181,9 @@ $options = json_decode('{
 				<div class="col-lg-5">
 					<strong class="h2">Для покупателя</strong>
 					<ul>
+						<li><a href="/blog/">Статьи и полезное</a></li>
 						<li><a href="/kak-chitat-aukczionnyj-list/">Как читать аукционный лист</a></li>
-						
+						<li><a href="/kak-kupit-avto-s-aukcziona-yaponii/">Как купить авто с аукциона Японии</a></li>
 					</ul>
 				</div>
 				

@@ -13,6 +13,7 @@
 						<li><a href="/spectehnika/">Спецтехника из&nbsp;Японии</a></li>
 						<li><a href="/kompaniya/">О компании</a></li>
 						<li><a href="/kontaktyi/">Контакты</a></li>
+						<li><a href="/blog/">Статьи и полезное</a></li>
 					</ul>
 				</nav>
 			</div>

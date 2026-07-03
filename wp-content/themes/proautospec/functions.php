@@ -24,6 +24,7 @@ $picostrap_includes = array(
 	//'/scssphp-legacy-compiler-integration.php', //To interface the Customizer with the SCSS php compiler
 	//'/options-page.php',                  // Load theme options page. 
 	'/content-filtering.php',				//for LC compatibility when shutting down plugin
+	'/blog-seo.php',                        // Blog bootstrap, CTA, FAQ (P3).
     //'/windpress-support.php'                    //for deep integration with the WindPress plugin, for optional use of TailWind
 );
 
@@ -57,102 +58,278 @@ function set_user_ip_global() {
 }
 add_action('init', 'set_user_ip_global');
 
+/**
+ * Slug каталога (марка/модель) пригоден для URL.
+ */
+function proauc_is_valid_catalog_slug( $slug ) {
+	return is_string( $slug ) && $slug !== '' && mb_strpos( $slug, '%' ) === false;
+}
+
+/**
+ * Количество лотов в API каталога (та же логика, что и 404 на странице).
+ * При ошибке запроса возвращает -1.
+ */
+function proauc_catalog_api_count( $country, $mark_slug, $model_slug = null, $timeout = 20 ) {
+	$endpoints = array(
+		'korea' => 'get-cars-korea.php',
+		'china' => 'get-cars-china.php',
+		'japan' => 'get-cars-japan.php',
+	);
+
+	if ( empty( $endpoints[ $country ] ) ) {
+		return 0;
+	}
+
+	$mark = str_replace( '-', ' ', $mark_slug );
+	$url  = home_url( '/api/' . $endpoints[ $country ] . '?marka_name=' . rawurlencode( $mark ) );
+	
+	if ( null !== $model_slug ) {
+		/*if(strpos($model_slug, '-series') !== false) {
+			$model = $model_slug;
+		} else {
+			$model = str_replace( '-', ' ', $model_slug );
+		}
+		$url  .= '&model_name=' . rawurlencode( $model );
+		*/
+		$url  .= '&model_name=' . $model;
+	}
+	
+	$response = wp_remote_get( $url, array( 'timeout' => $timeout ) );
+	if ( is_wp_error( $response ) ) {
+		return -1;
+	}
+
+	$body = json_decode( wp_remote_retrieve_body( $response ), true );
+	if ( ! is_array( $body ) || ! isset( $body['count'] ) ) {
+		return -1;
+	}
+	
+	return (int) $body['count'];
+}
+
+/**
+ * Есть ли в каталоге хотя бы один лот (иначе страница отдаёт 404).
+ */
+function proauc_catalog_has_listings( $country, $mark_slug, $model_slug = null ) {
+	$count = proauc_catalog_api_count( $country, $mark_slug, $model_slug );
+	if ( $count < 0 ) {
+		return true;
+	}
+	return $count > 0;
+}
+
+/**
+ * Проверка лотов для генерации sitemap (короткий timeout API + кэш в рамках одного запроса).
+ */
+function proauc_sitemap_has_listings( $country, $mark_slug, $model_slug = null ) {
+	static $cache = array();
+
+	$key = $country . '|' . $mark_slug . '|' . ( null === $model_slug ? '' : $model_slug );
+	if ( isset( $cache[ $key ] ) ) {
+		return $cache[ $key ];
+	}
+
+	$count = proauc_catalog_api_count( $country, $mark_slug, $model_slug, 8 );
+	if ( $count < 0 ) {
+		$cache[ $key ] = true;
+		return true;
+	}
+
+	$cache[ $key ] = $count > 0;
+	return $cache[ $key ];
+}
+
+function proauc_http_get_body( $url, $timeout = 30, $retries = 3 ) {
+	$context = stream_context_create(
+		array(
+			'http' => array(
+				'timeout' => $timeout,
+			),
+			'ssl'  => array(
+				'verify_peer'      => false,
+				'verify_peer_name' => false,
+			),
+		)
+	);
+
+	for ( $attempt = 0; $attempt < $retries; $attempt++ ) {
+		if ( $attempt > 0 ) {
+			usleep( 750000 * $attempt );
+		}
+
+		$body = @file_get_contents( $url, false, $context ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( proauc_is_valid_json_body( $body ) ) {
+			return $body;
+		}
+
+		$response = wp_remote_get(
+			$url,
+			array(
+				'timeout'   => $timeout,
+				'sslverify' => false,
+			)
+		);
+		if ( is_wp_error( $response ) ) {
+			continue;
+		}
+
+		$remote_body = wp_remote_retrieve_body( $response );
+		if ( proauc_is_valid_json_body( $remote_body ) ) {
+			return $remote_body;
+		}
+	}
+
+	return '';
+}
+
+function proauc_fetch_cars_api_page( $country, $pn, $timeout = 45 ) {
+	$url = home_url( '/api/get-cars-' . $country . '.php?pn=' . (int) $pn );
+
+	for ( $attempt = 0; $attempt < 4; $attempt++ ) {
+		if ( $attempt > 0 ) {
+			usleep( 750000 * $attempt );
+		}
+
+		$body = proauc_http_get_body( $url, $timeout, 1 );
+		if ( ! proauc_is_valid_json_body( $body ) ) {
+			continue;
+		}
+
+		$data = json_decode( $body );
+		if ( ! empty( $data->autos ) && is_array( $data->autos ) ) {
+			return $data;
+		}
+
+		if ( 1 === (int) $pn ) {
+			break;
+		}
+	}
+
+	return null;
+}
+
+function proauc_is_valid_json_body( $body ) {
+	if ( ! is_string( $body ) || strlen( $body ) < 20 ) {
+		return false;
+	}
+
+	$data = json_decode( $body );
+	if ( JSON_ERROR_NONE !== json_last_error() ) {
+		return false;
+	}
+
+	return is_object( $data ) || is_array( $data );
+}
+
+function proauc_sitemap_response_start( $label ) {
+	if ( php_sapi_name() !== 'cli' ) {
+		if ( ! headers_sent() ) {
+			header( 'Content-Type: text/plain; charset=utf-8' );
+		}
+		echo $label . "\n";
+		if ( function_exists( 'ob_flush' ) ) {
+			@ob_flush();
+		}
+		flush();
+	}
+}
+
+function proauc_sitemap_response_finish( array $lines ) {
+	if ( php_sapi_name() !== 'cli' ) {
+		echo "\nГотово:\n";
+		foreach ( $lines as $line ) {
+			echo '- ' . $line . "\n";
+		}
+	}
+	exit;
+}
+
+function proauc_catalog_label_to_slug( $label ) {
+	return str_replace( array( '&', ' ' ), '-', strtolower( $label ) );
+}
+
+function proauc_request_path() {
+	if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+		return '';
+	}
+	$path = wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH );
+	return $path ? user_trailingslashit( $path ) : '';
+}
+
+function proauc_match_request_path( $uri_path ) {
+	if ( empty( $uri_path ) ) {
+		return false;
+	}
+	$uri_path = str_replace( 'https://proauc.ru', '', $uri_path );
+	return proauc_request_path() === user_trailingslashit( $uri_path );
+}
+
+function proauc_build_lot_slug( $marka, $model, $grade = '', $country = 'korea' ) {
+	if ( 'japan' === $country && $grade ) {
+		$name = $marka . '-' . $model . '-' . $grade;
+	} else {
+		$name = $marka . ' ' . $model;
+	}
+	$name = preg_replace( '/[^a-zA-Z0-9\s-]/', '', $name );
+	$name = trim( $name );
+	$name = preg_replace( '/\s+/', '-', $name );
+	$name = preg_replace( '/-+/', '-', $name );
+	return strtolower( $name );
+}
+
+function proauc_build_lot_url( $country, $lot, $car ) {
+	$slug  = proauc_build_lot_slug(
+		$car->marka_name,
+		$car->model_name,
+		isset( $car->grade ) ? $car->grade : '',
+		$country
+	);
+	$bases = array(
+		'korea' => 'avto-iz-korei',
+		'china' => 'avto-iz-kitaya',
+		'japan' => 'avto-iz-yaponii',
+	);
+	if ( empty( $bases[ $country ] ) || empty( $lot ) || empty( $slug ) ) {
+		return '';
+	}
+	return 'https://proauc.ru/' . $bases[ $country ] . '/' . rawurlencode( $lot ) . '-' . $slug . '/';
+}
+
 function check_maker_model_available() {
 	global $wp;
-	global $wpdb;
-	global $post;
-	$country = $wp->query_vars['country'];
+	global $wp_query;
 
-	if(!empty($wp->query_vars['mark']) && empty($wp->query_vars['model'])) {
-		if($country == "korea") {
-			$mark = str_replace("-", " ", $wp->query_vars['mark']);
-			$json = json_decode(file_get_contents("https://proauc.ru/api/get-cars-korea.php?marka_name=" . urlencode($mark)), true);
-			if($json['count'] == 0) {
-				global $wp_query;
-				$wp_query->set_404();
-				status_header( 404 );
-				get_template_part( 404 );
-				get_footer();
-				exit();
-			}
-		}
-		if($country == "china") {
-			$mark = str_replace("-", " ", $wp->query_vars['mark']);
-			$json = json_decode(file_get_contents("https://proauc.ru/api/get-cars-china.php?marka_name=" . urlencode($mark)), true);
-			if($json['count'] == 0) {
-				global $wp_query;
-				$wp_query->set_404();
-				status_header( 404 );
-				get_template_part( 404 );
-				get_footer();
-				exit();
-			}
-		}
-		if($country == "japan") {
-			$mark = str_replace("-", " ", $wp->query_vars['mark']);
-			$json = json_decode(file_get_contents("https://proauc.ru/api/get-cars-japan.php?marka_name=" . urlencode($mark)), true);
-			if($json['count'] == 0) {
-				global $wp_query;
-				$wp_query->set_404();
-				status_header( 404 );
-				get_template_part( 404 );
-				get_footer();
-				exit();
-			}
-		}
-	}
+	$country = isset( $wp->query_vars['country'] ) ? $wp->query_vars['country'] : '';
 
-	if(!empty($wp->query_vars['mark']) && !empty($wp->query_vars['model'])) {
-		if($country == "korea") {
-			$mark = str_replace("-", " ", $wp->query_vars['mark']);
-			$model = str_replace("-", " ", $wp->query_vars['model']);
-			$json = json_decode(file_get_contents("https://proauc.ru/api/get-cars-korea.php?marka_name=" . urlencode($mark) . "&model_name=" . urlencode($model)), true);
-			if($json['count'] == 0) {
-				global $wp_query;
-				$wp_query->set_404();
-				status_header( 404 );
-				get_template_part( 404 );
-				get_footer();
-				exit();
-			}
-		}
-		if($country == "china") {
-			$mark = str_replace("-", " ", $wp->query_vars['mark']);
-			$model = str_replace("-", " ", $wp->query_vars['model']);
-			$json = json_decode(file_get_contents("https://proauc.ru/api/get-cars-china.php?marka_name=" . urlencode($mark) . "&model_name=" . urlencode($model)), true);
-			if($json['count'] == 0) {
-				global $wp_query;
-				$wp_query->set_404();
-				status_header( 404 );
-				get_template_part( 404 );
-				get_footer();
-				exit();
-			}
-		}
-		if($country == "japan") {
-			$mark = str_replace("-", " ", $wp->query_vars['mark']);
-			$model = str_replace("-", " ", $wp->query_vars['model']);
-			$json = json_decode(file_get_contents("https://proauc.ru/api/get-cars-japan.php?marka_name=" . urlencode($mark) . "&model_name=" . urlencode($model)), true);
-			if($json['count'] == 0) {
-				global $wp_query;
-				$wp_query->set_404();
-				status_header( 404 );
-				get_template_part( 404 );
-				get_footer();
-				exit();
-			}
-		}
-	}
-
-	if(!empty($wp->query_vars['model'])) {
-		if(mb_strpos($wp->query_vars['model'], "%") !== false) {
-			global $wp_query;
+	if ( ! empty( $wp->query_vars['mark'] ) && empty( $wp->query_vars['model'] ) ) {
+		if ( in_array( $country, array( 'korea', 'china', 'japan' ), true )
+			&& ! proauc_catalog_has_listings( $country, $wp->query_vars['mark'] ) ) {
 			$wp_query->set_404();
 			status_header( 404 );
 			get_template_part( 404 );
 			get_footer();
 			exit();
 		}
+	}
+
+	if ( ! empty( $wp->query_vars['mark'] ) && ! empty( $wp->query_vars['model'] ) ) {
+		
+		if ( in_array( $country, array( 'korea', 'china', 'japan' ), true )
+			&& ! proauc_catalog_has_listings( $country, $wp->query_vars['mark'], $wp->query_vars['model'] ) ) {
+			$wp_query->set_404();
+			status_header( 404 );
+			get_template_part( 404 );
+			get_footer();
+			exit();
+		}
+	}
+
+	if ( ! empty( $wp->query_vars['model'] ) && mb_strpos( $wp->query_vars['model'], '%' ) !== false ) {
+		$wp_query->set_404();
+		status_header( 404 );
+		get_template_part( 404 );
+		get_footer();
+		exit();
 	}
 }
 add_action('wp', 'check_maker_model_available');
@@ -341,7 +518,7 @@ function prefix_locations_rewrite_rule() {
 	
 	add_rewrite_rule( '^spectehnika/catalog/?$', 'index.php?page_id=41', 'top' );
 	add_rewrite_rule( '^spectehnika/([^/]+)/?$', 'index.php?page_id=41&hdm-group=$matches[1]', 'top' );
-	add_rewrite_rule( '^spectehnika/([^/]+)/([^/]+)/?$', 'index.php??page_id=41&hdm-group=$matches[1]&hdm-type=$matches[2]', 'top' );
+	add_rewrite_rule( '^spectehnika/([^/]+)/([^/]+)/?$', 'index.php?page_id=41&hdm-group=$matches[1]&hdm-type=$matches[2]', 'top' );
 
 
 
@@ -448,7 +625,14 @@ function preloadCarsData() {
 		if ( false === $manufacturersStored ) {
 			parseData('korea');
 		}
-	}else if ( is_page('avto-iz-kitaya') ){
+	}else if ( mb_strpos($_SERVER['REQUEST_URI'], 'avto-iz-korei') ){
+        global $wp_filesystem;
+        //delete_transient( 'manufacturers' );
+        $manufacturersStored = get_transient( 'manufacturers_korea' );
+        if ( false === $manufacturersStored ) {
+            parseData('korea');
+        }
+    }else if ( is_page('avto-iz-kitaya') ){
 		global $wp_filesystem;
 		//delete_transient( 'manufacturers' );
 		$manufacturersStored = get_transient( 'manufacturers' );
@@ -469,14 +653,28 @@ function preloadCarsData() {
 		if ( false === $manufacturersStored ) {
 			parseData('japan');
 		}
-	}else if ( is_page('motorcycles') ){
+	}else if ( mb_strpos($_SERVER['REQUEST_URI'], 'avto-iz-yaponii') ){
+        global $wp_filesystem;
+        //delete_transient( 'manufacturers' );
+        $manufacturersStored = get_transient( 'manufacturers_japan' );
+        if ( false === $manufacturersStored ) {
+            parseData('japan');
+        }
+    }else if ( is_page('motorcycles') ){
 		global $wp_filesystem;
 		//delete_transient( 'manufacturers' );
 		$manufacturersStored = get_transient( 'manufacturers' );
 		if ( false === $manufacturersStored ) {
 			parseData('bike');
 		}
-	}
+	}else if ( mb_strpos($_SERVER['REQUEST_URI'], 'motorcycles') ){
+        global $wp_filesystem;
+        //delete_transient( 'manufacturers' );
+        $manufacturersStored = get_transient( 'manufacturers_bike' );
+        if ( false === $manufacturersStored ) {
+            parseData('bike');
+        }
+    }
 	if ( is_page('spectehnika') ){
 		global $wp_filesystem;
 		//delete_transient( 'hdm' );
@@ -700,7 +898,6 @@ function parseData($country = 'korea'){
 	try {
 		$response = wp_remote_get("http://78.46.90.228/".$marks_filename);
 		
-		
 		if (is_object($response) || wp_remote_retrieve_response_code( $response ) != 200){ throw new Exception('api error');}
 
 		$wp_filesystem->put_contents( get_home_path().'/api/cache/'.$marks_filename.'.txt', $response['body']);
@@ -877,6 +1074,7 @@ function parseData($country = 'korea'){
 		foreach ($models as $model){
 			if ($model['marka_id'] == $vendor['id']){
 				unset ($model['marka_id']);
+				$model['slug'] = str_replace(' ', '-', mb_strtolower($model['text']));
 				$thisVendorModels[] = $model;
 			}
 		}
@@ -884,6 +1082,7 @@ function parseData($country = 'korea'){
 		
 	}
 	$wp_filesystem->put_contents( get_home_path().'/api/cache/'.$models_filename.'.js', 'const models_'.$country.' = \''.json_encode($newModels).'\';' );
+	set_transient( 'manufacturers_' . $country, date("Y-m-d H:i:s"), 2 * HOUR_IN_SECONDS );
 	set_transient( 'manufacturers', date("Y-m-d H:i:s"), 2 * HOUR_IN_SECONDS );
 }
 
@@ -1038,8 +1237,18 @@ function generateSitemap($urls) {
 function generate_sitemap(){
 	global $wpdb;
 	global $wp_filesystem;
-	
-	
+
+	@set_time_limit( 600 );
+	@ini_set( 'max_execution_time', '600' );
+
+	proauc_sitemap_response_start( 'Генерация карт сайта (марки/модели, лоты, спецтехника). Обычно 1–2 минуты…' );
+
+	if ( empty( $wp_filesystem ) ) {
+		WP_Filesystem();
+	}
+	generate_sitemap_lots();
+	generate_sitemap_hdm();
+
 	$countries =  [ 'china' => (object) ['slug' => "avto-iz-kitaya", 'filename' => 'sitemap_china.xml'], 
 					  'korea' => (object) ['slug' => "avto-iz-korei", 'filename' => 'sitemap_korea.xml'], 
 					  'japan' => (object) ['slug' => "avto-iz-yaponii", 'filename' => 'sitemap_japan.xml']
@@ -1054,8 +1263,15 @@ function generate_sitemap(){
 		$vendors =  $wpdb->get_results('SELECT * FROM wp_api_vendors WHERE country = "'.$country.'" AND seo_title IS NOT NULL ORDER by country, sort_order');
 		
 		foreach ($vendors as $vendor){
+			$vendor->slug = proauc_catalog_label_to_slug( $vendor->vendor_label );
+			if ( ! proauc_is_valid_catalog_slug( $vendor->slug ) ) {
+				continue;
+			}
+			if ( ! proauc_sitemap_has_listings( $country, $vendor->slug ) ) {
+				continue;
+			}
+
 			$xmlString .= '<url>'."\n";
-			$vendor->slug = str_replace(array('&', ' '), '-', strtolower($vendor->vendor_label));
 			$xmlString .= '<loc>'. $siteUrl. $options->slug."/catalog/".$vendor->slug.'/'.'</loc>'."\n";
 			$xmlString .= '<lastmod>'.$date.'</lastmod>'."\n";
 			$xmlString .= '<changefreq>daily</changefreq>'."\n";
@@ -1064,8 +1280,15 @@ function generate_sitemap(){
 			
 			$models = $wpdb->get_results('SELECT * FROM wp_api_models WHERE country = "'.$country.'" AND vendor_id = '. $vendor->id .' AND seo_title IS NOT NULL ORDER by model_label');
 			foreach ($models as $model){
+				$model->slug = proauc_catalog_label_to_slug( $model->model_label );
+				if ( ! proauc_is_valid_catalog_slug( $model->slug ) ) {
+					continue;
+				}
+				if ( ! proauc_sitemap_has_listings( $country, $vendor->slug, $model->slug ) ) {
+					continue;
+				}
+
 				$xmlString .= '<url>'."\n";
-				$model->slug = str_replace( array('&', ' '), '-', strtolower($model->model_label));
 				$xmlString .= '<loc>'. $siteUrl.$options->slug."/catalog/".$vendor->slug.'/'. $model->slug.'/</loc>'."\n";
 				$xmlString .= '<lastmod>'.$date.'</lastmod>'."\n";
 				$xmlString .= '<changefreq>daily</changefreq>'."\n";
@@ -1079,17 +1302,183 @@ function generate_sitemap(){
 
 	}
 
+	$root = get_home_path();
+	$lots_count = substr_count( @file_get_contents( $root . 'sitemap_lots.xml' ), '<loc>' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	$hdm_count  = substr_count( @file_get_contents( $root . 'sitemap_hdm.xml' ), '<loc>' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
-	exit;
+	proauc_sitemap_response_finish(
+		array(
+			'sitemap_korea.xml',
+			'sitemap_china.xml',
+			'sitemap_japan.xml',
+			'sitemap_lots.xml (' . (int) $lots_count . ' URL)',
+			'sitemap_hdm.xml (' . (int) $hdm_count . ' URL)',
+		)
+	);
 }
 
-if(!empty($_GET['sitemap-create'])) {
-    generate_sitemap();
+function generate_sitemap_lots( $max_per_country = 200 ) {
+	global $wp_filesystem;
+
+	@set_time_limit( 600 );
+
+	if ( empty( $wp_filesystem ) ) {
+		WP_Filesystem();
+	}
+
+	if ( ! empty( $_GET['sitemap-lots-create'] ) ) {
+		proauc_sitemap_response_start( 'Генерация sitemap_lots.xml…' );
+	}
+
+	$site_url  = 'https://proauc.ru/';
+	$date      = date( DATE_ATOM );
+	$xml       = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+	$xml      .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+	$page_size = 20;
+	$max_pages = max( 1, (int) ceil( $max_per_country / $page_size ) );
+
+	foreach ( array( 'korea', 'china', 'japan' ) as $country ) {
+		$seen  = array();
+		$added = 0;
+
+		for ( $pn = 1; $pn <= $max_pages && $added < $max_per_country; $pn++ ) {
+			if ( $pn > 1 ) {
+				usleep( 400000 );
+			}
+
+			$data = proauc_fetch_cars_api_page( $country, $pn, 45 );
+			if ( null === $data ) {
+				break;
+			}
+
+			foreach ( $data->autos as $car ) {
+				if ( empty( $car->lot ) ) {
+					continue;
+				}
+				$lot_key = $country . ':' . $car->lot;
+				if ( isset( $seen[ $lot_key ] ) ) {
+					continue;
+				}
+				$seen[ $lot_key ] = true;
+
+				$loc = proauc_build_lot_url( $country, $car->lot, $car );
+				if ( ! $loc ) {
+					continue;
+				}
+				$xml .= '<url>' . "\n";
+				$xml .= '<loc>' . esc_url( $loc ) . '</loc>' . "\n";
+				$xml .= '<lastmod>' . $date . '</lastmod>' . "\n";
+				$xml .= '<changefreq>daily</changefreq>' . "\n";
+				$xml .= '<priority>0.6</priority>' . "\n";
+				$xml .= '</url>' . "\n";
+				$added++;
+
+				if ( $added >= $max_per_country ) {
+					break;
+				}
+			}
+
+			if ( count( $data->autos ) < $page_size ) {
+				break;
+			}
+		}
+	}
+
+	$xml .= '</urlset>' . "\n";
+	$wp_filesystem->put_contents( get_home_path() . '/sitemap_lots.xml', $xml );
+
+	if ( ! empty( $_GET['sitemap-lots-create'] ) ) {
+		$url_count = substr_count( $xml, '<loc>' );
+		proauc_sitemap_response_finish(
+			array(
+				'sitemap_lots.xml (' . $url_count . ' URL)',
+			)
+		);
+	}
+
+	return substr_count( $xml, '<loc>' );
 }
 
+function generate_sitemap_hdm() {
+	global $wpdb;
+	global $wp_filesystem;
 
+	@set_time_limit( 120 );
 
+	if ( empty( $wp_filesystem ) ) {
+		WP_Filesystem();
+	}
 
+	if ( ! empty( $_GET['sitemap-hdm-create'] ) ) {
+		proauc_sitemap_response_start( 'Генерация sitemap_hdm.xml…' );
+	}
+
+	$site_url = 'https://proauc.ru/';
+	$date     = date( DATE_ATOM );
+	$xml      = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+	$xml     .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+	$groups = $wpdb->get_results( 'SELECT id, slug FROM wp_api_hdm_groups ORDER BY name_ru' );
+	foreach ( $groups as $group ) {
+		if ( empty( $group->slug ) ) {
+			continue;
+		}
+		$xml .= '<url>' . "\n";
+		$xml .= '<loc>' . esc_url( $site_url . 'spectehnika/' . $group->slug . '/' ) . '</loc>' . "\n";
+		$xml .= '<lastmod>' . $date . '</lastmod>' . "\n";
+		$xml .= '<changefreq>daily</changefreq>' . "\n";
+		$xml .= '<priority>0.8</priority>' . "\n";
+		$xml .= '</url>' . "\n";
+
+		$types = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT slug FROM wp_api_hdm_types WHERE group_id = %d AND has_items = 1 ORDER BY name_ru',
+				$group->id
+			)
+		);
+		foreach ( $types as $type ) {
+			if ( empty( $type->slug ) ) {
+				continue;
+			}
+			$xml .= '<url>' . "\n";
+			$xml .= '<loc>' . esc_url( $site_url . 'spectehnika/' . $group->slug . '/' . $type->slug . '/' ) . '</loc>' . "\n";
+			$xml .= '<lastmod>' . $date . '</lastmod>' . "\n";
+			$xml .= '<changefreq>daily</changefreq>' . "\n";
+			$xml .= '<priority>0.7</priority>' . "\n";
+			$xml .= '</url>' . "\n";
+		}
+	}
+
+	$xml .= '</urlset>' . "\n";
+	$wp_filesystem->put_contents( get_home_path() . '/sitemap_hdm.xml', $xml );
+
+	if ( ! empty( $_GET['sitemap-hdm-create'] ) ) {
+		$url_count = substr_count( $xml, '<loc>' );
+		proauc_sitemap_response_finish(
+			array(
+				'sitemap_hdm.xml (' . $url_count . ' URL)',
+			)
+		);
+	}
+}
+
+add_action(
+	'init',
+	function () {
+		if ( ! empty( $_GET['sitemap-create'] ) ) {
+			generate_sitemap();
+		}
+		if ( ! empty( $_GET['sitemap-lots-create'] ) ) {
+			generate_sitemap_lots();
+			exit;
+		}
+		if ( ! empty( $_GET['sitemap-hdm-create'] ) ) {
+			generate_sitemap_hdm();
+			exit;
+		}
+	},
+	1
+);
 
 function get_ip_address(){
     foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
@@ -1113,7 +1502,7 @@ if(file_exists(get_template_directory() . "/seo.csv")) {
         $data = str_getcsv($line);
         if(!empty($data[0])) {
             $data[0] = str_replace("https://proauc.ru", "", $data[0]);
-            if($_SERVER["REQUEST_URI"] == $data[0]) {
+            if ( proauc_match_request_path( $data[0] ) ) {
                 $update_seo['title'] = $data[1];
                 $update_seo['description'] = $data[2];
                 $update_seo['h1'] = $data[3];
@@ -1128,7 +1517,7 @@ if(file_exists(get_template_directory() . "/spec.csv")) {
         $data = explode(";", $line);
         if(!empty($data[0])) {
             $data[0] = str_replace("https://proauc.ru", "", $data[0]);
-            if($_SERVER["REQUEST_URI"] == $data[0]) {
+            if ( proauc_match_request_path( $data[0] ) ) {
                 $update_seo['title'] = $data[2];
                 $update_seo['description'] = $data[3];
                 $update_seo['h1'] = $data[1];

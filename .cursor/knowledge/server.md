@@ -39,10 +39,47 @@ scp -r proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/api ~/Projects/proauc-se
 - `.htaccess` — server rewrite rules
 - SSL certs under `/var/www/httpd-cert/` on server
 
+## Code ownership
+
+| Zone | Owner | Do not overwrite on deploy |
+|------|-------|---------------------------|
+| Catalog / API | other dev | `functions.php`, `page-48.php`, `js/api/cars-catalog.js` |
+| SEO & theme tweaks | us | `rank-math.php`, `inc/blog-*.php`, `category.php`, blog templates |
+
+**Production is source of truth for catalog.** Pull their files before merging our work:
+
+```bash
+scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautospec/functions.php \
+    wp-content/themes/proautospec/functions.php
+scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautospec/page-48.php \
+    wp-content/themes/proautospec/page-48.php
+scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautospec/js/api/cars-catalog.js \
+    wp-content/themes/proautospec/js/api/cars-catalog.js
+```
+
 ## Deploy workflow
 
 1. Edit locally, commit to `main`
-2. Test if possible on staging (none documented — production-only today)
-3. Upload changed files to document root via `scp` or `tar` pipe
+2. If catalog files diverged — `scp` from prod first (see above), adapt SEO on top
+3. Upload **only our** changed files via `scp` (see README deploy list)
 4. Clear Autoptimize cache if CSS/JS changed
 5. Verify Rank Math sitemap / robots if SEO files changed
+
+SEO deploy example:
+
+```bash
+THEME=wp-content/themes/proautospec
+ROOT=/var/www/proauc_ru_usr/data/www/proauc.ru
+for f in rank-math.php header.php footer.php home.php single.php category.php \
+         loops/cards.php css/app.css spec.csv inc/blog-seo.php inc/blog-articles.php; do
+  scp "$THEME/$f" "proauc:$ROOT/$THEME/$f"
+done
+```
+
+## Local-only: `seov/`
+
+Каталог `seov/` в корне репозитория — отчёты, планы, runbooks. **Не в Git** (`.gitignore`: `/seov/`). На production **не деплоить**.
+
+Деплой сегодня — точечный `scp` изменённых файлов в document root, не заливка всего репо; `seov/` на сервер не попадает, если явно не копировать. При полном `tar` с локальной машины на сервер — **исключать** `seov/`.
+
+Клиентский SEO-отчёт о прогрессе: `seov/SEO-отчет-прогресс.md`, PDF: `seov/SEO-отчет-прогресс.pdf`. Пересборка PDF: `seov/.venv-pdf/bin/python seov/md_to_pdf.py seov/SEO-отчет-прогресс.md seov/SEO-отчет-прогресс.pdf`.

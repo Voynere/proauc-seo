@@ -44,8 +44,13 @@ if (array_key_exists('mark', $wp->query_vars) && isset($wp->query_vars['mark']))
 
     $auto_name = $post->api_meta->vendorLabel;
 
-    if (array_key_exists('model', $wp->query_vars) && isset($wp->query_vars['model'])){
-		$model = str_replace('-', '+', strtoupper($wp->query_vars['model'])); 
+    if (array_key_exists('model', $wp->query_vars) && isset($wp->query_vars['model'])) {
+		if(strpos(strtoupper($wp->query_vars['model']), '-SERIES') !== false) {
+			$model = strtoupper($wp->query_vars['model']);
+		} else {
+			$model = str_replace('-', '+', strtoupper($wp->query_vars['model'])); 
+		}
+		
 		$carsApiUrl = $carsApiUrl.'&model_name='.$model;
 		if (property_exists ($post, 'api_meta') ){
 			$h1 = $post->api_meta->seo_h1;
@@ -54,8 +59,8 @@ if (array_key_exists('mark', $wp->query_vars) && isset($wp->query_vars['mark']))
 
             $auto_name .= " " . $post->api_meta->modelLabel;
 		}
-	}	
-
+	}
+	
 	if ($post->ID == 46){
 		$carsApiUrl = $carsApiUrl.'&stat=1';
 		$h1 = 'Статистика (средние цены) на '.$h1;

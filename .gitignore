@@ -15,3 +15,6 @@ node_modules/
 
 # Agent RAG index (rebuilt locally)
 .cursor/rag/store.sqlite
+
+# Local plans, runbooks, notes (not for prod/git)
+/seov/

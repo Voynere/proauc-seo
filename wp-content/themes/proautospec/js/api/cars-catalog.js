@@ -35,7 +35,7 @@ Promise.all([domLoaded]).then((results) => {
 		apiParams.delete( 'model_id');
 		
 		let model  = routerParams.model;
-		model  = routerParams.model.replaceAll('-', ' ');
+		//model  = routerParams.model.replaceAll('-', ' ');
 
 		apiParams.append( 'model_name', model );
 	}	

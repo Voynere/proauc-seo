@@ -207,6 +207,73 @@ section{margin:1.5rem 0 0rem; padding:.5rem 0}
 .single section{padding:0;}
 .single section:last-child{margin-bottom:3rem;}
 
+/* Single post / blog: светлая карточка на тёмном фоне сайта */
+.single #container-content-single{
+	background:#fff;
+	color:#1c1c1c;
+}
+.single #container-content-single h1,
+.single #container-content-single h2,
+.single #container-content-single h3,
+.single #container-content-single h4{
+	color:#1c1c1c;
+}
+.single #container-content-single p,
+.single #container-content-single li,
+.single #container-content-single td,
+.single #container-content-single th,
+.single #container-content-single .post-meta,
+.single #container-content-single .post-meta .lead{
+	color:#333;
+}
+.single #container-content-single .post-meta .lead{opacity:1;}
+.single #container-content-single .entry-categories a{
+	color:#666;
+}
+.single #container-content-single .proauc-blog-faq,
+.single #container-content-single .proauc-blog-faq .accordion-button:not(.collapsed),
+.single #container-content-single .proauc-blog-faq .accordion-body{
+	color:#1c1c1c;
+}
+.single #container-content-single .proauc-blog-cta{
+	background:#f5f5f5;
+	border-color:#e0e0e0;
+	color:#1c1c1c;
+}
+.single #container-content-single .proauc-blog-cta .text-muted{
+	color:#555 !important;
+}
+.single #container-content-single .proauc-blog-expert,
+.single #container-content-single .proauc-blog-related,
+.single #container-content-single .proauc-auction-list-related{
+	background:#f5f5f5;
+	border:1px solid #e0e0e0;
+	color:#1c1c1c;
+}
+.single #container-content-single .proauc-blog-expert__label,
+.single #container-content-single .proauc-blog-related__link,
+.single #container-content-single .proauc-auction-list-related a{
+	color:#1c1c1c;
+}
+.single #container-content-single .proauc-blog-related__link:hover,
+.single #container-content-single .proauc-auction-list-related a:hover{
+	color:#f59502;
+}
+.single #container-content-single .proauc-blog-expert__icon{
+	display:block;width:72px;height:72px;border-radius:50%;
+	background:#e8e8e8 url(../images/icon-star-g.svg) center/40% no-repeat;
+}
+.inner-page .proauc-auction-list-related{
+	background:#232222;border-color:#525252;
+}
+.inner-page .proauc-auction-list-related h2,
+.inner-page .proauc-auction-list-related a{
+	color:#fff;
+}
+.inner-page .proauc-auction-list-related a:hover{
+	color:#f59502;
+}
+
 section:first-child{margin-top:0;padding-top:0}
 .inner-page section:last-child{margin-bottom:0;}
 .bg-light-grey{background:#2A2A2A;padding-left:1rem; padding-right:1rem}
@@ -873,7 +940,31 @@ left: 0;}
 .news-card__date{font-size:.85rem;color:#777;margin-bottom:14px;}
 .news-card hr{height:0;border-top:1px solid #525252;margin:0 0 1rem;opacity:1;margin-top:auto}
 .news-card .btn{width:100%;text-transform: uppercase;border:1px solid #f59502;font-size:1rem;padding-top:.75rem;padding-bottom:.75rem;}
+.news-card .btn:hover{background:#f59502;color:#fff;border-color:#f59502;}
 
+/* Blog index (/blog/) */
+.blog .archive-description{color:#a8a8a8;}
+.blog section.b-blog-hero:first-child{padding-top:2.5rem !important;margin-top:0;}
+.b-blog-hero .breadcrumbs{text-align:left;margin-top:0;margin-bottom:1.5rem;font-size:14px;}
+.single .container > .breadcrumbs{margin-top:0;margin-bottom:1rem;font-size:14px;}
+.b-blog-list .news-card{transition:border-color .2s ease,box-shadow .2s ease;border:1px solid #3a3a3a;}
+.b-blog-list .news-card:hover{border-color:#525252;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+.b-blog-list .news-card__pic{display:block;text-decoration:none;}
+.b-blog-list .news-card__pic--placeholder{background:#232222 center 55%/65% no-repeat;}
+.b-blog-list .blog-card--yaponiya .news-card__pic--placeholder{background-image:url(../images/bg-alpha-cars.svg);}
+.b-blog-list .blog-card--koreya .news-card__pic--placeholder,
+.b-blog-list .blog-card--kitaj .news-card__pic--placeholder{background-image:url(../images/bg-alpha-red.svg);}
+.b-blog-list .blog-card--spectehnika .news-card__pic--placeholder{background-image:url(../images/bg-alpha-vehicles.svg);}
+.b-blog-list .blog-card--obzory .news-card__pic--placeholder,
+.b-blog-list .blog-card--kejsy .news-card__pic--placeholder{background-image:url(../images/bg-recently-bought-card.svg);}
+.b-blog-list .blog-card--mototsikly .news-card__pic--placeholder{background-image:url(../images/bg-alpha-cars.svg);}
+.b-blog-list .news-card__pic:not(.news-card__pic--placeholder) img{object-fit:cover;}
+.b-blog-list .news-card h3{font-size:1.125rem;line-height:1.35;margin-bottom:.5rem;}
+.b-blog-list .news-card h3 a{color:#fff;text-decoration:none;}
+.b-blog-list .news-card h3 a:hover{color:#f59502;}
+.b-blog-list .news-card__excerpt{font-size:.9375rem;color:#b0b0b0;line-height:1.5;margin-bottom:0;flex-grow:1;}
+.b-blog-list .news-card__date:empty{display:none;}
+.b-blog-list .blog-card--no-thumb .news-card__desc{border-width:1px;border-radius:3px;}
 
 
 .b-form-free-estimate{background:#232222;border-radius:3px;border:1px solid #55524D;padding:1.375rem 1.875rem;text-align:left;}

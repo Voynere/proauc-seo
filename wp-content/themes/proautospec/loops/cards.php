@@ -1,28 +1,32 @@
-<?php 
-/*
-This loop is used in the Archive and in the Home [.php] templates.
-*/
-?>
-<div class="col-md-4 col-sm-6">
-  <div class="card mb-4 shadow-sm">
+<?php
+/**
+ * Blog post card — used on the posts index (home.php /blog/).
+ */
+defined( 'ABSPATH' ) || exit;
 
-    <?php the_post_thumbnail('medium', ['class' => 'w-100']);    ?>
-    
-    <div class="card-body">
-        <?php if (!get_theme_mod("singlepost_disable_date") ): ?>
-          <small class="text-muted"><?php the_date() ?></small>
-        <?php endif; ?>
-        
-        <h2><a class="stretched-link" href="<?php the_permalink() ?>"><?php the_title() ?></a></h2>
-        <p class="card-text"><?php the_excerpt(); ?></p>
-        <!--
-        <div class="d-flex justify-content-between align-items-center"> 
-            <div class="btn-group">
-              <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-              <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-            </div>
-        </div>
-        -->
-    </div>
-  </div>
+$permalink = get_permalink();
+$image_url = function_exists( 'proauc_blog_card_image_url' ) ? proauc_blog_card_image_url() : '';
+$excerpt   = function_exists( 'proauc_blog_card_excerpt' ) ? proauc_blog_card_excerpt() : '';
+$cluster   = function_exists( 'proauc_get_blog_post_cluster' ) ? proauc_get_blog_post_cluster() : '';
+$has_thumb = (bool) ( has_post_thumbnail() || $image_url );
+?>
+<div class="col-lg-4 col-md-6">
+	<article class="news-card blog-card<?php echo $has_thumb ? '' : ' blog-card--no-thumb'; ?><?php echo $cluster ? ' blog-card--' . esc_attr( $cluster ) : ''; ?>">
+		<a class="news-card__pic<?php echo $has_thumb ? '' : ' news-card__pic--placeholder'; ?>" href="<?php echo esc_url( $permalink ); ?>" tabindex="-1" aria-hidden="true">
+			<?php if ( has_post_thumbnail() ) : ?>
+				<?php the_post_thumbnail( 'medium_large', array( 'alt' => esc_attr( get_the_title() ) ) ); ?>
+			<?php elseif ( $image_url ) : ?>
+				<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" width="640" height="432">
+			<?php endif; ?>
+		</a>
+		<div class="news-card__desc">
+			<time class="news-card__date" datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'd.m.Y' ) ); ?></time>
+			<h3><a href="<?php echo esc_url( $permalink ); ?>"><?php the_title(); ?></a></h3>
+			<?php if ( $excerpt ) : ?>
+				<p class="news-card__excerpt"><?php echo esc_html( $excerpt ); ?></p>
+			<?php endif; ?>
+			<hr>
+			<a class="btn btn-outline-primary" href="<?php echo esc_url( $permalink ); ?>">Читать далее</a>
+		</div>
+	</article>
 </div>

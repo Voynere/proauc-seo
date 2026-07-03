@@ -8,15 +8,30 @@ get_header();
   
  
 
-<section class="py-6 text-center">
+<section class="b-blog-hero py-6 text-center">
   <div class="container">
-    <h1><?php bloginfo('Name') ?></h1>
-    <div class="lead text-muted col-md-8 offset-md-2 archive-description"><?php bloginfo('description') ?></div> 
+    <?php proauc_render_blog_breadcrumbs(); ?>
+    <?php
+    $blog_title = proauc_get_blog_posts_page_title();
+    $blog_lead  = 'Покупка авто с аукционов Японии, Кореи и Китая: этапы, цены, документы и советы экспертов Proauc.';
+    $posts_page = (int) get_option( 'page_for_posts' );
+    if ( $posts_page ) {
+        $blog_page = get_post( $posts_page );
+        if ( $blog_page ) {
+            $blog_title = $blog_page->post_title;
+            if ( $blog_page->post_content ) {
+                $blog_lead = wp_strip_all_tags( $blog_page->post_content );
+            }
+        }
+    }
+    ?>
+    <h1><?php echo esc_html( $blog_title ); ?></h1>
+    <div class="lead col-md-8 offset-md-2 mx-auto archive-description"><?php echo esc_html( $blog_lead ); ?></div>
  
   </div>
 </section>
 
-<section class="album py-5 bg-light">
+<section class="b-auto-news b-blog-list py-5">
   <div class="container">
     <div class="row">
     <?php 

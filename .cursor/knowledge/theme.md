@@ -28,9 +28,14 @@ inc/
 |------|------|
 | `front-page.php` | Homepage |
 | `page-40.php` … `page-51.php` | Catalog / landing pages |
+| `page-45.php` | Japan catalog (`/avto-iz-yaponii/catalog/…`) |
+| `page-48.php` | Korea catalog — **other dev** (slug `-SERIES`) |
 | `page-hdm-lot.php`, `page-moto-lot.php` | Lot detail |
 | `page-spectehnika.php`, `page-motorcycles.php` | Sections |
 | `rank-math.php` | SEO filters (required) |
+| `home.php`, `single.php`, `category.php` | Blog list, post, cluster archive |
+| `inc/blog-seo.php` | Blog bootstrap, CTA, FAQ, JSON-LD |
+| `inc/blog-articles.php` | P3 seed articles (waves 1–4) |
 
 ## Frontend JS API clients
 
@@ -46,9 +51,18 @@ Data source: `/api/*.php` on production (not in Git).
 
 Rewrite/query vars (see `functions.php`):
 
-- `{country}/{mark}/` and `{country}/{mark}/{model}/` — country = korea | china | japan
+- Catalog: `/avto-iz-{yaponii|korei|kitaya}/catalog/{mark}/` and `…/{mark}/{model}/`
+- Blog: `/blog/`, `/blog/{slug}/`, clusters `/blog/category/{slug}/`
 - HDM: `hdm-group`, `hdm-type` slugs
-- 404 validation calls live API when mark has zero models
+- 404 validation calls live API when mark has zero listings (`proauc_catalog_has_listings`)
+
+## Catalog files (other dev — prod is source of truth)
+
+- `functions.php` — `parseData`, transients `manufacturers_*`, `proauc_catalog_api_count`
+- `page-48.php` — Korea model slug (`-SERIES`)
+- `js/api/cars-catalog.js` — `model_name` without `replaceAll('-', ' ')`
+
+Do not deploy our copies over prod unless intentionally syncing from prod first.
 
 ## Styles
 

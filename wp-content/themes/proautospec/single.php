@@ -9,6 +9,11 @@ get_header();
 // Loop through posts if there are any
 if (have_posts()):
     while (have_posts()): the_post();
+        ?>
+    <div class="container">
+        <?php proauc_render_blog_breadcrumbs(); ?>
+    </div>
+        <?php
 
         // Check if the post has a featured image
         if (has_post_thumbnail()) {  
@@ -41,7 +46,7 @@ if (have_posts()):
                 if (!get_theme_mod("singlepost_disable_entry_cats") &&  has_category() ) {
                         ?>
                         <div class="entry-categories">
-                            <span class="screen-reader-text"><?php _e( 'Categories', 'picostrap5' ); ?></span>
+                            <span class="screen-reader-text">Категории</span>
                             <div class="entry-categories-inner">
                                 <?php the_category( ' ' ); ?>
                             </div><!-- .entry-categories-inner -->
@@ -58,11 +63,11 @@ if (have_posts()):
                         <p class="lead opacity-75">
                             
                             <?php if (!get_theme_mod("singlepost_disable_date") ): ?>
-                                <span class="post-date"><?php the_date(); ?> </span>
+                                <span class="post-date"><?php echo esc_html( get_the_date( 'd.m.Y' ) ); ?></span>
                             <?php endif; ?>
 
                             <?php if (!get_theme_mod("singlepost_disable_author") ): ?>
-                                <span class="post-author"> <?php _e( 'by', 'picostrap5' ) ?> <?php the_author(); ?></span>
+                                <span class="post-author"> · автор <?php echo esc_html( function_exists( 'proauc_get_blog_author_display_name' ) ? proauc_get_blog_author_display_name() : 'Редакция Proauc' ); ?></span>
                             <?php endif; ?>
                         </p>
                     </div> 
@@ -75,6 +80,11 @@ if (have_posts()):
                 <?php 
                 
                 the_content();
+
+                proauc_render_blog_related();
+                proauc_render_blog_faq();
+                proauc_render_blog_cta();
+                proauc_render_blog_expert();
                 
                 if( get_theme_mod("enable_sharing_buttons")) picostrap_the_sharing_buttons();
                 

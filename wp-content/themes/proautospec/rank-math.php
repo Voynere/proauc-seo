@@ -204,6 +204,10 @@ function proauc_get_static_landing_seo() {
 			'title'       => 'Как читать аукционный лист: оценки и расшифровка обозначений',
 			'description' => 'Расшифровка аукционного листа японского авто: оценки кузова и салона, листы USS, JAA, TAA, обозначения A1–W3. Подбор и доставка авто с аукциона под ключ.',
 		),
+		'/blog/' => array(
+			'title'       => 'Статьи о покупке авто с аукционов — Япония, Корея, Китай',
+			'description' => 'Полезные материалы Proauc: как купить авто с аукциона, растаможка, цены, спецтехника и электромобили из Китая. Советы экспертов и ответы на частые вопросы.',
+		),
 		'/motorcycles/' => array(
 			'description' => 'Мотоциклы с аукционов Японии под заказ с доставкой! Проверенная история, выгодные условия и полное сопровождение на всех этапах сделки.',
 		),
@@ -935,15 +939,19 @@ add_action( 'wp_head', function() {
 }, 97 );
 
 /**
- * Статьи блога: Rank Math выводит BlogPosting — дополняем связью с организацией, без дубля типа Article.
+ * Статьи блога: дополняем BlogPosting Rank Math или добавляем в граф; BreadcrumbList без дубля.
  */
 add_filter( 'rank_math/json_ld', function( $data ) {
 	if ( ! is_singular( 'post' ) || ! is_array( $data ) ) {
 		return $data;
 	}
 
-	$site_url = home_url( '/' );
-	$org_id   = $site_url . '#organization';
+	$post = get_queried_object();
+	if ( ! $post instanceof WP_Post ) {
+		return $data;
+	}
+
+	$article_key = null;
 
 	foreach ( $data as $key => $entity ) {
 		if ( ! is_array( $entity ) || empty( $entity['@type'] ) ) {
@@ -951,16 +959,36 @@ add_filter( 'rank_math/json_ld', function( $data ) {
 		}
 
 		$types = (array) $entity['@type'];
+		if ( in_array( 'BreadcrumbList', $types, true ) ) {
+			$GLOBALS['proauc_rank_math_breadcrumbs'] = true;
+			continue;
+		}
+
 		if ( ! array_intersect( $types, array( 'Article', 'BlogPosting', 'NewsArticle' ) ) ) {
 			continue;
 		}
 
-		if ( empty( $data[ $key ]['publisher'] ) || ! is_array( $data[ $key ]['publisher'] ) ) {
-			$data[ $key ]['publisher'] = array( '@id' => $org_id );
-		} else {
-			$data[ $key ]['publisher']['@id'] = $org_id;
+		$article_key = $key;
+		if ( function_exists( 'proauc_enrich_blogposting_entity' ) ) {
+			proauc_enrich_blogposting_entity( $data[ $key ], $post );
 		}
-		$data[ $key ]['inLanguage'] = 'ru-RU';
+		$GLOBALS['proauc_rank_math_blogposting'] = true;
+	}
+
+	if ( null === $article_key && function_exists( 'proauc_build_blogposting_schema' ) ) {
+		$built = proauc_build_blogposting_schema( $post, false );
+		if ( $built ) {
+			$data['proauc-blogposting'] = $built;
+			$GLOBALS['proauc_rank_math_blogposting'] = true;
+		}
+	}
+
+	if ( empty( $GLOBALS['proauc_rank_math_breadcrumbs'] ) && function_exists( 'proauc_build_breadcrumb_list_schema' ) && function_exists( 'proauc_get_blog_breadcrumb_items' ) ) {
+		$bc = proauc_build_breadcrumb_list_schema( proauc_get_blog_breadcrumb_items() );
+		if ( $bc ) {
+			$data['proauc-breadcrumb'] = $bc;
+			$GLOBALS['proauc_rank_math_breadcrumbs'] = true;
+		}
 	}
 
 	return $data;

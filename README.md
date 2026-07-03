@@ -20,6 +20,7 @@
 | `wp-content/cache/`, `wp-content/upgrade/` | runtime-кэш и временные файлы |
 | `wp-config.php`, `.htaccess` | секреты и серверная конфигурация |
 | `*.log`, `node_modules/` | логи и зависимости |
+| `seov/` | локальные отчёты и планы, не для prod/git |
 
 ## Продакшен
 
@@ -29,6 +30,26 @@
 | SSH | `ssh proauc` |
 | Document root | `/var/www/proauc_ru_usr/data/www/proauc.ru` |
 | Nginx config | `/etc/nginx/fastpanel2-available/proauc_ru_usr/proauc.ru.conf` |
+
+## Зоны ответственности
+
+| Зона | Кто | Файлы (примеры) |
+|------|-----|-----------------|
+| **Каталог / API** | другой разработчик | `functions.php` (slug, transients, `parseData`), `page-48.php`, `js/api/cars-catalog.js` |
+| **SEO и техфичи темы** | мы | `rank-math.php`, `inc/blog-seo.php`, `inc/blog-articles.php`, `category.php`, шаблоны блога |
+
+**Прод — source of truth для каталога.** При расхождении тянем с прода, не правим чужой код:
+
+```bash
+scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautospec/functions.php \
+    wp-content/themes/proautospec/functions.php
+scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautospec/page-48.php \
+    wp-content/themes/proautospec/page-48.php
+scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautospec/js/api/cars-catalog.js \
+    wp-content/themes/proautospec/js/api/cars-catalog.js
+```
+
+Деплой SEO — точечный `scp` **только наших** файлов; три файла каталога на прод не перезаписываем.
 
 ## Синхронизация с сервера
 
@@ -54,17 +75,42 @@ scp -r proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/assets ~/Projects/proauc
 scp -r proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/api ~/Projects/proauc-seo/
 ```
 
+## Деплой SEO на прод
+
+```bash
+THEME=wp-content/themes/proautospec
+ROOT=/var/www/proauc_ru_usr/data/www/proauc.ru
+
+for f in rank-math.php header.php footer.php home.php single.php category.php \
+         loops/cards.php css/app.css spec.csv \
+         inc/blog-seo.php inc/blog-articles.php; do
+  scp "$THEME/$f" "proauc:$ROOT/$THEME/$f"
+done
+```
+
+После CSS/JS — сбросить кэш Autoptimize в админке WP.
+
 ## Структура проекта
 
 ```
 ├── wp-content/
 │   ├── themes/proautospec/   # основная тема сайта
+│   │   ├── rank-math.php     # SEO-фильтры Rank Math
+│   │   ├── inc/blog-seo.php  # блог: schema, CTA, FAQ
+│   │   └── inc/blog-articles.php  # seed-статьи P3
 │   └── plugins/              # плагины (Rank Math, CF7, ACF и др.)
 ├── wp-admin/, wp-includes/   # ядро WordPress
 ├── assets/                   # локально, не в Git
 ├── api/                      # локально, не в Git
+├── seov/                     # локальные отчёты, не в Git
 └── sitemap_*.xml             # карты сайта
 ```
+
+## Статус (03.07.2026)
+
+- P3 блог: 12 статей в seed, `category.php`, JSON-LD BlogPosting/BreadcrumbList/FAQPage, волна 4 в работе (Palisade и др.)
+- Каталог на проде: правки slug/transients (01–02.07) — в репо подтянуты с прода, не трогаем
+- Следующая сессия: довести волну 4 блога, деплой SEO-файлов на прод
 
 ## Лицензия
 
