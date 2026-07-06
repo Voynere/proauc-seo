@@ -25,6 +25,7 @@ $picostrap_includes = array(
 	//'/options-page.php',                  // Load theme options page. 
 	'/content-filtering.php',				//for LC compatibility when shutting down plugin
 	'/blog-seo.php',                        // Blog bootstrap, CTA, FAQ (P3).
+	'/seo-settings.php',                    // OAuth Метрики, SEO-настройки админки.
     //'/windpress-support.php'                    //for deep integration with the WindPress plugin, for optional use of TailWind
 );
 
