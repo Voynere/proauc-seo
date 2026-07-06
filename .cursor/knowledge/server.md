@@ -44,7 +44,7 @@ scp -r proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/api ~/Projects/proauc-se
 | Zone | Owner | Do not overwrite on deploy |
 |------|-------|---------------------------|
 | Catalog / API | other dev | `functions.php`, `page-48.php`, `js/api/cars-catalog.js` |
-| SEO & theme tweaks | us | `rank-math.php`, `inc/blog-*.php`, `category.php`, blog templates |
+| SEO & theme tweaks | us | `rank-math.php`, `inc/blog-*.php`, `inc/seo-settings.php`, `category.php` |
 
 **Production is source of truth for catalog.** Pull their files before merging our work:
 
@@ -71,12 +71,17 @@ SEO deploy example:
 THEME=wp-content/themes/proautospec
 ROOT=/var/www/proauc_ru_usr/data/www/proauc.ru
 for f in rank-math.php header.php footer.php home.php single.php category.php \
-         loops/cards.php css/app.css spec.csv inc/blog-seo.php inc/blog-articles.php; do
+         loops/cards.php css/app.css spec.csv inc/blog-seo.php inc/blog-articles.php \
+         inc/seo-settings.php; do
   scp "$THEME/$f" "proauc:$ROOT/$THEME/$f"
 done
 ```
 
+Пересборка sitemap лотов на проде: `https://proauc.ru/?sitemap-lots-create=1` (~1 мин, 517 URL при лимите 340/страна).
+
 ## Local-only: `seov/`
+
+Клиентский отчёт и Дзен-черновики — только локально в `seov/`:
 
 Каталог `seov/` в корне репозитория — отчёты, планы, runbooks. **Не в Git** (`.gitignore`: `/seov/`). На production **не деплоить**.
 

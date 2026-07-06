@@ -35,7 +35,8 @@ inc/
 | `rank-math.php` | SEO filters (required) |
 | `home.php`, `single.php`, `category.php` | Blog list, post, cluster archive |
 | `inc/blog-seo.php` | Blog bootstrap, CTA, FAQ, JSON-LD |
-| `inc/blog-articles.php` | P3 seed articles (waves 1–4) |
+| `inc/blog-articles.php` | P3 seed articles (waves 1–5) |
+| `inc/seo-settings.php` | Admin «Яндекс Метрика» (ACF), API token |
 
 ## Frontend JS API clients
 
@@ -52,7 +53,8 @@ Data source: `/api/*.php` on production (not in Git).
 Rewrite/query vars (see `functions.php`):
 
 - Catalog: `/avto-iz-{yaponii|korei|kitaya}/catalog/{mark}/` and `…/{mark}/{model}/`
-- Blog: `/blog/`, `/blog/{slug}/`, clusters `/blog/category/{slug}/`
+- Blog: `/blog/` (archive), clusters `/blog/category/{slug}/`
+- **Posts:** root URLs `/slug/` (not `/blog/slug/`) — e.g. `/obzor-byd-seal-iz-kitaya/`
 - HDM: `hdm-group`, `hdm-type` slugs
 - 404 validation calls live API when mark has zero listings (`proauc_catalog_has_listings`)
 

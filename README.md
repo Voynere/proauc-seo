@@ -83,10 +83,12 @@ ROOT=/var/www/proauc_ru_usr/data/www/proauc.ru
 
 for f in rank-math.php header.php footer.php home.php single.php category.php \
          loops/cards.php css/app.css spec.csv \
-         inc/blog-seo.php inc/blog-articles.php; do
+         inc/blog-seo.php inc/blog-articles.php inc/seo-settings.php; do
   scp "$THEME/$f" "proauc:$ROOT/$THEME/$f"
 done
 ```
+
+`functions.php` — только при изменении SEO-части (например `generate_sitemap_lots`); **не перезаписывать** каталожные правки другого разработчика без sync с прода.
 
 После CSS/JS — сбросить кэш Autoptimize в админке WP.
 
@@ -97,7 +99,8 @@ done
 │   ├── themes/proautospec/   # основная тема сайта
 │   │   ├── rank-math.php     # SEO-фильтры Rank Math
 │   │   ├── inc/blog-seo.php  # блог: schema, CTA, FAQ
-│   │   └── inc/blog-articles.php  # seed-статьи P3
+│   │   ├── inc/blog-articles.php  # seed-статьи P3 (волны 1–5)
+│   │   └── inc/seo-settings.php   # админка «Яндекс Метрика» (ACF)
 │   └── plugins/              # плагины (Rank Math, CF7, ACF и др.)
 ├── wp-admin/, wp-includes/   # ядро WordPress
 ├── assets/                   # локально, не в Git
@@ -106,15 +109,27 @@ done
 └── sitemap_*.xml             # карты сайта
 ```
 
-## Статус (06.07.2026)
+## Статус (06.07.2026, вечер)
 
-- P3 блог: **21 статья** в seed (волны 1–5), публикация по расписанию
-- Волна 4: BYD Seal, кейс Sorento, PC200, доставка ДВ (06–15.07)
-- Волна 5: Alphard, X-Trail, Vezel, Carnival, BYD vs Zeekr (18–31.07)
+**Сделано сегодня**
+
+- P3 блог: **21 статья** в seed (волны 1–5), публикация по расписанию (`future` → `publish`)
+- Волна 4 на проде: BYD Seal (live), Sorento / PC200 / доставка ДВ — по датам 09–15.07
+- Волна 5 в seed: Alphard, X-Trail, Vezel, Carnival, BYD vs Zeekr — 18–31.07
 - Гео-сниппеты: `/avto-iz-yaponii/`, `/avto-iz-korei/`, `/spectehnika/`, `/kontaktyi/`
-- sitemap лотов: лимит 250/страна → 500+ URL
-- Клиентский отчёт: `seov/SEO-отчет-прогресс.md` (+ PDF)
+- `sitemap_lots.xml`: **517 URL** (`generate_sitemap_lots`, лимит 340/страна)
+- Админка: пункт меню **Яндекс Метрика** (ACF) — OAuth-токен + проверка API
+- Клиентский отчёт: `seov/SEO-отчет-прогресс.md` + PDF; черновики Дзена: `seov/dzen/`
 - Каталог на проде — не трогаем (зона другого разработчика)
+
+**Посты блога:** URL без `/blog/` в пути (например `/obzor-byd-seal-iz-kitaya/`).
+
+**Следующая сессия**
+
+1. Вставить OAuth-токен Метрики в админке → подключить отчёты API в SEO-дашборд
+2. Индексация блога в Вебмастере, 1-й съём позиций Topvisor
+3. Публикация 2 адаптаций в Дзене (при доступе к каналу)
+4. Статьи волны 4–5 выходят по расписанию автоматически
 
 ## Лицензия
 

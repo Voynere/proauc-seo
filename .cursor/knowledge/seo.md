@@ -34,19 +34,30 @@ Root files: `sitemap_japan.xml`, `sitemap_korea.xml`, `sitemap_china.xml`
 
 - `wp-content/themes/proautospec/rank-math.php` — main SEO filters
 - `wp-content/themes/proautospec/inc/blog-seo.php` — blog CTA, FAQ, JSON-LD helpers
-- `wp-content/themes/proautospec/inc/blog-articles.php` — seed content (waves 1–4)
+- `wp-content/themes/proautospec/inc/blog-articles.php` — seed content (waves 1–5)
 - `wp-content/themes/proautospec/seo.csv` — SEO data reference
 - `wp-content/themes/proautospec/rank-math-old.php` — legacy, check before editing
 
 ## Blog (P3)
 
 - URL base: `/blog/` (`category_base=blog`)
-- Seeds: `proauc_blog_seed_v1` … `v4`, migrations `proauc_blog_dates_v1`, thumbnails `proauc_blog_thumbnail`
+- Seeds: `proauc_blog_seed_v1` … `v5`, schedule migrations `proauc_blog_wave4_schedule_v1`, `proauc_blog_wave5_schedule_v1`
 - Clusters: `yaponiya`, `koreya`, `kitaj`, `spectehnika`, `mototsikly`, `obzory`, `kejsy`
 - Schema: `CollectionPage` + `ItemList` on archive; `BlogPosting` + `BreadcrumbList` + `FAQPage` on single
 - Static `/blog/` title/description in `proauc_get_static_landing_seo()`
 - `category.php` — cluster archives with post cards (not catalog `archive.php`)
-- Admin: **Яндекс Метрика** (пункт меню слева, ACF) — OAuth-токен API, ID счётчика, кнопка «Проверить API»
+- Admin: **Яндекс Метрика** — top-level WP menu (ACF options page, pattern like ferma-dv «Яндекс Директ»)
+  - Slug: `yandex-metrika-settings`
+  - Fields: `metrika_oauth_token`, `metrika_counter_id` (default `98962652`)
+  - Helpers: `proauc_get_metrika_oauth_token()`, `proauc_metrika_health_check()`
+  - Fallback wp-config: `PROAUC_METRIKA_OAUTH_TOKEN`, `PROAUC_METRIKA_COUNTER_ID`
+  - File: `inc/seo-settings.php`
+
+## Sitemap lots
+
+- `generate_sitemap_lots()` in `functions.php` — default **340** lots per country (korea/china/japan)
+- Regenerate: `https://proauc.ru/?sitemap-lots-create=1` → `sitemap_lots.xml` (~517 URL as of 06.07.2026)
+- Full sitemap: `https://proauc.ru/?sitemap-create=1`
 
 ## UTM / analytics
 
