@@ -106,11 +106,12 @@ done
 └── sitemap_*.xml             # карты сайта
 ```
 
-## Статус (03.07.2026)
+## Статус (06.07.2026)
 
-- P3 блог: 12 статей в seed, `category.php`, JSON-LD BlogPosting/BreadcrumbList/FAQPage, волна 4 в работе (Palisade и др.)
-- Каталог на проде: правки slug/transients (01–02.07) — в репо подтянуты с прода, не трогаем
-- Следующая сессия: довести волну 4 блога, деплой SEO-файлов на прод
+- P3 блог: 16 статей в seed (волны 1–4), `category.php`, JSON-LD BlogPosting/BreadcrumbList/FAQPage
+- Волна 4 (06–15.07): BYD Seal, кейс Kia Sorento, Komatsu PC200, доставка в регионы ДВ
+- Каталог на проде: правки slug/transients (01–02.07) — не трогаем, source of truth — прод
+- Посты блога: URL без префикса `/blog/` (например `/obzor-hyundai-palisade-iz-korei/`)
 
 ## Лицензия
 

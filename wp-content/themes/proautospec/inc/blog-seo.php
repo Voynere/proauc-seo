@@ -190,6 +190,37 @@ function proauc_migrate_blog_wave3_dates() {
 	flush_rewrite_rules( false );
 }
 
+function proauc_migrate_blog_wave4_schedule() {
+	if ( ! function_exists( 'proauc_get_blog_article_seeds_wave4' ) ) {
+		require_once get_template_directory() . '/inc/blog-articles.php';
+	}
+
+	foreach ( proauc_get_blog_article_seeds_wave4() as $seed ) {
+		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
+			continue;
+		}
+
+		$post = get_page_by_path( $seed['slug'], OBJECT, 'post' );
+		if ( ! $post ) {
+			continue;
+		}
+
+		$gmt     = get_gmt_from_date( $seed['post_date'] );
+		$publish = strtotime( $gmt ) <= time();
+
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_status'   => $publish ? 'publish' : 'future',
+				'post_date'     => $seed['post_date'],
+				'post_date_gmt' => $gmt,
+			)
+		);
+	}
+
+	flush_rewrite_rules( false );
+}
+
 function proauc_get_blog_posts_page_title() {
 	$posts_page = (int) get_option( 'page_for_posts' );
 	if ( $posts_page ) {
@@ -944,6 +975,62 @@ function proauc_get_blog_post_faq( $slug = '' ) {
 				'a' => 'В каталоге авто из Кореи на сайте или по заявке менеджеру.',
 			),
 		),
+		'obzor-byd-seal-iz-kitaya' => array(
+			array(
+				'q' => 'Какой запас хода у BYD Seal в реальных условиях?',
+				'a' => 'Зависит от версии батареи и климата. На этапе подбора уточняем комплектацию и обсуждаем зимнюю дальность.',
+			),
+			array(
+				'q' => 'Можно ли заказать Seal с быстрой DC-зарядкой?',
+				'a' => 'Да, поддержка DC зависит от версии. Сверяем комплектацию до оплаты.',
+			),
+			array(
+				'q' => 'Где смотреть актуальные предложения BYD?',
+				'a' => 'В каталоге авто из Китая на сайте или по заявке менеджеру.',
+			),
+		),
+		'kejs-pokupka-kia-sorento-iz-korei' => array(
+			array(
+				'q' => 'Сколько длилась сделка в кейсе?',
+				'a' => 'Около 5 недель от заявки до получения во Владивостоке — типичный диапазон для Кореи.',
+			),
+			array(
+				'q' => 'Проверяли ли историю Sorento перед покупкой?',
+				'a' => 'Да. Сверяем пробег, страховые случаи и количество владельцев по базам до оплаты.',
+			),
+			array(
+				'q' => 'Можно ли организовать доставку в другой город ДВ?',
+				'a' => 'Да. По запросу организуем перегон из Владивостока после таможни.',
+			),
+		),
+		'obzor-komatsu-pc200-iz-yaponii' => array(
+			array(
+				'q' => 'Какие моточасы считаются нормальными для PC200?',
+				'a' => 'До 8–10 тыс. моточасов при хорошем отчёте по гидравлике — ориентир для подбора без сюрпризов.',
+			),
+			array(
+				'q' => 'Чем PC200 отличается от PC210 или Hitachi ZX200?',
+				'a' => 'Класс машины схожий; сравниваем по моточасам, году, состоянию и итогу «под ключ» для вашей задачи.',
+			),
+			array(
+				'q' => 'Где смотреть экскаваторы на аукционе?',
+				'a' => 'В каталоге спецтехники на сайте или по подбору менеджера.',
+			),
+		),
+		'dostavka-avto-v-regiony-dalnego-vostoka' => array(
+			array(
+				'q' => 'Можно ли сразу получить авто не во Владивостоке?',
+				'a' => 'Сначала растаможка во Владивостоке. Перегон в ваш город — отдельный этап после выдачи документов.',
+			),
+			array(
+				'q' => 'Сколько едет автовоз до Хабаровска?',
+				'a' => 'Обычно 1–2 дня после погрузки. Точный срок зависит от расписания перевозчика.',
+			),
+			array(
+				'q' => 'Доставляете ли на Сахалин или в Магадан?',
+				'a' => 'Да, по запросу — маршрут и сроки согласуем индивидуально с учётом паромной логистики.',
+			),
+		),
 	);
 
 	return isset( $faqs[ $slug ] ) ? $faqs[ $slug ] : array();
@@ -1031,7 +1118,7 @@ function proauc_get_blog_category_seo( $slug ) {
 		),
 		'obzory'      => array(
 			'title'       => 'Обзоры автомобилей и техники — Proauc',
-			'description' => 'Обзоры моделей для покупателей: Land Cruiser, Palisade и другие — критерии выбора и ссылки на каталог.',
+			'description' => 'Обзоры моделей для покупателей: Land Cruiser, Palisade, BYD Seal, Komatsu PC200 и другие — критерии выбора и ссылки на каталог.',
 		),
 		'kejsy'       => array(
 			'title'       => 'Кейсы покупки авто и техники — Proauc',
@@ -1160,6 +1247,18 @@ add_action(
 		if ( ! get_option( 'proauc_blog_wave3_dates_v1' ) ) {
 			proauc_migrate_blog_wave3_dates();
 			update_option( 'proauc_blog_wave3_dates_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_seed_v4' ) ) {
+			if ( ! function_exists( 'proauc_get_blog_article_seeds_wave4' ) ) {
+				require_once get_template_directory() . '/inc/blog-articles.php';
+			}
+			proauc_seed_blog_posts( proauc_get_blog_article_seeds_wave4() );
+			update_option( 'proauc_blog_seed_v4', 1 );
+			flush_rewrite_rules( false );
+		}
+		if ( ! get_option( 'proauc_blog_wave4_schedule_v1' ) ) {
+			proauc_migrate_blog_wave4_schedule();
+			update_option( 'proauc_blog_wave4_schedule_v1', 1 );
 		}
 	},
 	20
