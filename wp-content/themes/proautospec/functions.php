@@ -1317,7 +1317,7 @@ function generate_sitemap(){
 	);
 }
 
-function generate_sitemap_lots( $max_per_country = 200 ) {
+function generate_sitemap_lots( $max_per_country = 340 ) {
 	global $wp_filesystem;
 
 	@set_time_limit( 600 );

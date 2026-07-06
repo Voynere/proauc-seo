@@ -10,7 +10,8 @@ function proauc_get_blog_article_seeds() {
 		proauc_get_blog_article_seeds_wave1(),
 		proauc_get_blog_article_seeds_wave2(),
 		proauc_get_blog_article_seeds_wave3(),
-		proauc_get_blog_article_seeds_wave4()
+		proauc_get_blog_article_seeds_wave4(),
+		proauc_get_blog_article_seeds_wave5()
 	);
 }
 
@@ -206,6 +207,66 @@ function proauc_get_blog_article_seeds_wave4() {
 			'seo_title'       => 'Доставка авто из Владивостока в регионы ДВ — сроки и варианты',
 			'seo_description' => 'Как доставить автомобиль из Владивостока в Хабаровск, Якутск, Магадан и другие города ДВ: автовоз, транзит, сроки и документы.',
 			'content'         => proauc_blog_article_dostavka_dv(),
+		),
+	);
+}
+
+function proauc_get_blog_article_seeds_wave5() {
+	return array(
+		array(
+			'slug'            => 'obzor-toyota-alphard-iz-yaponii',
+			'post_date'       => '2026-07-18 06:00:00',
+			'title'           => 'Обзор Toyota Alphard с аукциона Японии',
+			'category'        => 'obzory',
+			'cluster'         => 'yaponiya',
+			'thumbnail'       => 'bg-recently-bought-card.svg',
+			'seo_title'       => 'Toyota Alphard с аукциона Японии — обзор минивэна',
+			'seo_description' => 'Стоит ли покупать Toyota Alphard с японского аукциона: комплектации, оценки на листе, цена «под ключ» и кому подходит премиальный минивэн.',
+			'content'         => proauc_blog_article_obzor_alphard(),
+		),
+		array(
+			'slug'            => 'obzor-nissan-x-trail-iz-yaponii',
+			'post_date'       => '2026-07-21 06:00:00',
+			'title'           => 'Обзор Nissan X-Trail с аукциона Японии',
+			'category'        => 'obzory',
+			'cluster'         => 'yaponiya',
+			'thumbnail'       => 'bg-recently-bought-card.svg',
+			'seo_title'       => 'Nissan X-Trail с аукциона Японии — обзор для покупателя',
+			'seo_description' => 'Обзор Nissan X-Trail с японского аукциона: полный привод, комплектации, оценки на листе и цена «под ключ».',
+			'content'         => proauc_blog_article_obzor_xtrail(),
+		),
+		array(
+			'slug'            => 'obzor-honda-vezel-iz-yaponii',
+			'post_date'       => '2026-07-24 06:00:00',
+			'title'           => 'Обзор Honda Vezel (HR-V) с аукциона Японии',
+			'category'        => 'obzory',
+			'cluster'         => 'yaponiya',
+			'thumbnail'       => 'bg-recently-bought-card.svg',
+			'seo_title'       => 'Honda Vezel с аукциона Японии — обзор кроссовера',
+			'seo_description' => 'Honda Vezel (HR-V) с японского аукциона: гибрид и бензин, комплектации, оценки на листе и покупка под заказ.',
+			'content'         => proauc_blog_article_obzor_vezel(),
+		),
+		array(
+			'slug'            => 'obzor-kia-carnival-iz-korei',
+			'post_date'       => '2026-07-27 06:00:00',
+			'title'           => 'Обзор Kia Carnival из Кореи: семейный минивэн',
+			'category'        => 'obzory',
+			'cluster'         => 'koreya',
+			'thumbnail'       => 'bg-alpha-red.svg',
+			'seo_title'       => 'Kia Carnival из Кореи — обзор и покупка под заказ',
+			'seo_description' => 'Обзор Kia Carnival с корейского рынка: комплектации, проверка истории, цена «под ключ» для большой семьи.',
+			'content'         => proauc_blog_article_obzor_carnival(),
+		),
+		array(
+			'slug'            => 'byd-seal-i-zeekr-001-sravnenie',
+			'post_date'       => '2026-07-31 06:00:00',
+			'title'           => 'BYD Seal и Zeekr 001 из Китая: сравнение для покупателя',
+			'category'        => 'kitaj',
+			'cluster'         => 'kitaj',
+			'thumbnail'       => 'bg-alpha-red.svg',
+			'seo_title'       => 'BYD Seal vs Zeekr 001 — какой электромобиль заказать из Китая',
+			'seo_description' => 'Сравнение BYD Seal и Zeekr 001 с китайского рынка: запас хода, зарядка, комплектации и цена «под ключ».',
+			'content'         => proauc_blog_article_byd_zeekr_sravnenie(),
 		),
 	);
 }
@@ -588,5 +649,90 @@ function proauc_blog_article_dostavka_dv() {
 <p>По запросу организуем доставку из Владивостока в ваш город — согласуем способ, срок и бюджет после получения авто на складе.</p>
 
 <p>Нужен расчёт доставки в ваш город — укажите пункт назначения в заявке вместе с моделью авто.</p>
+HTML;
+}
+
+function proauc_blog_article_obzor_alphard() {
+	return <<<'HTML'
+<p>Toyota Alphard — премиальный минивэн, который часто берут с японских аукционов для семьи и бизнеса. Просторный салон, надёжные моторы и высокая ликвидность делают модель одной из самых востребованных в сегменте. Разбираем, на что смотреть при подборе.</p>
+
+<h2>Почему Alphard с аукциона</h2>
+<p>На торгах USS и других площадок регулярно появляются Alphard 30 и 40 серии с прозрачной историей. Состояние фиксируется в <a href="/kak-chitat-aukczionnyj-list/">аукционном листе</a> — оценка кузова, салона, пробег.</p>
+
+<h2>Комплектации</h2>
+<p>Чаще встречаются 7- и 8-местные версии с кожаным салоном, двумя сдвижными дверями и пакетами безопасности. Для Дальнего Востока важны полный привод и подогревы — уточняем на этапе подбора.</p>
+
+<h2>Цена «под ключ»</h2>
+<p>Итог зависит от года, объёма двигателя и курса йены. Актуальные лоты — в <a href="/avto-iz-yaponii/catalog/">каталоге Японии</a>; ориентиры по смете — в <a href="/skolko-stoit-privezti-avto-iz-yaponii/">статье о стоимости привоза</a>.</p>
+
+<p>Нужен подбор Alphard — оставьте заявку с желаемым годом и комплектацией.</p>
+HTML;
+}
+
+function proauc_blog_article_obzor_xtrail() {
+	return <<<'HTML'
+<p>Nissan X-Trail — практичный кроссовер с полным приводом, популярный на японских аукционах. Подходит для города и поездок по Дальнему Востоку. Ниже — критерии выбора и типичные комплектации.</p>
+
+<h2>Почему X-Trail с аукциона</h2>
+<p>Широкий выбор годов и пробегов, понятные оценки на листе. Модель сопоставима по классу с Toyota RAV4 и Honda CR-V — сравните итог «под ключ», а не только цену лота.</p>
+
+<h2>Моторы и привод</h2>
+<p>Встречаются бензиновые 2.0–2.5 и гибридные версии. Для снега и грунтовок важен полный привод — проверяем по комплектации и отчёту.</p>
+
+<h2>Где смотреть предложения</h2>
+<p>Актуальные лоты — в <a href="/avto-iz-yaponii/catalog/">каталоге авто из Японии</a>. Менеджер подберёт X-Trail под бюджет и сроки доставки во Владивосток.</p>
+
+<p>Готовы обсудить X-Trail — оставьте заявку с желаемым годом и пробегом.</p>
+HTML;
+}
+
+function proauc_blog_article_obzor_vezel() {
+	return <<<'HTML'
+<p>Honda Vezel (на некоторых рынках — HR-V) — компактный кроссовер, часто с гибридной силовой установкой. На японских аукционах много вариантов с низким пробегом. Разбираем плюсы формата и на что смотреть на листе.</p>
+
+<h2>Гибрид vs бензин</h2>
+<p>Гибридные Vezel экономичны в городе; бензиновые проще в обслуживании. Выбор зависит от пробега в год и условий эксплуатации на Дальнем Востоке.</p>
+
+<h2>Оценка на аукционном листе</h2>
+<p>Целевой диапазон 4.0–4.5, пробег до 80–100 тыс. км для «без сюрпризов». Расшифровка оценок — в <a href="/kak-chitat-aukczionnyj-list/">гайде по аукционному листу</a>.</p>
+
+<h2>Цена и сроки</h2>
+<p>Полный цикл «под ключ» — см. <a href="/kak-kupit-avto-s-aukcziona-yaponii/">этапы покупки с аукциона</a>. Лоты в <a href="/avto-iz-yaponii/catalog/">каталоге</a>.</p>
+
+<p>Ищете Vezel под бюджет — опишите параметры в заявке.</p>
+HTML;
+}
+
+function proauc_blog_article_obzor_carnival() {
+	return <<<'HTML'
+<p>Kia Carnival (в Корее также известен как Staria в новом кузове, но Carnival остаётся хитом сегмента) — просторный минивэн для большой семьи. С корейского рынка часто заказывают богатые комплектации с панорамой и пакетами ADAS.</p>
+
+<h2>Почему Carnival из Кореи</h2>
+<p>Широкий выбор на внутреннем рынке, проверка истории и страховых случаев до оплаты. Логика подбора — в <a href="/kak-kupit-avto-iz-korei/">как купить авто из Кореи</a>.</p>
+
+<h2>Сравнение с Alphard</h2>
+<p>Carnival часто дешевле «под ключ», чем премиальный Alphard с аукциона Японии. Сравните оба формата под ваш бюджет — у нас есть <a href="/obzor-toyota-alphard-iz-yaponii/">обзор Alphard</a> и кейсы по Корее.</p>
+
+<h2>Каталог</h2>
+<p>Актуальные предложения — в <a href="/avto-iz-korei/catalog/">каталоге авто из Кореи</a>.</p>
+
+<p>Нужен Carnival — оставьте заявку с желаемым годом и числом мест.</p>
+HTML;
+}
+
+function proauc_blog_article_byd_zeekr_sravnenie() {
+	return <<<'HTML'
+<p>BYD Seal и Zeekr 001 — два популярных электромобиля, которые заказывают из Китая. Оба в сегменте премиальных EV, но с разной философией: Seal ближе к классическому седану, Zeekr 001 — к shooting brake. Сравниваем для покупателя.</p>
+
+<h2>Формат и салон</h2>
+<p><strong>BYD Seal</strong> — седан с акцентом на аэродинамику и запас хода. <strong>Zeekr 001</strong> — просторный кузов и премиальный интерьер. Выбор зависит от сценария: семья, трасса, город.</p>
+
+<h2>Запас хода и зарядка</h2>
+<p>Сверяем версию батареи, поддержку DC и реальную зимнюю дальность. Подробнее по каждой модели — в <a href="/obzor-byd-seal-iz-kitaya/">обзоре BYD Seal</a> и <a href="/elektromobili-iz-kitaya-byd-zeekr/">статье про электромобили из Китая</a>.</p>
+
+<h2>Цена «под ключ»</h2>
+<p>Итог зависит от комплектации и курса. Актуальные варианты — в <a href="/avto-iz-kitaya/catalog/">каталоге Китая</a>.</p>
+
+<p>Не можете выбрать между Seal и Zeekr 001 — опишите бюджет и сценарий в заявке, подберём вариант.</p>
 HTML;
 }

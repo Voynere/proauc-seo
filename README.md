@@ -108,10 +108,13 @@ done
 
 ## Статус (06.07.2026)
 
-- P3 блог: 16 статей в seed (волны 1–4), `category.php`, JSON-LD BlogPosting/BreadcrumbList/FAQPage
-- Волна 4 (06–15.07): BYD Seal, кейс Kia Sorento, Komatsu PC200, доставка в регионы ДВ
-- Каталог на проде: правки slug/transients (01–02.07) — не трогаем, source of truth — прод
-- Посты блога: URL без префикса `/blog/` (например `/obzor-hyundai-palisade-iz-korei/`)
+- P3 блог: **21 статья** в seed (волны 1–5), публикация по расписанию
+- Волна 4: BYD Seal, кейс Sorento, PC200, доставка ДВ (06–15.07)
+- Волна 5: Alphard, X-Trail, Vezel, Carnival, BYD vs Zeekr (18–31.07)
+- Гео-сниппеты: `/avto-iz-yaponii/`, `/avto-iz-korei/`, `/spectehnika/`, `/kontaktyi/`
+- sitemap лотов: лимит 250/страна → 500+ URL
+- Клиентский отчёт: `seov/SEO-отчет-прогресс.md` (+ PDF)
+- Каталог на проде — не трогаем (зона другого разработчика)
 
 ## Лицензия
 

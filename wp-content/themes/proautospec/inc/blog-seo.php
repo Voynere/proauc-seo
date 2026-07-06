@@ -221,6 +221,37 @@ function proauc_migrate_blog_wave4_schedule() {
 	flush_rewrite_rules( false );
 }
 
+function proauc_migrate_blog_wave5_schedule() {
+	if ( ! function_exists( 'proauc_get_blog_article_seeds_wave5' ) ) {
+		require_once get_template_directory() . '/inc/blog-articles.php';
+	}
+
+	foreach ( proauc_get_blog_article_seeds_wave5() as $seed ) {
+		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
+			continue;
+		}
+
+		$post = get_page_by_path( $seed['slug'], OBJECT, 'post' );
+		if ( ! $post ) {
+			continue;
+		}
+
+		$gmt     = get_gmt_from_date( $seed['post_date'] );
+		$publish = strtotime( $gmt ) <= time();
+
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_status'   => $publish ? 'publish' : 'future',
+				'post_date'     => $seed['post_date'],
+				'post_date_gmt' => $gmt,
+			)
+		);
+	}
+
+	flush_rewrite_rules( false );
+}
+
 function proauc_get_blog_posts_page_title() {
 	$posts_page = (int) get_option( 'page_for_posts' );
 	if ( $posts_page ) {
@@ -1031,6 +1062,76 @@ function proauc_get_blog_post_faq( $slug = '' ) {
 				'a' => 'Да, по запросу — маршрут и сроки согласуем индивидуально с учётом паромной логистики.',
 			),
 		),
+		'obzor-toyota-alphard-iz-yaponii' => array(
+			array(
+				'q' => 'Какие серии Alphard чаще на аукционе?',
+				'a' => '30 и 40 серии — выбор зависит от бюджета и желаемого года выпуска.',
+			),
+			array(
+				'q' => 'Нужен ли полный привод для Alphard?',
+				'a' => 'Для Дальнего Востока и зимы — желательно. Уточняем комплектацию на этапе подбора.',
+			),
+			array(
+				'q' => 'Где смотреть лоты Alphard?',
+				'a' => 'В каталоге авто из Японии или по заявке менеджеру.',
+			),
+		),
+		'obzor-nissan-x-trail-iz-yaponii' => array(
+			array(
+				'q' => 'Есть ли гибридный X-Trail на аукционе?',
+				'a' => 'Да, встречаются гибридные и бензиновые версии — уточняем при подборе.',
+			),
+			array(
+				'q' => 'Чем X-Trail отличается от RAV4?',
+				'a' => 'Схожий класс; сравниваем по состоянию на листе, пробегу и итогу «под ключ».',
+			),
+			array(
+				'q' => 'Какая оценка на листе оптимальна?',
+				'a' => 'Ориентир 4.0–4.5 при пробеге, согласованном с бюджетом.',
+			),
+		),
+		'obzor-honda-vezel-iz-yaponii' => array(
+			array(
+				'q' => 'Vezel и HR-V — это одна модель?',
+				'a' => 'Да, Vezel — японское название линейки, на ряде рынков известна как HR-V.',
+			),
+			array(
+				'q' => 'Стоит ли брать гибридный Vezel?',
+				'a' => 'Выгоден при городском пробеге; для дальних поездок обсудим бензиновую версию.',
+			),
+			array(
+				'q' => 'Где смотреть предложения?',
+				'a' => 'В каталоге Японии на сайте Proauc.',
+			),
+		),
+		'obzor-kia-carnival-iz-korei' => array(
+			array(
+				'q' => 'Чем Carnival отличается от Alphard?',
+				'a' => 'Carnival часто доступнее «под ключ»; Alphard — премиум-сегмент с аукциона Японии.',
+			),
+			array(
+				'q' => 'Сколько мест в Carnival?',
+				'a' => 'Встречаются 7- и 8-местные конфигурации — уточняем на подборе.',
+			),
+			array(
+				'q' => 'Проверяете ли историю в Корее?',
+				'a' => 'Да, сверяем пробег, ДТП и владельцев по базам до оплаты.',
+			),
+		),
+		'byd-seal-i-zeekr-001-sravnenie' => array(
+			array(
+				'q' => 'Что выбрать — Seal или Zeekr 001?',
+				'a' => 'Seal — седан с упором на запас хода; Zeekr 001 — простор и премиум-формат. Зависит от сценария.',
+			),
+			array(
+				'q' => 'Какая зимняя дальность у этих EV?',
+				'a' => 'Зависит от версии батареи и климата — обсуждаем на этапе подбора.',
+			),
+			array(
+				'q' => 'Где заказать обе модели?',
+				'a' => 'В каталоге авто из Китая или по заявке менеджеру.',
+			),
+		),
 	);
 
 	return isset( $faqs[ $slug ] ) ? $faqs[ $slug ] : array();
@@ -1259,6 +1360,18 @@ add_action(
 		if ( ! get_option( 'proauc_blog_wave4_schedule_v1' ) ) {
 			proauc_migrate_blog_wave4_schedule();
 			update_option( 'proauc_blog_wave4_schedule_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_seed_v5' ) ) {
+			if ( ! function_exists( 'proauc_get_blog_article_seeds_wave5' ) ) {
+				require_once get_template_directory() . '/inc/blog-articles.php';
+			}
+			proauc_seed_blog_posts( proauc_get_blog_article_seeds_wave5() );
+			update_option( 'proauc_blog_seed_v5', 1 );
+			flush_rewrite_rules( false );
+		}
+		if ( ! get_option( 'proauc_blog_wave5_schedule_v1' ) ) {
+			proauc_migrate_blog_wave5_schedule();
+			update_option( 'proauc_blog_wave5_schedule_v1', 1 );
 		}
 	},
 	20

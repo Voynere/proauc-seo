@@ -96,3 +96,7 @@ SEO приоритет: продвижение в городах ДВ, seov/sema
 ## 2026-07-06 03:39 UTC
 
 06.07.2026: волна 4 блога — 4 статьи (BYD Seal, кейс Kia Sorento, Komatsu PC200, доставка ДВ). seed proauc_blog_seed_v4. URL постов без /blog/ префикса. Деплой только blog-seo.php + blog-articles.php.
+
+## 2026-07-06 03:59 UTC
+
+06.07.2026 полный SEO-блок: волна 5 (5 статей), гео-сниппеты, sitemap_lots 517 URL, Дзен черновики seov/dzen/, отчёт обновлён. functions.php — только generate_sitemap_lots лимит 340.
