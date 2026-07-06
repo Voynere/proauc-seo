@@ -46,6 +46,7 @@ Root files: `sitemap_japan.xml`, `sitemap_korea.xml`, `sitemap_china.xml`
 - Schema: `CollectionPage` + `ItemList` on archive; `BlogPosting` + `BreadcrumbList` + `FAQPage` on single
 - Static `/blog/` title/description in `proauc_get_static_landing_seo()`
 - `category.php` — cluster archives with post cards (not catalog `archive.php`)
+- Admin: **Яндекс Метрика** (пункт меню слева, ACF) — OAuth-токен API, ID счётчика, кнопка «Проверить API»
 
 ## UTM / analytics
 
