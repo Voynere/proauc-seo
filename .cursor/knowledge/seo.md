@@ -59,6 +59,13 @@ Root files: `sitemap_japan.xml`, `sitemap_korea.xml`, `sitemap_china.xml`
 - Regenerate: `https://proauc.ru/?sitemap-lots-create=1` → `sitemap_lots.xml` (~517 URL as of 06.07.2026)
 - Full sitemap: `https://proauc.ru/?sitemap-create=1`
 
+## Position monitoring
+
+- **Service:** [seo.smyalichi.ru](https://seo.smyalichi.ru) — SEO-кабинет Smyalichi (свой сервис, не Topvisor)
+- **CSV in `seov/`:** `semantic-core-high.csv` (215), `semantic-core-dv.csv` (112 ДВ), `semantic-core.csv` (508)
+- **Baseline:** 30.06.2026 — compare weekly TOP-3/10/30
+- **Regions:** Владивосток, Хабаровск, Благовещенск, Южно-Сахалинск, Якутск
+
 ## UTM / analytics
 
 - Plugin: **handl-utm-grabber**
