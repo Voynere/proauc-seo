@@ -1235,21 +1235,45 @@ function proauc_render_blog_related() {
 		return;
 	}
 
-	$cats = get_the_category();
-	if ( ! $cats ) {
-		return;
+	$post_id = (int) get_the_ID();
+	$cluster = get_post_meta( $post_id, 'proauc_blog_cluster', true );
+
+	$args = array(
+		'post__not_in'   => array( $post_id ),
+		'posts_per_page' => 3,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'post_status'    => 'publish',
+		'no_found_rows'  => true,
+	);
+
+	if ( is_string( $cluster ) && '' !== $cluster ) {
+		$args['meta_query'] = array(
+			array(
+				'key'   => 'proauc_blog_cluster',
+				'value' => $cluster,
+			),
+		);
+	} else {
+		$cats = get_the_category();
+		if ( ! $cats ) {
+			return;
+		}
+		$args['category__in'] = array( (int) $cats[0]->term_id );
 	}
 
-	$query = new WP_Query(
-		array(
-			'category__in'   => array( (int) $cats[0]->term_id ),
-			'post__not_in'   => array( (int) get_the_ID() ),
-			'posts_per_page' => 3,
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-			'no_found_rows'  => true,
-		)
-	);
+	$query = new WP_Query( $args );
+
+	if ( ! $query->have_posts() ) {
+		if ( isset( $args['meta_query'] ) ) {
+			unset( $args['meta_query'] );
+			$cats = get_the_category();
+			if ( $cats ) {
+				$args['category__in'] = array( (int) $cats[0]->term_id );
+				$query = new WP_Query( $args );
+			}
+		}
+	}
 
 	if ( ! $query->have_posts() ) {
 		return;

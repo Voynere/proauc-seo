@@ -8,6 +8,7 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/metrika-reports.php';
+require_once __DIR__ . '/seo-indexing.php';
 
 define( 'PROAUC_METRIKA_MENU_SLUG', 'yandex-metrika-settings' );
 define( 'PROAUC_METRIKA_OPTION_TOKEN', 'proauc_metrika_oauth_token' );

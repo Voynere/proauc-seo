@@ -118,6 +118,9 @@ done
 
 - Исправлен **post-sitemap**: BYD Seal и новые статьи попадают в карту после публикации (сброс кэша Rank Math + хук `transition_post_status`)
 - **SEO-дашборд Метрики** в админке: просмотры блога/каталога, органика, utm dzen (`inc/metrika-reports.php`) — нужен OAuth-токен
+- **IndexNow**: модуль включён, 14 URL отправлены (HTTP 202), авто-ping при публикации (`inc/seo-indexing.php`)
+- **Перелинковка** «Читайте также» по кластеру контента
+- `robots.txt`: Sitemap → `sitemap_index.xml`
 - Блог на проде: **13 publish**, 8 `future` (волны 4–5 по расписанию)
 
 **Предыдущая сессия (06.07)**

@@ -73,4 +73,4 @@ Allow: /wp-admin/admin-ajax.php
 Clean-Param: utm_source&utm_medium&utm_campaign&tpclid&page&category
 Clean-Param: openstat&year-start&year-end&mileage-start&mileage-end&pn
 
-Sitemap: https://proauc.ru/sitemap.xml
+Sitemap: https://proauc.ru/sitemap_index.xml
