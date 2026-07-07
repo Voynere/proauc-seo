@@ -20,3 +20,11 @@
 ## 2026-07-07 06:06 UTC
 
 Позиции: seo.smyalichi.ru без API — еженедельно вручную в seov/positions-weekly.md, оттуда блок в SEO-отчет-прогресс.md. 1-й съём ~14.07.
+
+## 2026-07-07 08:47 UTC
+
+Motorhome import: внешний importer (adapters → normalizer → WP-CLI writer), dedup meta _source + _source_id, локальное зеркалирование фото. Не трогать /api/ аукционного каталога и functions.php/page-48/cars-catalog.js.
+
+## 2026-07-07 08:47 UTC
+
+Источники motorhome: Fujicars (JP, EN, Phase 2), Bobaedream (KR, camp filter, Phase 3), Encar (KR, camping car, Phase 4 — сначала проверить Korea API на проде).
