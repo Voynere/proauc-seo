@@ -112,3 +112,7 @@ SEO приоритет: продвижение в городах ДВ, seov/sema
 ## 2026-07-07 00:39 UTC
 
 07.07: prod каталог без изменений MD5. post-sitemap fix Rank Math cache+hook. Metrika SEO dashboard inc/metrika-reports.php. BYD в sitemap 14 URL.
+
+## 2026-07-07 05:30 UTC
+
+07.07 день: IndexNow включён, 14 URL HTTP 202, inc/seo-indexing.php, related by cluster, robots sitemap_index.xml
