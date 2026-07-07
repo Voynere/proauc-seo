@@ -16,3 +16,7 @@
 ## 2026-07-07 06:04 UTC
 
 Мониторинг позиций proauc.ru — seo.smyalichi.ru (SEO-кабинет Smyalichi), не Topvisor. CSV: seov/semantic-core-high.csv 215, semantic-core-dv.csv 112. Базовый срез 30.06.2026.
+
+## 2026-07-07 06:06 UTC
+
+Позиции: seo.smyalichi.ru без API — еженедельно вручную в seov/positions-weekly.md, оттуда блок в SEO-отчет-прогресс.md. 1-й съём ~14.07.
