@@ -12,3 +12,7 @@
 ## 2026-07-06 08:08 UTC
 
 06.07 вечер: зафиксировано. HEAD 7a42eee. Блог 21 статья, Metrika ACF admin, sitemap 517. Док: README, knowledge/*.md, seov отчёт. Каталог чужой — не трогать.
+
+## 2026-07-07 06:04 UTC
+
+Мониторинг позиций proauc.ru — seo.smyalichi.ru (SEO-кабинет Smyalichi), не Topvisor. CSV: seov/semantic-core-high.csv 215, semantic-core-dv.csv 112. Базовый срез 30.06.2026.
