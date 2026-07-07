@@ -72,7 +72,7 @@ THEME=wp-content/themes/proautospec
 ROOT=/var/www/proauc_ru_usr/data/www/proauc.ru
 for f in rank-math.php header.php footer.php home.php single.php category.php \
          loops/cards.php css/app.css spec.csv inc/blog-seo.php inc/blog-articles.php \
-         inc/seo-settings.php; do
+         inc/seo-settings.php inc/metrika-reports.php; do
   scp "$THEME/$f" "proauc:$ROOT/$THEME/$f"
 done
 ```

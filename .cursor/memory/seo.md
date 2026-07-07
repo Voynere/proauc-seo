@@ -108,3 +108,7 @@ SEO приоритет: продвижение в городах ДВ, seov/sema
 ## 2026-07-06 08:06 UTC
 
 Итог сессии 06.07: блог 21 статья (волны 1–5), sitemap_lots 517 URL, гео-сниппеты, отчёт+PDF обновлены, Дзен seov/dzen/. Админка «Яндекс Метрика» (ACF, как ferma). Следующее: токен в админке, API-отчёты, Вебмастер, Topvisor, публикация Дзена.
+
+## 2026-07-07 00:39 UTC
+
+07.07: prod каталог без изменений MD5. post-sitemap fix Rank Math cache+hook. Metrika SEO dashboard inc/metrika-reports.php. BYD в sitemap 14 URL.

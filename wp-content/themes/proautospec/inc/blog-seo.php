@@ -1373,8 +1373,37 @@ add_action(
 			proauc_migrate_blog_wave5_schedule();
 			update_option( 'proauc_blog_wave5_schedule_v1', 1 );
 		}
+		if ( ! get_option( 'proauc_blog_sitemap_flush_v1' ) ) {
+			proauc_invalidate_rank_math_post_sitemap();
+			update_option( 'proauc_blog_sitemap_flush_v1', 1 );
+		}
 	},
 	20
+);
+
+/**
+ * Сброс кэша Rank Math post-sitemap (после публикации отложенных статей).
+ */
+function proauc_invalidate_rank_math_post_sitemap() {
+	if ( class_exists( '\RankMath\Sitemap\Cache' ) ) {
+		\RankMath\Sitemap\Cache::invalidate_storage();
+	}
+	do_action( 'rank_math/sitemap/invalidate_object_type', 'post', 0 );
+}
+
+add_action(
+	'transition_post_status',
+	static function ( $new_status, $old_status, $post ) {
+		if ( 'publish' !== $new_status || 'publish' === $old_status ) {
+			return;
+		}
+		if ( ! $post instanceof WP_Post || 'post' !== $post->post_type ) {
+			return;
+		}
+		proauc_invalidate_rank_math_post_sitemap();
+	},
+	10,
+	3
 );
 
 /**

@@ -100,7 +100,8 @@ done
 │   │   ├── rank-math.php     # SEO-фильтры Rank Math
 │   │   ├── inc/blog-seo.php  # блог: schema, CTA, FAQ
 │   │   ├── inc/blog-articles.php  # seed-статьи P3 (волны 1–5)
-│   │   └── inc/seo-settings.php   # админка «Яндекс Метрика» (ACF)
+│   │   ├── inc/seo-settings.php   # админка «Яндекс Метрика» (ACF)
+│   │   └── inc/metrika-reports.php # SEO-дашборд Stat API
 │   └── plugins/              # плагины (Rank Math, CF7, ACF и др.)
 ├── wp-admin/, wp-includes/   # ядро WordPress
 ├── assets/                   # локально, не в Git
@@ -109,7 +110,17 @@ done
 └── sitemap_*.xml             # карты сайта
 ```
 
-## Статус (06.07.2026, вечер)
+## Статус (07.07.2026)
+
+**Проверка прода:** каталог (`functions.php`, `page-48.php`, `cars-catalog.js`) — **без изменений** от другого разработчика (MD5 совпадают). SEO-файлы синхронизированы.
+
+**Сделано 07.07**
+
+- Исправлен **post-sitemap**: BYD Seal и новые статьи попадают в карту после публикации (сброс кэша Rank Math + хук `transition_post_status`)
+- **SEO-дашборд Метрики** в админке: просмотры блога/каталога, органика, utm dzen (`inc/metrika-reports.php`) — нужен OAuth-токен
+- Блог на проде: **13 publish**, 8 `future` (волны 4–5 по расписанию)
+
+**Предыдущая сессия (06.07)**
 
 **Сделано сегодня**
 
