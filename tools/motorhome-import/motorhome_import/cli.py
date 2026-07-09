@@ -72,6 +72,19 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     for listing in adapter.fetch_listings():
         listing = enrich_listing(listing, config, http)
+
+        if args.source == "fujicars":
+            from .adapters.fujicars import has_valid_price_rub
+
+            if not has_valid_price_rub(listing):
+                logger.info(
+                    "Skipping %s — pricing failed (rub=%s): %s",
+                    listing.source_id,
+                    listing.properties.price_rub,
+                    listing.title[:80],
+                )
+                continue
+
         wp_result = writer.upsert(listing)
         count += 1
         if args.json or config.import_.dry_run:

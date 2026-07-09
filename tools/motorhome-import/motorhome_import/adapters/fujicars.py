@@ -1,7 +1,10 @@
 """Fujicars Japan camping car adapter.
 
 Inventory lives at /search/list_en (not the marketing /english/ pages).
-Filter body=9 → キャンピングカー (camping cars / motorhomes).
+Filter body=9 → キャンピングカー (camping cars), then client-side subtype filter.
+
+Fujicars body=9 mixes real motorhomes with van-conversion minivans (バンコン).
+The list card field ``li.carName`` carries the camping-car subtype.
 """
 
 from __future__ import annotations
@@ -28,6 +31,62 @@ from ..schema import ListingParameter, ListingProperties, NormalizedListing
 from .base import BaseAdapter
 
 logger = logging.getLogger(__name__)
+
+# li.carName values on /search/list_en?body=9 (2026-07-09)
+MOTORHOME_SUBTYPES = frozenset(
+    {
+        "キャブコン",  # cab-over motorhome
+        "バスコン",  # bus motorhome
+        "軽キャンパー",  # kei camper
+        "トラックキャンパー",  # truck camper
+    }
+)
+EXCLUDED_SUBTYPES = frozenset(
+    {
+        "バンコン",  # van / minivan conversion — not a motorhome
+    }
+)
+EXCLUDED_TITLE_MARKERS = ("バンコン",)
+
+
+def is_motorhome(
+    *,
+    body_subtype: str = "",
+    title: str = "",
+    grade: str = "",
+) -> bool:
+    """Return True when listing is a real motorhome (not van-con minivan).
+
+    Rules (first match wins):
+    1. ``body_subtype`` from list card ``li.carName`` — primary signal.
+    2. Title / grade text — catches detail-page titles like ``キャンピングカー バンコン…``.
+    3. Unknown subtype without motorhome markers → reject (safe default).
+    """
+    subtype = body_subtype.strip()
+    if subtype in EXCLUDED_SUBTYPES:
+        return False
+    if subtype in MOTORHOME_SUBTYPES:
+        return True
+
+    text = f"{title} {grade}"
+    if any(marker in text for marker in EXCLUDED_TITLE_MARKERS):
+        return False
+    if any(marker in text for marker in MOTORHOME_SUBTYPES):
+        return True
+
+    return False
+
+
+def has_valid_price_jpy(listing: NormalizedListing) -> bool:
+    """Reject listings with missing/zero JPY source price."""
+    price_jpy = listing.raw.get("price_jpy")
+    return isinstance(price_jpy, int) and price_jpy > 0
+
+
+def has_valid_price_rub(listing: NormalizedListing) -> bool:
+    """Reject listings where landed-cost pricing failed (0 or null RUB)."""
+    price_rub = listing.properties.price_rub
+    return isinstance(price_rub, int) and price_rub > 0
 
 BASE_URL = "https://www.fujicars.jp/search/"
 DETAIL_PATH_RE = re.compile(r"\./detail/(\d+)")
@@ -85,6 +144,31 @@ class FujicarsAdapter(BaseAdapter):
                         logger.exception("Detail fetch failed for %s", source_id)
 
                 listing = finalize_listing(listing)
+                listing.raw["body_subtype"] = card.get("body_subtype", "")
+
+                if not is_motorhome(
+                    body_subtype=card.get("body_subtype", ""),
+                    title=listing.title,
+                    grade=card.get("grade", ""),
+                ):
+                    logger.info(
+                        "Skipping non-motorhome %s (%s): %s",
+                        source_id,
+                        card.get("body_subtype", "?"),
+                        listing.title[:80],
+                    )
+                    continue
+
+                if not has_valid_price_jpy(listing):
+                    logger.info(
+                        "Skipping %s — no valid price (jpy=%s, rub=%s): %s",
+                        source_id,
+                        listing.raw.get("price_jpy"),
+                        listing.properties.price_rub,
+                        listing.title[:80],
+                    )
+                    continue
+
                 yield listing
                 count += 1
                 if limit and count >= limit:
@@ -122,12 +206,12 @@ class FujicarsAdapter(BaseAdapter):
         car_no_match = CAR_NO_RE.search(img_src)
         car_no = car_no_match.group(1) if car_no_match else detail_id
 
-        car_name_el = box.select_one("li.carName")
+        subtype_el = box.select_one("li.carName")
         grade_el = box.select_one("li.carGrade")
         year_el = box.select_one("li.carModelYearMilage")
         price_el = box.select_one("li.carPrice")
 
-        car_name = car_name_el.get_text(strip=True) if car_name_el else ""
+        body_subtype = subtype_el.get_text(strip=True) if subtype_el else ""
         grade = grade_el.get_text(strip=True) if grade_el else ""
         year_text = year_el.get_text(" ", strip=True) if year_el else ""
         price_text = price_el.get_text(" ", strip=True) if price_el else ""
@@ -139,7 +223,8 @@ class FujicarsAdapter(BaseAdapter):
             "source_id": detail_id,
             "car_no": car_no,
             "detail_path": href,
-            "car_name": car_name,
+            "body_subtype": body_subtype,
+            "car_name": body_subtype,
             "grade": grade,
             "year": parse_year(year_text),
             "mileage": parse_mileage(year_text),
