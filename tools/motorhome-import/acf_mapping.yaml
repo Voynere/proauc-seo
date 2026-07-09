@@ -1,0 +1,115 @@
+# ACF field group «Спецификация авто» — exported from prod 2026-07-09 (post_type=avto)
+# Source: ssh proauc → acf_get_fields('group_66142209491a3') + postmeta on post #315
+
+group:
+  key: group_66142209491a3
+  title: Спецификация авто
+
+fields:
+  properties:
+    key: field_67b48ecbe836d
+    type: group
+    meta_prefix: properties
+    sub_fields:
+      price:
+        key: field_661462d473b69
+        type: number
+      year:
+        key: field_6614220aac3bc
+        type: select
+        choices:
+          - "2024"
+          - "2023"
+          - "2022"
+          - "2021"
+          - "2020"
+          - "2019"
+          - "2018"
+          - "2017"
+          - "2016"
+          - "2015"
+          - "2014"
+          - "2013"
+      mileage:
+        key: field_661db86a9e9b7
+        type: text
+      grade:
+        key: field_66644ed27dbcd
+        type: text
+      engine-type:
+        key: field_661db79a84eea
+        type: select
+        choices:
+          - Бензин
+          - Дизель
+          - Гибрид
+          - Электро
+      capacity:
+        key: field_66142534f4493
+        type: number
+      drive-type:
+        key: field_66142592f4494
+        type: select
+        # ACF stores slug values; labels shown in theme
+        choices:
+          front: Передний
+          rear: Задний
+          4wd: Полный
+
+  photos:
+    key: field_661db2fc197a5
+    type: gallery
+    meta_key: photos
+
+  parameters:
+    key: field_661db0796ab18
+    type: repeater
+    sub_fields:
+      param-name:
+        key: field_661db19b6ab19
+        type: select
+        choices:
+          - Комплектация
+          - Оценка
+          - Кузов
+          - Цвет
+      param-value:
+        key: field_661db3504f937
+        type: text
+
+  # Legacy — do not set on new imports
+  old-id:
+    key: field_67b9db2a19cfc
+  old-slug:
+    key: field_67b9e84050f1f
+  old-photos:
+    key: field_67b9f50c72d3f
+
+# Normalizer → ACF value maps (source text → stored value)
+drive_type_map:
+  "4WD": 4wd
+  "4wd": 4wd
+  "Полный": 4wd
+  "FF": front
+  "FR": rear
+  "2WD": rear
+  "Передний": front
+  "Задний": rear
+
+engine_type_map:
+  gasoline: Бензин
+  gas: Бензин
+  "ガソリン": Бензин
+  diesel: Дизель
+  "ディーゼル": Дизель
+  "軽油": Дизель
+  hybrid: Гибрид
+  "ハイブリッド": Гибрид
+  electric: Электро
+
+param_name_map:
+  # Fujicars JP spec keys → closest ACF param-name choice (or passthrough as param-value context)
+  "装備": Комплектация
+  "修復歴": Оценка
+  "ボディタイプ": Кузов
+  "カラー": Цвет

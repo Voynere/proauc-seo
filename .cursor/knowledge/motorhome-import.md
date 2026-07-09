@@ -2,7 +2,7 @@
 
 Planning doc for importing motorhomes / camping cars from Korean and Japanese marketplaces into the **«Авто в наличии»** section on proauc.ru.
 
-**Status:** discovery complete (2026-07-07). No scrapers in repo yet. Next session: Phase 0 tasks.
+**Status:** Phase 1–3 in progress (2026-07-09). Skeleton + Fujicars + Bobaedream detail + Encar API probe in `tools/motorhome-import/`.
 
 ## Target section
 
@@ -36,7 +36,7 @@ Card loop (`avto.php`) reads `properties` + featured thumbnail or legacy `old-*`
 
 | Source | Market | Filter / URL | Language | Notes |
 |--------|--------|--------------|----------|-------|
-| **Fujicars** | Japan | English site | EN | Start here — simpler HTML, good for first adapter |
+| **Fujicars** | Japan | `/search/list_en?body=9` (camping cars) | JA/EN list | Inventory NOT on `/english/` marketing pages |
 | **Bobaedream** | Korea | Camp / camping filter | KO | Korean marketplace, camp category |
 | **Encar** | Korea | Camping car filter | KO | Strategy **TBD**: check prod `/api/` Korea endpoints first; scraper only if API unsuitable |
 
@@ -65,7 +65,7 @@ Separate **external importer** (not inside WordPress theme, not inside `/api/` a
 | `/api/` auction catalog (Japan/Korea/China) | **Do not modify** — other dev, prod source of truth |
 | Theme `functions.php`, `page-48.php`, `js/api/*` | **Do not modify** for import |
 | CPT `avto` + ACF on prod | Write via importer only |
-| This repo | Importer code under e.g. `tools/motorhome-import/` (TBD in Phase 1) |
+| This repo | Importer code under `tools/motorhome-import/` |
 
 ## Implementation phases
 
@@ -73,29 +73,33 @@ Separate **external importer** (not inside WordPress theme, not inside `/api/` a
 
 - [ ] Sync `/api/` from prod (reference only; check if Encar/camping data already exists in Korea API).
 - [ ] Export ACF field group for `avto` from prod (`acf export` or JSON sync).
-- [ ] Sample 3–5 live listings per source; document HTML/API field mapping.
+- [x] Sample live Fujicars listings; HTML field mapping documented in `tools/motorhome-import/README.md`.
 - [ ] Confirm category ID 1 and slug structure for new singles (`/avto/...` or custom).
 
 ### Phase 1 — Skeleton
 
-- [ ] Create `tools/motorhome-import/` with CLI entrypoint, config, logging.
-- [ ] Canonical listing schema (JSON or PHP array).
-- [ ] WP writer stub + dedup meta keys.
-- [ ] Dry-run mode (no WP writes).
+- [x] Create `tools/motorhome-import/` with CLI entrypoint, config, logging.
+- [x] Canonical listing schema (JSON or PHP array).
+- [x] WP writer stub + dedup meta keys.
+- [x] Dry-run mode (no WP writes).
 
 ### Phase 2 — Fujicars adapter
 
-- [ ] List + detail fetch, normalizer, image mirror.
+- [x] List + detail fetch, normalizer (image sideload pending).
 - [ ] First end-to-end import to staging/local WP.
 
 ### Phase 3 — Bobaedream adapter
 
-- [ ] Camp filter URLs, KO text handling, same pipeline.
+- [x] Camp filter URLs, list parser (~70/page, UTF-8, `?page=N`)
+- [x] Detail page: gallery (30 photos), KO specs, description, equipment
+- [ ] First end-to-end import to staging/local WP
 
 ### Phase 4 — Encar adapter
 
-- [ ] Decision: reuse Korea API vs dedicated scraper.
-- [ ] Camping car filter integration.
+- [x] API probe: `api.encar.com/search/car/list/general` works without Playwright
+- [ ] Decision: reuse Korea API vs dedicated scraper — **no camping Ryvuss node confirmed**; client filter on `캠핑` / `model_groups`
+- [x] Basic list parser (beta) with `camping_only` heuristic
+- [ ] Detail page specs (may need Playwright)
 
 ### Phase 5 — Ops
 

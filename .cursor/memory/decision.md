@@ -32,3 +32,15 @@ Motorhome import: внешний importer (adapters → normalizer → WP-CLI wr
 ## 2026-07-09 03:41 UTC
 
 Репозиторий proauc-seo переведён на custom-code модель (как atk-ved/ferma-dv): в git только wp-content/themes/proautospec/, scripts/, .cursor/. WP core и плагины исключены. Deploy через GitHub Actions rsync, каталожные файлы (functions.php, page-48.php, cars-catalog.js) не перезаписываются.
+
+## 2026-07-09 06:38 UTC
+
+Motorhome import Phase 0/1: tools/motorhome-import/ с CLI python -m motorhome_import run. Fujicars inventory на /search/list_en?body=9 (не /english/). Dedup _source/_source_id. Fujicars adapter работает (list+detail+gallery). Bobaedream/Encar — stubs. ACF keys и image sideload — блокеры.
+
+## 2026-07-09 06:43 UTC
+
+Motorhome import Phase 1 complete: acf_mapping.yaml from prod (properties/photos field keys, drive-type front/rear/4wd). pricing.py uses get-price.php sum×USDRUB. media.py sideload via wp-cli/ssh/REST. Bobaedream list parser works UTF-8 div.list-inner ~70/page ?page=N.
+
+## 2026-07-09 07:04 UTC
+
+Motorhome import Phase 1-3: Bobaedream detail parser (gallery/specs/description, no Playwright). Encar list via api.encar.com Ryvuss API; camping filter not found server-side — client filter on 캠핑/model_groups. Dry-run: Fujicars price_rub ~1.16M, Bobaedream ~1.52M KRW listing.

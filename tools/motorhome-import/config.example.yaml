@@ -1,0 +1,71 @@
+# Copy to config.yaml and fill in credentials.
+# Run from architect (local or prod) per project convention.
+
+wordpress:
+  url: https://proauc.ru
+  # Application password or basic auth for REST API
+  user: ""
+  app_password: ""
+  # Absolute path to WP root for wp-cli (preferred on prod)
+  wp_path: /var/www/proauc_ru_usr/data/www/proauc.ru
+  # SSH alias for remote wp-cli / media import when wp not installed locally
+  ssh_host: proauc
+  post_type: avto
+  category_id: 1
+
+import:
+  dry_run: true
+  # Max listings per run (0 = unlimited)
+  limit: 10
+  # Skip sold-out listings
+  skip_sold_out: true
+  # Fetch detail pages for full specs + gallery
+  fetch_details: true
+  # Download + sideload images (skipped in dry-run — URLs logged only)
+  sideload_images: true
+  # Fallback simple JPY×rate when pricing API disabled (0 = skip)
+  jpy_to_rub_rate: 0
+  pricing:
+    enabled: true
+    api_url: https://proauc.ru/api/get-price.php
+    country: japan  # use korea for Bobaedream (auto-detected from price_krw)
+
+http:
+  user_agent: "Mozilla/5.0 (compatible; proauc-motorhome-import/0.1)"
+  timeout_seconds: 30
+  # Delay between requests (seconds)
+  rate_limit: 1.0
+
+sources:
+  fujicars:
+    enabled: true
+    # body=9 → camping cars (キャンピングカー)
+    list_url: https://www.fujicars.jp/search/list_en
+    body_type: 9
+    max_pages: 1
+
+  bobaedream:
+    enabled: false
+    list_url: https://www.bobaedream.co.kr/cyber/CyberCar.php?features=camp
+    max_pages: 1
+
+  encar:
+    enabled: false
+    # Ryvuss API query — domestic cars: (And.Hidden.N._.CarType.N.)
+    api_query: "(And.Hidden.N._.CarType.N.)"
+    max_pages: 3
+    page_size: 50
+    # Filter: Badge/Model contains 캠핑 OR model in model_groups
+    camping_only: true
+    model_groups:
+      - 스타리아
+      - 그랜드스타렉스
+      - 스타렉스
+      - 카운티
+      - e-카운티
+      - 포터
+      - 봉고
+      - 카니발
+
+logging:
+  level: INFO
