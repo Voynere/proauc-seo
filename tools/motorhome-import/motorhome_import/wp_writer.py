@@ -317,6 +317,7 @@ class WordPressWriter:
             "--post_status=publish",
             "--meta_key=_source",
             f"--meta_value={source}",
+            "--posts_per_page=-1",
             "--format=ids",
         )
         result = self._run_wp(cmd)
