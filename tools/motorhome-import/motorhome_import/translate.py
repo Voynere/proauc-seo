@@ -76,6 +76,56 @@ KNOWN_NAMES: dict[str, str] = {
     "エアコン": "кондиционер",
     "ディーゼル": "дизель",
     "ガソリン": "бензин",
+    # Builders / conversion kits (camping cars).
+    "トヨファクトリー": "Toyo Factory",
+    "グリーンバディ": "Green Body",
+    "ランドタイプ": "Land Type",
+    "エブリー": "Every",
+    "エブリイ": "Every",
+    "カーショップアシスト": "Car Shop Assist",
+    "キャンタライ": "Cantrai",
+    "ぷちキャンタライ": "Mini Cantrai",
+    "ぷち": "Mini",
+    "ハイゼット": "Hijet",
+    "ラクンタイプ": "Raccoon Type",
+    "バンテック": "Vantec",
+    "バンテックル": "Vantec L",
+    "AZ-MAX": "AZ-MAX",
+    # Equipment phrases (often glued to Latin in titles).
+    "FF暖房": "FF отопление",
+    "家用エアコン": "бытовой кондиционер",
+    "2段ベッド": "двухъярусная кровать",
+    "2段ベット": "двухъярусная кровать",
+    "ベッド": "кровать",
+    "ベット": "кровать",
+    "インバーター": "инвертор",
+    "インバータ": "инвертор",
+    "架装": "оборудование",
+    "新規": "новый",
+    "家庭用": "бытовой",
+    "顔替え": "рестайлинг",
+    "顔替": "рестайлинг",
+}
+
+# Kanji fragments common in motorhome titles/specs (JP → RU).
+KANJI_MAP: dict[str, str] = {
+    "暖房": "отопление",
+    "架装": "оборудование",
+    "新規": "новый",
+    "家用": "бытовой",
+    "家庭用": "бытовой",
+    "軽": "лёгкий",
+    "2段": "2-ярусный",
+    "段": "ярус",
+    "顔替え": "рестайлинг",
+    "顔替": "рестайлинг",
+    "家": "бытовой",
+    "冷": "холод",
+    "温": "тепло",
+    "風": "вентиляция",
+    "電": "электро",
+    "装": "оборудование",
+    "備": "опции",
 }
 
 # Fix katakana transliteration that does not match established Latin spellings.
@@ -84,6 +134,25 @@ _LATIN_FIXES: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\bDerika\b", re.I), "Delica"),
     (re.compile(r"\bKeiwakusu\b", re.I), "Keiworks"),
     (re.compile(r"\bKuruzu\b", re.I), "Cruise"),
+    (re.compile(r"\bToifuakutori\b", re.I), "Toyo Factory"),
+    (re.compile(r"\bGurinbadei\b", re.I), "Green Body"),
+    (re.compile(r"\bRandoteipi\b", re.I), "Land Type"),
+    (re.compile(r"\bEburii\b", re.I), "Every"),
+    (re.compile(r"\bKashiyopuashisuto\b", re.I), "Car Shop Assist"),
+    (re.compile(r"\bKiyantorai\b", re.I), "Cantrai"),
+    (re.compile(r"\bHaizeto\b", re.I), "Hijet"),
+    (re.compile(r"\bRakun\s+Taipu\b", re.I), "Raccoon Type"),
+    (re.compile(r"\bBantekujiru\b", re.I), "Vantec L"),
+    (re.compile(r"\bEakon\b", re.I), "кондиционер"),
+    (re.compile(r"\bBedo\b", re.I), "кровать"),
+    (re.compile(r"\bFF\s*暖房\b"), "FF отопление"),
+    (re.compile(r"\b2段\s+Bedo\b"), "двухъярусная кровать"),
+    (re.compile(r"\b2段\s+кровать\b"), "двухъярусная кровать"),
+    (re.compile(r"\b家\s+Eakon\b"), "бытовой кондиционер"),
+    (re.compile(r"\b520\s+家\s+кондиционер\b"), "520 бытовой кондиционер"),
+    (re.compile(r"\b顔替\s+え\b"), "рестайлинг"),
+    (re.compile(r"\bぷ\s+ち\b"), "Mini"),
+    (re.compile(r"\s+え\b"), ""),
 ]
 
 # Auction / repair-history grade values (JP → RU).
@@ -298,6 +367,15 @@ def _translate_katakana_segment(segment: str) -> str:
     return " ".join(p for p in parts if p)
 
 
+def _apply_kanji_map(text: str) -> str:
+    """Replace leftover kanji fragments (longest match first)."""
+    if not text:
+        return text
+    for jp, ru in sorted(KANJI_MAP.items(), key=lambda kv: len(kv[0]), reverse=True):
+        text = text.replace(jp, ru)
+    return text
+
+
 def _fix_latin_spellings(text: str) -> str:
     for pattern, replacement in _LATIN_FIXES:
         text = pattern.sub(replacement, text)
@@ -351,8 +429,10 @@ def translate_title(title: str) -> str:
         if jp in text:
             text = text.replace(jp, ru)
 
+    text = _apply_kanji_map(text)
     text = _translate_remaining_japanese(text)
     text = _fix_latin_spellings(text)
+    text = _apply_kanji_map(text)
     text = _normalize_model_tokens(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text or title.strip()
@@ -370,8 +450,10 @@ def translate_text(text: str | None) -> str | None:
     for jp, ru in sorted(KNOWN_NAMES.items(), key=lambda kv: len(kv[0]), reverse=True):
         if jp in result:
             result = result.replace(jp, ru)
+    result = _apply_kanji_map(result)
     result = _translate_remaining_japanese(result)
     result = _fix_latin_spellings(result)
+    result = _apply_kanji_map(result)
     return re.sub(r"\s+", " ", result).strip() or raw
 
 
