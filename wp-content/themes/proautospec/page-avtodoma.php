@@ -14,7 +14,7 @@ get_header();
 		<?php if(function_exists('bcn_display')): echo bcn_display(true); endif; ?>
 	</div>  
 	<div class="section-title">
-		<h1>Каталог автомобилей и спецтехники в наличии</h1>
+		<h1>Автодома в наличии</h1>
 	
 	</div>
     <div class="row">
@@ -41,7 +41,7 @@ get_header();
 		
         <?php else: ?>
 		<div class="col-12">
-            <p>Автомобилей в наличии на данный момент нету.</p>
+            <p>Автодомов в наличии на данный момент нет.</p>
 		</div>
         <?php 
 		endif;

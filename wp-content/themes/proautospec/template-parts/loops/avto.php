@@ -64,7 +64,7 @@
 				<?php endif;?>
 			</dl>
 			<div class="car-item__price">
-				<span>Цена в РФ</span> <var><?php echo number_format( $props['price'], 0, '.', ' ' );?> ₽</var>
+				<span>Цена в РФ</span> <var><?php echo esc_html( proautospec_avto_price_html( $props['price'] ?? 0 ) ); ?></var>
 			</div>
 			<a class="btn" href="#" data-bs-toggle="modal" data-bs-target="#order-dialog" data-model="<?php echo $car->title;?>">Хочу похожий</a>
 		</div>

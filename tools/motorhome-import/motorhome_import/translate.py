@@ -61,6 +61,21 @@ KNOWN_NAMES: dict[str, str] = {
     "コマツ": "Komatsu",
     "インターネック": "Internec",
     "東和モータース": "Towa Motors",
+    "東和": "Towa",
+    "冷蔵庫": "холодильник",
+    "新車": "новый",
+    "中古": "б/у",
+    "未使用": "не использовался",
+    "ワンオーナー": "один владелец",
+    "禁煙": "некурящий",
+    "車検": "техосмотр",
+    "サンルーフ": "люк",
+    "バックカメラ": "камера заднего вида",
+    "ナビ": "навигация",
+    "ETC": "ETC",
+    "エアコン": "кондиционер",
+    "ディーゼル": "дизель",
+    "ガソリン": "бензин",
 }
 
 # Fix katakana transliteration that does not match established Latin spellings.
@@ -332,11 +347,32 @@ def translate_title(title: str) -> str:
     for jp, ru in sorted(BODY_TYPE_MAP.items(), key=lambda kv: len(kv[0]), reverse=True):
         text = text.replace(jp, f" {ru} ")
 
+    for jp, ru in sorted(KNOWN_NAMES.items(), key=lambda kv: len(kv[0]), reverse=True):
+        if jp in text:
+            text = text.replace(jp, ru)
+
     text = _translate_remaining_japanese(text)
     text = _fix_latin_spellings(text)
     text = _normalize_model_tokens(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text or title.strip()
+
+
+def translate_text(text: str | None) -> str | None:
+    """Translate common JP terms in free-form spec/equipment strings."""
+    if text is None:
+        return None
+    raw = text.strip()
+    if not raw or not contains_japanese(raw):
+        return raw
+
+    result = normalize_japanese_text(raw)
+    for jp, ru in sorted(KNOWN_NAMES.items(), key=lambda kv: len(kv[0]), reverse=True):
+        if jp in result:
+            result = result.replace(jp, ru)
+    result = _translate_remaining_japanese(result)
+    result = _fix_latin_spellings(result)
+    return re.sub(r"\s+", " ", result).strip() or raw
 
 
 def translate_grade(grade: str | None) -> str | None:
@@ -380,8 +416,9 @@ def apply_translation(listing: NormalizedListing) -> NormalizedListing:
         if listing.properties.grade:
             listing.properties.grade = translate_grade(listing.properties.grade)
         for param in listing.parameters:
-            if param.name in ("Оценка", "修復歴") and param.value:
-                translated = translate_grade(param.value)
+            param.value = translate_text(param.value) or param.value
+            if param.name in ("Оценка", "修復歴", "Комплектация") and param.value:
+                translated = translate_grade(param.value) or translate_text(param.value)
                 if translated:
                     param.value = translated
     return listing

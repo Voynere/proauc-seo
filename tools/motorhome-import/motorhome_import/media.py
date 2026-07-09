@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -65,11 +66,11 @@ class MediaSideloader:
             if not local_files:
                 return []
 
-            if self._wp_cli_local_available():
-                return self._import_via_local_wp_cli(local_files)
-
             if self.wp.ssh_host:
                 return self._import_via_ssh_wp_cli(local_files)
+
+            if self._wp_cli_local_available():
+                return self._import_via_local_wp_cli(local_files)
 
             if self.wp.user and self.wp.app_password:
                 return self._import_via_rest(local_files)
@@ -163,11 +164,20 @@ class MediaSideloader:
         ids: list[int] = []
         for index, remote_path in enumerate(remote_files):
             featured = "--featured_image" if index == 0 else ""
-            cmd = (
-                f"wp media import {remote_path} --path={wp_path} --porcelain {featured}".strip()
-            )
+            cmd = [
+                "wp",
+                "media",
+                "import",
+                remote_path,
+                f"--path={wp_path}",
+                "--allow-root",
+                "--porcelain",
+            ]
+            if featured:
+                cmd.append(featured)
+            remote_cmd = " ".join(shlex.quote(arg) for arg in cmd)
             result = subprocess.run(
-                ["ssh", ssh_host, cmd],
+                ["ssh", ssh_host, remote_cmd],
                 capture_output=True,
                 text=True,
                 check=False,

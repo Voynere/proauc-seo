@@ -74,13 +74,12 @@ def cmd_run(args: argparse.Namespace) -> int:
         listing = enrich_listing(listing, config, http)
 
         if args.source == "fujicars":
-            from .adapters.fujicars import has_valid_price_rub
+            from .adapters.fujicars import has_valid_price_jpy
 
-            if not has_valid_price_rub(listing):
+            if listing.sold_out or not has_valid_price_jpy(listing):
                 logger.info(
-                    "Skipping %s — pricing failed (rub=%s): %s",
+                    "Skipping %s — sold out or missing JPY price: %s",
                     listing.source_id,
-                    listing.properties.price_rub,
                     listing.title[:80],
                 )
                 continue
@@ -126,6 +125,33 @@ def cmd_retranslate(args: argparse.Namespace) -> int:
         "Retranslate: %s post(s) scanned, %s changed, dry_run=%s",
         len(results),
         len(changed),
+        config.import_.dry_run,
+    )
+    return 0
+
+
+def cmd_backfill_photos(args: argparse.Namespace) -> int:
+    config_path = Path(args.config)
+    if not config_path.exists():
+        logging.error("Config not found: %s", config_path)
+        return 1
+
+    config = load_config(config_path)
+    if args.dry_run is not None:
+        config.import_.dry_run = args.dry_run
+
+    setup_logging(config.logging_level)
+    writer = WordPressWriter(config)
+    results = writer.backfill_photos_meta(
+        sources=tuple(args.sources),
+        dry_run=config.import_.dry_run,
+    )
+    fixed = [r for r in results if r.get("fixed")]
+    print(json.dumps(results, ensure_ascii=False, indent=2))
+    logging.getLogger("motorhome_import.cli").info(
+        "Backfill photos: %s post(s) scanned, %s fixed, dry_run=%s",
+        len(results),
+        len(fixed),
         config.import_.dry_run,
     )
     return 0
@@ -245,6 +271,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="Preview changes without writing (default: true)",
     )
     retranslate_parser.set_defaults(func=cmd_retranslate)
+
+    backfill_parser = sub.add_parser(
+        "backfill-photos",
+        help="Fix double-serialized ACF photos gallery on imported posts",
+    )
+    backfill_parser.add_argument("-c", "--config", default=str(DEFAULT_CONFIG))
+    backfill_parser.add_argument(
+        "--sources",
+        nargs="+",
+        default=["fujicars", "bobaedream"],
+        choices=["fujicars", "bobaedream"],
+    )
+    backfill_parser.add_argument(
+        "--dry-run",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Preview without writing (default: true)",
+    )
+    backfill_parser.set_defaults(func=cmd_backfill_photos)
 
     demo_parser = sub.add_parser("translate-demo", help="Show title/grade translation for one string")
     demo_parser.add_argument("--title", required=True)

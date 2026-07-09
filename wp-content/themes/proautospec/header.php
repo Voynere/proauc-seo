@@ -139,7 +139,7 @@ $options = json_decode('{
 							<li class="menu-item menu-item-type-post_type menu-item-object-page nav-item nav-item-271"><a href="/shema-raboty/" class="dropdown-item ">Каталог авто из Китая</a></li>
 						</ul>
 					</li>
-					<li><a class="nav-link nav-link--highlighted" href="/avto-v-nalichii/">🔥 Авто в наличии</a></li>					
+					<li><a class="nav-link nav-link--highlighted" href="/avtodoma/">🔥 Автодома</a></li>					
 				</ul>
 				<div class="ms-auto">
 					<small>Мы в социальных сетях</small>
@@ -173,7 +173,7 @@ $options = json_decode('{
 					<ul>
 						<li><a href="/spectehnika/">Спецтехника и&nbsp;грузовые автомобили</a></li>
 						
-						<li><a href="/avto-v-nalichii/" style="color:#F9D87B">Автомобили в наличии 🔥 </a></li>
+						<li><a href="/avtodoma/" style="color:#F9D87B">Автодома 🔥 </a></li>
 					</ul>
 				</div>
 			</div>

@@ -171,19 +171,25 @@ class WordPressWriter:
     def _apply_acf_meta(self, post_id: int, listing: NormalizedListing) -> None:
         meta = build_wp_meta_updates(listing)
         attachment_ids = [int(p) for p in listing.photos if str(p).isdigit()]
-        if attachment_ids:
-            meta.update(build_photos_meta(attachment_ids))
-            featured_id = attachment_ids[0]
-            self._run_wp(
-                self._wp_cmd("post", "meta", "update", str(post_id), "_thumbnail_id", str(featured_id)),
-                check=False,
-            )
 
         for key, value in meta.items():
             self._run_wp(
                 self._wp_cmd("post", "meta", "update", str(post_id), key, str(value)),
                 check=False,
             )
+
+        if attachment_ids:
+            self._apply_photos_field(post_id, attachment_ids)
+
+    def _apply_photos_field(self, post_id: int, attachment_ids: list[int]) -> None:
+        """Set ACF gallery via update_field() — avoids wp-cli double-serialization."""
+        ids_csv = ", ".join(str(i) for i in attachment_ids)
+        php = (
+            f'$ids = array({ids_csv}); '
+            f'update_field("photos", $ids, {post_id}); '
+            f'set_post_thumbnail({post_id}, {attachment_ids[0]});'
+        )
+        self._run_wp(self._wp_cmd("eval", php), check=False)
 
     def _create_via_rest(self, listing: NormalizedListing) -> dict[str, Any]:
         if not self.wp.user or not self.wp.app_password:
@@ -305,6 +311,43 @@ class WordPressWriter:
                     entry["updated"] = True
                 elif changed:
                     entry["updated"] = False
+                results.append(entry)
+
+        return results
+
+    def backfill_photos_meta(
+        self,
+        *,
+        sources: tuple[str, ...] = ("fujicars", "bobaedream"),
+        dry_run: bool | None = None,
+    ) -> list[dict[str, Any]]:
+        """Fix double-serialized ACF photos meta on imported posts."""
+        effective_dry_run = self.dry_run if dry_run is None else dry_run
+        results: list[dict[str, Any]] = []
+
+        for source in sources:
+            for post_id in self._list_posts_by_source(source):
+                php = (
+                    f'$raw = get_post_meta({post_id}, "photos", true); '
+                    f'$fixed = 0; '
+                    f'if (is_string($raw) && str_starts_with($raw, "a:")) {{ '
+                    f'  $ids = @unserialize($raw); '
+                    f'  if (is_array($ids) && $ids) {{ '
+                    f'    if (!{int(effective_dry_run)}) {{ update_field("photos", array_map("intval", $ids), {post_id}); }} '
+                    f'    $fixed = count($ids); '
+                    f'  }} '
+                    f'}} elseif (is_array($raw)) {{ $fixed = count($raw); }} '
+                    f'echo (string) $fixed;'
+                )
+                result = self._run_wp(self._wp_cmd("eval", php))
+                count = int(result.stdout.strip() or "0") if result.returncode == 0 else 0
+                entry = {
+                    "post_id": post_id,
+                    "source": source,
+                    "photo_count": count,
+                    "fixed": count > 0 and not effective_dry_run,
+                    "dry_run": effective_dry_run,
+                }
                 results.append(entry)
 
         return results

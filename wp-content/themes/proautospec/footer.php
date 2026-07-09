@@ -4,7 +4,7 @@
 			<div class="col-lg-6">
 				<nav>
 					<ul class="footer-menu">
-						<li><a href="/avto-v-nalichii/">Авто в&nbsp;наличии</a></li>
+						<li><a href="/avtodoma/">Автодома</a></li>
 						<li><a href="/avto-iz-yaponii/catalog/">Аукционы Японии</a></li>
 						<li><a href="/avto-iz-korei/catalog/">Каталог авто из&nbsp;Кореи</a></li>
 						<li><a href="/avto-iz-kitaya/catalog/">Каталог авто из&nbsp;Китая</a></li>

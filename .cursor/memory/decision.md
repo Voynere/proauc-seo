@@ -44,3 +44,19 @@ Motorhome import Phase 1 complete: acf_mapping.yaml from prod (properties/photos
 ## 2026-07-09 07:04 UTC
 
 Motorhome import Phase 1-3: Bobaedream detail parser (gallery/specs/description, no Playwright). Encar list via api.encar.com Ryvuss API; camping filter not found server-side — client filter on 캠핑/model_groups. Dry-run: Fujicars price_rub ~1.16M, Bobaedream ~1.52M KRW listing.
+
+## 2026-07-09 07:47 UTC
+
+Fujicars body=9: li.carName = подтип (バンコン=минивэн, исключать; キャブコン/バスコン/軽キャンパー=автодом). Фильтр is_motorhome() в fujicars.py.
+
+## 2026-07-09 07:51 UTC
+
+Motorhome import: JP titles/grades translated via motorhome_import/translate.py (dictionary + katakana). CLI: retranslate, translate-demo. Prod fix: wp post update post_title + properties_grade.
+
+## 2026-07-09 07:55 UTC
+
+Motorhome translate: デリカ→Delica, ケイワークス→Keiworks, クルーズ→Cruise; Latin fixes Derika/Delika→Delica, D5→D:5 dedupe.
+
+## 2026-07-09 22:22 UTC
+
+Motorhome polish 2026-07-10: /avtodoma/ (301 с /avto-v-nalichii/), меню «Автодома», цена «По запросу» cat1/_source, ACF photos fix через update_field (wp-cli двойная сериализация), backfill 23 постов, retranslate 21 title, sample post 1926 — 20 фото.

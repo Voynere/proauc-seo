@@ -25,6 +25,7 @@ $picostrap_includes = array(
 	//'/options-page.php',                  // Load theme options page. 
 	'/content-filtering.php',				//for LC compatibility when shutting down plugin
 	'/blog-seo.php',                        // Blog bootstrap, CTA, FAQ (P3).
+	'/avto-display.php',                    // Avto price / motorhome display helpers.
 	'/seo-settings.php',                    // OAuth Метрики, SEO-настройки админки.
     //'/windpress-support.php'                    //for deep integration with the WindPress plugin, for optional use of TailWind
 );
@@ -580,6 +581,18 @@ function prefix_url_rewrite_templates() {
 }
 
 add_action( 'template_redirect', 'prefix_url_rewrite_templates' );
+
+/**
+ * 301 redirect legacy motorhome listing URL to /avtodoma/.
+ */
+function proautospec_avtodoma_legacy_redirect() {
+	$path = trim( (string) parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
+	if ( $path === 'avto-v-nalichii' ) {
+		wp_redirect( home_url( '/avtodoma/' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'proautospec_avtodoma_legacy_redirect', 0 );
 
 
 

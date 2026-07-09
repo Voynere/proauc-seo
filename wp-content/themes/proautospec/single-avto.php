@@ -157,7 +157,7 @@ if (have_posts()):
 										<?php endwhile;?>
 										</dl>
 									<?php endif; ?>									
-									<dt class="single-auto__price">Конечная<br>стоимость</dt><dd class="single-auto__price"><?php echo number_format( $props['price'], 0, '.', ' ' );?> ₽</dd>
+									<dt class="single-auto__price">Конечная<br>стоимость</dt><dd class="single-auto__price"><?php echo esc_html( proautospec_avto_price_html( $props['price'] ?? 0 ) ); ?></dd>
 								</dl>
 							<?php else: ?>
 								<dl>

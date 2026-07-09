@@ -69,7 +69,6 @@ def build_wp_meta_updates(listing: NormalizedListing, mapping: dict[str, Any] | 
         if field_key:
             meta[f"_{meta_key}"] = field_key
 
-    set_sub("price", props.price_rub)
     year_val = listing.year or props.year
     if year_val is not None:
         set_sub("year", str(year_val))
@@ -79,6 +78,7 @@ def build_wp_meta_updates(listing: NormalizedListing, mapping: dict[str, Any] | 
     set_sub("engine-type", props.engine_type)
     set_sub("capacity", props.capacity)
     set_sub("drive-type", props.drive_type)
+    # Price omitted — theme shows «По запросу» for motorhome imports / category 1.
 
     group_key = props_cfg.get("key")
     if group_key:

@@ -8,13 +8,13 @@ Planning doc for importing motorhomes / camping cars from Korean and Japanese ma
 
 | Key | Value |
 |-----|-------|
-| URL | https://proauc.ru/avto-v-nalichii/ |
+| URL | https://proauc.ru/avtodoma/ (301 from `/avto-v-nalichii/`) |
 | CPT | `avto` |
-| Category | ID **1** (default «в наличии» listing) |
-| List template | `page-avto-v-nalichii.php` |
+| Category | ID **1** (default «автодома» listing) |
+| List template | `page-avtodoma.php` |
 | Card loop | `template-parts/loops/avto.php` |
 | Single template | `single-avto.php` |
-| SEO override | `rank-math.php` → `/avto-v-nalichii/` description |
+| SEO override | `rank-math.php` → `/avtodoma/` description |
 
 Other `avto` listings use category archives (`archive.php`) with per-category `category__in`; motorhomes go into category 1 on the main «в наличии» page.
 
@@ -127,7 +127,7 @@ ACF field updates are easier via a small PHP bootstrap (`wp eval-file`) than raw
 
 | Path | Role |
 |------|------|
-| `wp-content/themes/proautospec/page-avto-v-nalichii.php` | Main listing page |
+| `wp-content/themes/proautospec/page-avtodoma.php` | Main listing page |
 | `wp-content/themes/proautospec/template-parts/loops/avto.php` | Card template |
 | `wp-content/themes/proautospec/single-avto.php` | Single motorhome/car |
 | `wp-content/themes/proautospec/archive.php` | Category archives for other `avto` categories |
