@@ -28,6 +28,19 @@ KNOWN_NAMES: dict[str, str] = {
     "クレソンボヤージュ": "Cresson Boyage",
     "クレソンボヤージュX": "Cresson Boyage X",
     "ボヤージュ": "Boyage",
+    "ケイワークス": "Keiworks",
+    "ケイワクス": "Keiworks",
+    "デリカ": "Delica",
+    "クルーズ": "Cruise",
+    "ハイエース": "Hiace",
+    "グランドキャビン": "Grand Cabin",
+    "キャラバン": "Caravan",
+    "セレナ": "Serena",
+    "エルグランド": "Elgrand",
+    "アルファード": "Alphard",
+    "ヴォクシー": "Voxy",
+    "ボクシー": "Voxy",
+    "スペースギア": "Space Gear",
     "トヨタ": "Toyota",
     "ニッサン": "Nissan",
     "ホンダ": "Honda",
@@ -36,13 +49,27 @@ KNOWN_NAMES: dict[str, str] = {
     "ダイハツ": "Daihatsu",
     "いすゞ": "Isuzu",
     "三菱": "Mitsubishi",
+    "スバル": "Subaru",
+    "レクサス": "Lexus",
+    "日野": "Hino",
+    "ヤマハ": "Yamaha",
     "ベンツ": "Mercedes-Benz",
     "メルセデス": "Mercedes",
     "フォルクスワーゲン": "Volkswagen",
     "フィアット": "Fiat",
     "キャタピラー": "Caterpillar",
     "コマツ": "Komatsu",
+    "インターネック": "Internec",
+    "東和モータース": "Towa Motors",
 }
+
+# Fix katakana transliteration that does not match established Latin spellings.
+_LATIN_FIXES: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\bDelika\b", re.I), "Delica"),
+    (re.compile(r"\bDerika\b", re.I), "Delica"),
+    (re.compile(r"\bKeiwakusu\b", re.I), "Keiworks"),
+    (re.compile(r"\bKuruzu\b", re.I), "Cruise"),
+]
 
 # Auction / repair-history grade values (JP → RU).
 GRADE_MAP: dict[str, str] = {
@@ -256,6 +283,28 @@ def _translate_katakana_segment(segment: str) -> str:
     return " ".join(p for p in parts if p)
 
 
+def _fix_latin_spellings(text: str) -> str:
+    for pattern, replacement in _LATIN_FIXES:
+        text = pattern.sub(replacement, text)
+    return text
+
+
+def _normalize_model_tokens(text: str) -> str:
+    """Normalize D5 → D:5 and drop duplicate generation tokens."""
+    text = re.sub(r"\bD5\b", "D:5", text)
+    if "D:5" not in text:
+        return text
+    parts: list[str] = []
+    seen_d5 = False
+    for part in text.split():
+        if part == "D:5":
+            if seen_d5:
+                continue
+            seen_d5 = True
+        parts.append(part)
+    return " ".join(parts)
+
+
 def _translate_remaining_japanese(text: str) -> str:
     """Translate leftover katakana/hiragana segments in mixed text."""
     if not text or not contains_japanese(text):
@@ -284,6 +333,8 @@ def translate_title(title: str) -> str:
         text = text.replace(jp, f" {ru} ")
 
     text = _translate_remaining_japanese(text)
+    text = _fix_latin_spellings(text)
+    text = _normalize_model_tokens(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text or title.strip()
 
