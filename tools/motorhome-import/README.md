@@ -17,6 +17,37 @@ cp config.example.yaml config.yaml
 
 Run on **architect** (local or prod SSH) per project convention.
 
+## Translation (JP → RU)
+
+Fujicars and Bobaedream titles/grades are translated in `finalize_listing()` via `motorhome_import/translate.py` (dictionary + katakana transliteration, no external API).
+
+| JP | RU |
+|----|-----|
+| キャンピングカー | Автодом |
+| キャブコン | кабина-кон |
+| バンコン | ван-кон |
+| バスコン | автобус-кон |
+| 無 (grade) | — |
+| 5点 / 4.5点 | 5 / 4.5 |
+| R / RA / S | R / RA / S |
+
+Demo one title/grade:
+
+```bash
+python -m motorhome_import translate-demo \
+  --title 'キャンピングカー キャブコンｶﾑﾛｰﾄﾞ ﾅｯﾂRV ｸﾚｿﾝﾎﾞﾔｰｼﾞｭX 4WD' \
+  --grade '無'
+```
+
+Retranslate existing prod posts (`_source` fujicars/bobaedream):
+
+```bash
+python -m motorhome_import retranslate --config config.yaml --dry-run
+python -m motorhome_import retranslate --config config.yaml --no-dry-run
+```
+
+Uses wp-cli over SSH (`wordpress.ssh_host`) to update `post_title` and `properties_grade`.
+
 ## Usage
 
 Dry-run Fujicars (no WP writes, prints JSON with `price_rub`):
@@ -164,6 +195,7 @@ tools/motorhome-import/
     ├── pricing.py          # get-price.php → price_rub
     ├── media.py            # Download + wp media sideload
     ├── normalizer.py       # Shared parsers / mappers
+    ├── translate.py        # JP→RU title and grade translation
     ├── wp_writer.py        # Dry-run + wp-cli/REST writer
     └── adapters/
         ├── fujicars.py     # List + detail

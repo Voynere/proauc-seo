@@ -133,7 +133,9 @@ def finalize_listing(listing: NormalizedListing) -> NormalizedListing:
     if listing.year is None and listing.properties.year is not None:
         listing.year = listing.properties.year
     listing.parameters = normalize_parameters(listing.parameters)
-    return listing
+    from .translate import apply_translation
+
+    return apply_translation(listing)
 
 
 def spec_row_to_parameters(specs: dict[str, str]) -> list[ListingParameter]:

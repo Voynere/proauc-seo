@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import shlex
 import subprocess
 from typing import Any
 
@@ -126,6 +127,7 @@ class WordPressWriter:
 
     def _update(self, post_id: int, listing: NormalizedListing) -> dict[str, Any]:
         logger.info("Update existing post %s for %s/%s", post_id, listing.source, listing.source_id)
+        self._update_post_title(post_id, listing.title)
         self._apply_acf_meta(post_id, listing)
         return {
             "action": "update",
@@ -134,6 +136,12 @@ class WordPressWriter:
             "meta": listing.wp_meta(),
             "acf": listing.acf_payload(),
         }
+
+    def _update_post_title(self, post_id: int, title: str) -> None:
+        self._run_wp(
+            self._wp_cmd("post", "update", str(post_id), f"--post_title={title}"),
+            check=False,
+        )
 
     def _create_via_wp_cli(self, listing: NormalizedListing) -> dict[str, Any]:
         cmd = self._wp_cmd(
@@ -210,11 +218,13 @@ class WordPressWriter:
 
     def _wp_cmd(self, *args: str) -> list[str]:
         cmd = ["wp", *args, f"--path={self.wp.wp_path}"]
+        if self.wp.ssh_host:
+            cmd.append("--allow-root")
         return cmd
 
     def _run_wp(self, cmd: list[str], *, check: bool = False) -> subprocess.CompletedProcess[str]:
         if self.wp.ssh_host:
-            remote_cmd = " ".join(cmd)
+            remote_cmd = " ".join(shlex.quote(arg) for arg in cmd)
             return subprocess.run(
                 ["ssh", self.wp.ssh_host, remote_cmd],
                 capture_output=True,
@@ -229,7 +239,7 @@ class WordPressWriter:
         if self.wp.ssh_host:
             try:
                 result = subprocess.run(
-                    ["ssh", self.wp.ssh_host, f"wp --info --path={self.wp.wp_path}"],
+                    ["ssh", self.wp.ssh_host, f"wp --info --path={self.wp.wp_path} --allow-root"],
                     capture_output=True,
                     text=True,
                     check=False,
@@ -247,6 +257,85 @@ class WordPressWriter:
             return result.returncode == 0
         except FileNotFoundError:
             return False
+
+    def retranslate_existing_posts(
+        self,
+        *,
+        sources: tuple[str, ...] = ("fujicars", "bobaedream"),
+        dry_run: bool | None = None,
+    ) -> list[dict[str, Any]]:
+        """Retranslate post_title and properties_grade for imported motorhome posts."""
+        from .translate import translate_grade, translate_title
+
+        effective_dry_run = self.dry_run if dry_run is None else dry_run
+        results: list[dict[str, Any]] = []
+
+        for source in sources:
+            post_ids = self._list_posts_by_source(source)
+            for post_id in post_ids:
+                title = self._get_post_field(post_id, "post_title")
+                grade = self._get_post_meta(post_id, "properties_grade")
+                new_title = translate_title(title)
+                new_grade = translate_grade(grade) if grade else grade
+
+                changed = new_title != title or (grade and new_grade != grade)
+                entry = {
+                    "post_id": post_id,
+                    "source": source,
+                    "title_before": title,
+                    "title_after": new_title,
+                    "grade_before": grade,
+                    "grade_after": new_grade,
+                    "changed": changed,
+                }
+                if changed and not effective_dry_run:
+                    self._update_post_title(post_id, new_title)
+                    if grade and new_grade and new_grade != grade:
+                        self._run_wp(
+                            self._wp_cmd(
+                                "post",
+                                "meta",
+                                "update",
+                                str(post_id),
+                                "properties_grade",
+                                new_grade,
+                            ),
+                            check=False,
+                        )
+                    entry["updated"] = True
+                elif changed:
+                    entry["updated"] = False
+                results.append(entry)
+
+        return results
+
+    def _list_posts_by_source(self, source: str) -> list[int]:
+        cmd = self._wp_cmd(
+            "post",
+            "list",
+            f"--post_type={self.wp.post_type}",
+            "--post_status=publish",
+            "--meta_key=_source",
+            f"--meta_value={source}",
+            "--format=ids",
+        )
+        result = self._run_wp(cmd)
+        if result.returncode != 0 or not result.stdout.strip():
+            return []
+        return [int(x) for x in result.stdout.split()]
+
+    def _get_post_field(self, post_id: int, field: str) -> str:
+        cmd = self._wp_cmd("post", "get", str(post_id), f"--field={field}")
+        result = self._run_wp(cmd)
+        return result.stdout.strip() if result.returncode == 0 else ""
+
+    def _get_post_meta(self, post_id: int, key: str) -> str | None:
+        cmd = self._wp_cmd("post", "meta", "get", str(post_id), key)
+        result = self._run_wp(cmd)
+        if result.returncode != 0:
+            return None
+        value = result.stdout.strip()
+        return value or None
 
     @staticmethod
     def format_listing_json(listing: NormalizedListing, result: dict[str, Any] | None = None) -> str:

@@ -104,6 +104,47 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0 if count > 0 else 2
 
 
+def cmd_retranslate(args: argparse.Namespace) -> int:
+    config_path = Path(args.config)
+    if not config_path.exists():
+        logging.error("Config not found: %s", config_path)
+        return 1
+
+    config = load_config(config_path)
+    if args.dry_run is not None:
+        config.import_.dry_run = args.dry_run
+
+    setup_logging(config.logging_level)
+    writer = WordPressWriter(config)
+    results = writer.retranslate_existing_posts(
+        sources=tuple(args.sources),
+        dry_run=config.import_.dry_run,
+    )
+    changed = [r for r in results if r.get("changed")]
+    print(json.dumps(results, ensure_ascii=False, indent=2))
+    logging.getLogger("motorhome_import.cli").info(
+        "Retranslate: %s post(s) scanned, %s changed, dry_run=%s",
+        len(results),
+        len(changed),
+        config.import_.dry_run,
+    )
+    return 0
+
+
+def cmd_translate_demo(args: argparse.Namespace) -> int:
+    from .translate import translate_grade, translate_title
+
+    title = args.title
+    grade = args.grade
+    print(json.dumps({
+        "title_before": title,
+        "title_after": translate_title(title),
+        "grade_before": grade,
+        "grade_after": translate_grade(grade),
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
 def cmd_probe_bobaedream(args: argparse.Namespace) -> int:
     """Fetch Bobaedream camp page and print structure summary."""
     config_path = Path(args.config)
@@ -185,6 +226,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="Write summary JSON to file",
     )
     run_parser.set_defaults(func=cmd_run)
+
+    retranslate_parser = sub.add_parser(
+        "retranslate",
+        help="Retranslate titles/grades on existing WP posts (_source fujicars/bobaedream)",
+    )
+    retranslate_parser.add_argument("-c", "--config", default=str(DEFAULT_CONFIG))
+    retranslate_parser.add_argument(
+        "--sources",
+        nargs="+",
+        default=["fujicars", "bobaedream"],
+        choices=["fujicars", "bobaedream"],
+    )
+    retranslate_parser.add_argument(
+        "--dry-run",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Preview changes without writing (default: true)",
+    )
+    retranslate_parser.set_defaults(func=cmd_retranslate)
+
+    demo_parser = sub.add_parser("translate-demo", help="Show title/grade translation for one string")
+    demo_parser.add_argument("--title", required=True)
+    demo_parser.add_argument("--grade", default="無")
+    demo_parser.set_defaults(func=cmd_translate_demo)
 
     probe_parser = sub.add_parser("probe-bobaedream", help="Probe Bobaedream camp HTML structure")
     probe_parser.add_argument("--url", help="Camp list URL")
