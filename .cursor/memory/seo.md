@@ -116,3 +116,45 @@ SEO приоритет: продвижение в городах ДВ, seov/sema
 ## 2026-07-07 05:30 UTC
 
 07.07 день: IndexNow включён, 14 URL HTTP 202, inc/seo-indexing.php, related by cluster, robots sitemap_index.xml
+
+## 2026-07-09 06:53 UTC
+
+09.07 SEO: перелинковка посадочных→блог (proauc_get_landing_blog_links, b-blog-links на avto-iz-*/spectehnika/motorcycles), motorcycles title+intro, волна 6 блога (3 статьи: sravnenie stran, statistika aukcionov, Habarovsk) seed v6
+
+## 2026-07-09 07:02 UTC
+
+09.07 SEO deploy prod: landing→blog links, motorcycles meta, wave6 seed (3 future aug). Отчёт seov/SEO-отчет-прогресс.md+PDF обновлён 09.07
+
+## 2026-07-09 07:18 UTC
+
+Blog covers: inc/blog-covers.php генерирует 24 уникальных SVG 1200x630 images/blog/{slug}.svg, scripts/generate-blog-covers.php, single.php hero, proauc_blog_covers_v1 migration. Prod 09.07.
+
+## 2026-07-09 08:04 UTC
+
+Blog covers photorealistic: 24 JPG images/blog/{slug}.jpg AI-generated, JPEG ~5.5MB total, blog-covers.php prefers jpg over svg, proauc_blog_covers_v2 migration, prod 09.07 night
+
+## 2026-07-09 08:16 UTC
+
+Blog in-body images: images/blog/content/, proauc_blog_content_figure() in blog-seo.php, proauc_sync_blog_post_content(slug) in blog-seo.php. Первый кейс — obzor-byd-seal-iz-kitaya (3 JPG: interior, charging, exterior). CSS .proauc-blog-figure в app.css. Миграция proauc_blog_content_byd_seal_v1. Prod 09.07.
+
+## 2026-07-10 08:17 UTC
+
+Чеклист ~14.07.2026 (волны 4–5 блога):
+
+**Статус волн (10.07):** 1–3 опубликованы; волна 4 — 2/4 (BYD Seal 06.07, Kia Sorento 09.07); Komatsu 12.07, доставка ДВ 15.07 — future; волна 5 (5 статей) 18–31.07 — future. post-sitemap ~14 URL → ~21 к 31.07.
+
+**14.07 — действия:**
+1. Проверить публикации: `/obzor-komatsu-pc200-iz-yaponii/` (12.07), `/dostavka-avto-v-regiony-dalnego-vostoka/` (15.07)
+2. Открыть `https://proauc.ru/post-sitemap.xml` — ожидать 15–16 URL
+3. Яндекс.Вебмастер → Индексирование → переобход `post-sitemap.xml` (+ опционально sitemap_index.xml)
+4. Переобход ключевых URL вручную (Komatsu, доставка ДВ)
+5. Снимок позиций → seov/positions-weekly.md (seo.smyalichi.ru)
+6. Проверить WP-Cron — future-посты публикуются автоматически; при сбое `wp cron event run --due-now`
+
+**Волна 5 (18–31.07):** Alphard, X-Trail, Vezel, Carnival, BYD vs Zeekr — мониторинг + переобход post-sitemap после 31.07.
+
+**Деплой до 14.07 (если не на проде):** blog-covers.php, blog-seo.php, blog-articles.php, images/blog/*.jpg, css/app.css, single.php, b-blog-links.php.
+
+## 2026-07-09 22:18 UTC
+
+Чеклист ~14.07: переобход post-sitemap в Яндекс.Вебмастере; волна 4 (2/4 опубликовано, Komatsu 12.07, доставка ДВ 15.07); волна 5 (5 статей 18–31.07) по расписанию через WP future; post-sitemap ~14→21 URL; снимок позиций seov/positions-weekly.md

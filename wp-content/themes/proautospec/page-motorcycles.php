@@ -11,6 +11,7 @@ get_header();
 		<?php if(function_exists('bcn_display')): echo bcn_display(true); endif; ?>
 	</div>
 	<h1 class="mb-4">Мотоциклы из Японии под заказ</h1>
+	<p class="mb-4">Подбираем мотоциклы Honda, Yamaha, Kawasaki и Harley с японских аукционов под заказ с доставкой во Владивосток и другие города Дальнего Востока. Проверенная история, выкуп на площадке и оформление «под ключ» — как для <a href="/avto-iz-yaponii/">авто из Японии</a>.</p>
 	<div class="b-cars-catalog-filter">
 		<form method="get">
 			<input type="hidden" name="pn" value="1">
@@ -66,6 +67,6 @@ echo "<script>".$models."</script>";
 
 </section>
 
+<?php get_template_part( 'template-parts/landing/b-blog-links', null, array( 'cluster' => 'mototsikly' ) ); ?>
 
-
-<?php get_footer();
+<?php get_footer(); ?>

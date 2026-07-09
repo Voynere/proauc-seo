@@ -5,6 +5,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+require_once get_template_directory() . '/inc/blog-covers.php';
+
 function proauc_blog_cluster_slugs() {
 	return array( 'yaponiya', 'koreya', 'kitaj', 'spectehnika', 'mototsikly', 'obzory', 'kejsy' );
 }
@@ -103,7 +105,7 @@ function proauc_seed_blog_posts( $seeds = null ) {
 			update_post_meta( $post_id, 'proauc_blog_cluster', $seed['cluster'] );
 		}
 		if ( ! empty( $seed['thumbnail'] ) && function_exists( 'proauc_save_blog_post_thumbnail' ) ) {
-			proauc_save_blog_post_thumbnail( $post_id, $seed['thumbnail'] );
+			proauc_save_blog_post_thumbnail( $post_id, proauc_get_blog_seed_thumbnail( $seed ) );
 		}
 	}
 }
@@ -158,7 +160,7 @@ function proauc_migrate_blog_post_thumbnails() {
 			continue;
 		}
 
-		proauc_save_blog_post_thumbnail( (int) $post->ID, $seed['thumbnail'] );
+		proauc_save_blog_post_thumbnail( (int) $post->ID, proauc_get_blog_seed_thumbnail( $seed ) );
 	}
 }
 
@@ -227,6 +229,37 @@ function proauc_migrate_blog_wave5_schedule() {
 	}
 
 	foreach ( proauc_get_blog_article_seeds_wave5() as $seed ) {
+		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
+			continue;
+		}
+
+		$post = get_page_by_path( $seed['slug'], OBJECT, 'post' );
+		if ( ! $post ) {
+			continue;
+		}
+
+		$gmt     = get_gmt_from_date( $seed['post_date'] );
+		$publish = strtotime( $gmt ) <= time();
+
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_status'   => $publish ? 'publish' : 'future',
+				'post_date'     => $seed['post_date'],
+				'post_date_gmt' => $gmt,
+			)
+		);
+	}
+
+	flush_rewrite_rules( false );
+}
+
+function proauc_migrate_blog_wave6_schedule() {
+	if ( ! function_exists( 'proauc_get_blog_article_seeds_wave6' ) ) {
+		require_once get_template_directory() . '/inc/blog-articles.php';
+	}
+
+	foreach ( proauc_get_blog_article_seeds_wave6() as $seed ) {
 		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
 			continue;
 		}
@@ -394,6 +427,44 @@ function proauc_render_blog_expert( $cluster = '' ) {
 		</div>
 	</aside>
 	<?php
+}
+
+function proauc_sync_blog_post_content( $slug ) {
+	$slug = sanitize_title( (string) $slug );
+	if ( ! $slug ) {
+		return false;
+	}
+
+	$post = get_page_by_path( $slug, OBJECT, 'post' );
+	if ( ! $post ) {
+		return false;
+	}
+
+	$callbacks = array(
+		'obzor-byd-seal-iz-kitaya' => 'proauc_blog_article_obzor_byd_seal',
+	);
+	if ( empty( $callbacks[ $slug ] ) || ! function_exists( $callbacks[ $slug ] ) ) {
+		if ( ! function_exists( 'proauc_get_blog_article_seeds' ) ) {
+			require_once get_template_directory() . '/inc/blog-articles.php';
+		}
+	}
+	if ( empty( $callbacks[ $slug ] ) || ! function_exists( $callbacks[ $slug ] ) ) {
+		return false;
+	}
+
+	$content = call_user_func( $callbacks[ $slug ] );
+	if ( ! $content ) {
+		return false;
+	}
+
+	wp_update_post(
+		array(
+			'ID'           => (int) $post->ID,
+			'post_content' => $content,
+		)
+	);
+
+	return true;
 }
 
 function proauc_migrate_blog_post_dates() {
@@ -1132,6 +1203,48 @@ function proauc_get_blog_post_faq( $slug = '' ) {
 				'a' => 'В каталоге авто из Китая или по заявке менеджеру.',
 			),
 		),
+		'sravnenie-avto-iz-yaponii-korei-kitaya' => array(
+			array(
+				'q' => 'Где дешевле — Япония, Корея или Китай?',
+				'a' => 'Зависит от модели и года. Сравниваем по смете «под ключ», а не по цене лота отдельно.',
+			),
+			array(
+				'q' => 'Где самая прозрачная история авто?',
+				'a' => 'На японских аукционах — через аукционный лист. В Корее и Китае проверяем по базам и отчётам.',
+			),
+			array(
+				'q' => 'Можно ли заказать расчёт по всем трём странам?',
+				'a' => 'Да — опишите модель и бюджет, менеджер подготовит варианты по каждому направлению.',
+			),
+		),
+		'kak-polzovatsya-statistikoj-aukcionov-yaponii' => array(
+			array(
+				'q' => 'Где смотреть статистику аукционов Японии?',
+				'a' => 'На странице «Статистика» на proauc.ru — цены, пробеги и популярные модели.',
+			),
+			array(
+				'q' => 'Заменяет ли статистика расчёт «под ключ»?',
+				'a' => 'Нет. Статистика показывает диапазон цен лота; полная смета включает доставку и пошлину.',
+			),
+			array(
+				'q' => 'Что делать, если модели нет в статистике?',
+				'a' => 'Подбор через каталог и живые листы на ближайших торгах — менеджер поможет с оценкой.',
+			),
+		),
+		'avto-iz-yaponii-v-habarovsk' => array(
+			array(
+				'q' => 'Сначала растаможка во Владивостоке?',
+				'a' => 'Да. После таможни и выдачи документов организуем перегон в Хабаровск.',
+			),
+			array(
+				'q' => 'Сколько едет автовоз до Хабаровска?',
+				'a' => 'Обычно 1–2 дня после погрузки во Владивостоке.',
+			),
+			array(
+				'q' => 'Сколько длится весь цикл до Хабаровска?',
+				'a' => 'Чаще 6–8 недель от заявки — зависит от модели, линии и очереди на таможне.',
+			),
+		),
 	);
 
 	return isset( $faqs[ $slug ] ) ? $faqs[ $slug ] : array();
@@ -1299,6 +1412,131 @@ function proauc_render_blog_related() {
 	<?php
 }
 
+/**
+ * Статьи блога для перелинковки с коммерческих посадочных.
+ *
+ * @param string $cluster yaponiya|koreya|kitaj|spectehnika|mototsikly
+ * @return array<int, array{url: string, title: string}>
+ */
+function proauc_get_landing_blog_links( $cluster ) {
+	$map = array(
+		'yaponiya'    => array(
+			array(
+				'url'   => '/kak-kupit-avto-s-aukcziona-yaponii/',
+				'title' => 'Как купить авто с аукциона Японии под ключ',
+			),
+			array(
+				'url'   => '/skolko-stoit-privezti-avto-iz-yaponii/',
+				'title' => 'Сколько стоит привезти авто из Японии',
+			),
+			array(
+				'url'   => '/kak-chitat-aukczionnyj-list/',
+				'title' => 'Как читать аукционный лист',
+			),
+			array(
+				'url'   => '/rastamozka-avto-iz-yaponii/',
+				'title' => 'Растаможка авто из Японии: документы и платежи',
+			),
+			array(
+				'url'   => '/dostavka-avto-v-regiony-dalnego-vostoka/',
+				'title' => 'Доставка авто в регионы Дальнего Востока',
+			),
+		),
+		'koreya'      => array(
+			array(
+				'url'   => '/kak-kupit-avto-iz-korei/',
+				'title' => 'Как купить авто из Кореи под заказ',
+			),
+			array(
+				'url'   => '/chem-avto-iz-korei-otlichaetsya-ot-yaponii/',
+				'title' => 'Чем авто из Кореи отличается от японского',
+			),
+			array(
+				'url'   => '/obzor-hyundai-palisade-iz-korei/',
+				'title' => 'Обзор Hyundai Palisade из Кореи',
+			),
+			array(
+				'url'   => '/kejs-pokupka-kia-sorento-iz-korei/',
+				'title' => 'Кейс: покупка Kia Sorento из Кореи',
+			),
+		),
+		'kitaj'       => array(
+			array(
+				'url'   => '/kak-kupit-avto-iz-kitaya/',
+				'title' => 'Как купить авто из Китая под заказ',
+			),
+			array(
+				'url'   => '/elektromobili-iz-kitaya-byd-zeekr/',
+				'title' => 'Электромобили из Китая: BYD, Zeekr',
+			),
+			array(
+				'url'   => '/obzor-byd-seal-iz-kitaya/',
+				'title' => 'Обзор BYD Seal из Китая',
+			),
+			array(
+				'url'   => '/byd-seal-i-zeekr-001-sravnenie/',
+				'title' => 'BYD Seal vs Zeekr 001 — сравнение',
+			),
+		),
+		'spectehnika' => array(
+			array(
+				'url'   => '/kak-kupit-spectehniku-s-aukcziona-yaponii/',
+				'title' => 'Как купить спецтехнику с аукциона Японии',
+			),
+			array(
+				'url'   => '/obzor-komatsu-pc200-iz-yaponii/',
+				'title' => 'Обзор Komatsu PC200 с аукциона',
+			),
+			array(
+				'url'   => '/kak-chitat-aukczionnyj-list/',
+				'title' => 'Как читать аукционный лист',
+			),
+		),
+		'mototsikly'  => array(
+			array(
+				'url'   => '/kak-kupit-mototsikl-s-aukcziona-yaponii/',
+				'title' => 'Как купить мотоцикл с аукциона Японии',
+			),
+			array(
+				'url'   => '/kak-chitat-aukczionnyj-list/',
+				'title' => 'Как читать аукционный лист',
+			),
+			array(
+				'url'   => '/kak-kupit-avto-s-aukcziona-yaponii/',
+				'title' => 'Как купить авто с аукциона Японии',
+			),
+		),
+	);
+
+	return isset( $map[ $cluster ] ) ? $map[ $cluster ] : array();
+}
+
+function proauc_render_landing_blog_links( $cluster ) {
+	$links = proauc_get_landing_blog_links( $cluster );
+	if ( ! $links ) {
+		return;
+	}
+	?>
+	<section class="content-plain pt-0">
+		<div class="container">
+			<aside class="proauc-auction-list-related my-4 p-4 p-lg-5 rounded border">
+				<h2 class="h5 mb-3">Полезные статьи</h2>
+				<ul class="mb-0">
+					<?php foreach ( $links as $link ) : ?>
+						<li class="mb-2">
+							<a href="<?php echo esc_url( home_url( $link['url'] ) ); ?>"><?php echo esc_html( $link['title'] ); ?></a>
+						</li>
+					<?php endforeach; ?>
+					<li class="mb-0 mt-3">
+						<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>">Все статьи Proauc &rarr;</a>
+					</li>
+				</ul>
+			</aside>
+		</div>
+	</section>
+	<?php
+}
+
 function proauc_append_auction_list_blog_links( $content ) {
 	if ( ! is_singular() || ! function_exists( 'proauc_request_path' ) ) {
 		return $content;
@@ -1396,6 +1634,45 @@ add_action(
 		if ( ! get_option( 'proauc_blog_wave5_schedule_v1' ) ) {
 			proauc_migrate_blog_wave5_schedule();
 			update_option( 'proauc_blog_wave5_schedule_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_seed_v6' ) ) {
+			if ( ! function_exists( 'proauc_get_blog_article_seeds_wave6' ) ) {
+				require_once get_template_directory() . '/inc/blog-articles.php';
+			}
+			proauc_seed_blog_posts( proauc_get_blog_article_seeds_wave6() );
+			update_option( 'proauc_blog_seed_v6', 1 );
+			flush_rewrite_rules( false );
+		}
+		if ( ! get_option( 'proauc_blog_wave6_schedule_v1' ) ) {
+			proauc_migrate_blog_wave6_schedule();
+			update_option( 'proauc_blog_wave6_schedule_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_covers_v1' ) ) {
+			proauc_migrate_blog_covers_v1();
+			update_option( 'proauc_blog_covers_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_covers_v2' ) ) {
+			proauc_migrate_blog_covers_v2();
+			update_option( 'proauc_blog_covers_v2', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_content_byd_seal_v1' ) ) {
+			proauc_sync_blog_post_content( 'obzor-byd-seal-iz-kitaya' );
+			update_option( 'proauc_blog_content_byd_seal_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_content_obzory_v1' ) ) {
+			$obzory_slugs = array(
+				'obzor-toyota-land-cruiser-iz-yaponii',
+				'obzor-hyundai-palisade-iz-korei',
+				'obzor-komatsu-pc200-iz-yaponii',
+				'obzor-toyota-alphard-iz-yaponii',
+				'obzor-nissan-x-trail-iz-yaponii',
+				'obzor-honda-vezel-iz-yaponii',
+				'obzor-kia-carnival-iz-korei',
+			);
+			foreach ( $obzory_slugs as $slug ) {
+				proauc_sync_blog_post_content( $slug );
+			}
+			update_option( 'proauc_blog_content_obzory_v1', 1 );
 		}
 		if ( ! get_option( 'proauc_blog_sitemap_flush_v1' ) ) {
 			proauc_invalidate_rank_math_post_sitemap();

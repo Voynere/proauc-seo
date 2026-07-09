@@ -15,22 +15,15 @@ if (have_posts()):
     </div>
         <?php
 
-        // Check if the post has a featured image
-        if (has_post_thumbnail()) {  
+        // Hero: featured image or generated blog cover.
+        $hero_url = function_exists( 'proauc_get_blog_hero_image_url' ) ? proauc_get_blog_hero_image_url() : '';
+        if ( $hero_url ) {
             ?>
-            <div class="container-fluid d-flex p-0 bg-body" style="height:50vh;">
-                <?php
-                // Output the featured image with custom classes and styles
-                the_post_thumbnail('full', [
-                    'class' => 'img-fluid w-100 h-100',
-                    'style' => 'object-fit:cover;',
-                    'alt' => esc_attr(get_post_meta(get_post_thumbnail_id() , '_wp_attachment_image_alt', true)), 
-                ]);
-                ?>
+            <div class="container-fluid d-flex p-0 bg-body" style="height:50vh;max-height:420px;">
+                <img class="img-fluid w-100 h-100" style="object-fit:cover;" src="<?php echo esc_url( $hero_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>">
             </div>
         <?php
         } else {
-            // Default block if no featured image is found
             ?>
             <div class="container-fluid d-flex py-6"></div>
         <?php

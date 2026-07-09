@@ -299,6 +299,8 @@ foreach ($pinnedCategories as $catName => $values):
 	</div>
 	</section>
 
+	<?php get_template_part( 'template-parts/landing/b-blog-links', null, array( 'cluster' => 'spectehnika' ) ); ?>
+
 </article>	
 <noindex>
 	<section class="mt-4">

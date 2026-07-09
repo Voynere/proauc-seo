@@ -11,7 +11,8 @@ function proauc_get_blog_article_seeds() {
 		proauc_get_blog_article_seeds_wave2(),
 		proauc_get_blog_article_seeds_wave3(),
 		proauc_get_blog_article_seeds_wave4(),
-		proauc_get_blog_article_seeds_wave5()
+		proauc_get_blog_article_seeds_wave5(),
+		proauc_get_blog_article_seeds_wave6()
 	);
 }
 
@@ -271,18 +272,81 @@ function proauc_get_blog_article_seeds_wave5() {
 	);
 }
 
+function proauc_get_blog_article_seeds_wave6() {
+	return array(
+		array(
+			'slug'            => 'sravnenie-avto-iz-yaponii-korei-kitaya',
+			'post_date'       => '2026-08-04 06:00:00',
+			'title'           => 'Сравнение авто из Японии, Кореи и Китая: что выбрать',
+			'category'        => 'yaponiya',
+			'cluster'         => 'yaponiya',
+			'thumbnail'       => 'bg-alpha-cars.svg',
+			'seo_title'       => 'Япония vs Корея vs Китай — сравнение для покупателя авто',
+			'seo_description' => 'Сравниваем покупку авто из Японии, Кореи и Китая: аукционы, цены «под ключ», сроки, документы и кому какой рынок подходит.',
+			'content'         => proauc_blog_article_sravnenie_stran(),
+		),
+		array(
+			'slug'            => 'kak-polzovatsya-statistikoj-aukcionov-yaponii',
+			'post_date'       => '2026-08-08 06:00:00',
+			'title'           => 'Как пользоваться статистикой аукционов Японии',
+			'category'        => 'yaponiya',
+			'cluster'         => 'yaponiya',
+			'thumbnail'       => 'bg-alpha-cars.svg',
+			'seo_title'       => 'Статистика аукционов Японии — как оценить цену до торгов',
+			'seo_description' => 'Как читать статистику японских аукционов: цены, пробеги, популярные модели. Связь с подбором лота и сметой «под ключ».',
+			'content'         => proauc_blog_article_statistika_aukcionov(),
+		),
+		array(
+			'slug'            => 'avto-iz-yaponii-v-habarovsk',
+			'post_date'       => '2026-08-12 06:00:00',
+			'title'           => 'Авто из Японии в Хабаровск: доставка и сроки',
+			'category'        => 'yaponiya',
+			'cluster'         => 'yaponiya',
+			'thumbnail'       => 'bg-alpha-cars.svg',
+			'seo_title'       => 'Авто из Японии в Хабаровск — доставка после Владивостока',
+			'seo_description' => 'Как привезти авто с аукциона Японии в Хабаровск: растаможка во Владивостоке, автовоз, сроки и документы для Дальнего Востока.',
+			'content'         => proauc_blog_article_habarovsk(),
+		),
+	);
+}
+
 function proauc_blog_article_obzor_land_cruiser() {
-	return <<<'HTML'
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-toyota-land-cruiser-iz-yaponii-exterior.jpg',
+			'Toyota Land Cruiser 200 белого цвета — вид спереди-три четверти',
+			'Land Cruiser 200 — один из самых ликвидных внедорожников на аукционах Японии.'
+		)
+		: '';
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-toyota-land-cruiser-iz-yaponii-interior.jpg',
+			'Салон Toyota Land Cruiser: кожаные сиденья и мультимедиа',
+			'Интерьер Land Cruiser — просторный салон с богатыми комплектациями.'
+		)
+		: '';
+	$fig_offroad = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-toyota-land-cruiser-iz-yaponii-offroad.jpg',
+			'Toyota Land Cruiser на грунтовой дороге',
+			'Полный привод и надёжность — ключевые аргументы в пользу Land Cruiser.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Toyota Land Cruiser — один из самых востребованных внедорожников на японских аукционах. Модель ценят за надёжность, полный привод и высокую ликвидность в России. Ниже — на что смотреть при подборе и чем отличаются комплектации на внутреннем рынке Японии.</p>
 
 <h2>Почему Land Cruiser берут с аукциона</h2>
 <p>На торгах USS, TAA и других площадок регулярно появляются Land Cruiser 200, Prado и старшие серии с прозрачной историей. Состояние фиксируется в <a href="/kak-chitat-aukczionnyj-list/">аукционном листе</a>: оценка кузова, салона, пробег. Это удобнее, чем искать машину на вторичном рынке РФ без документированной истории.</p>
+{$fig_exterior}
 
 <h2>Комплектации и моторы</h2>
 <p>Чаще встречаются бензиновые V8 и дизельные V6 — выбор зависит от бюджета «под ключ» и требований к расходу. Обращайте внимание на оценку 4.0–4.5 и выше, пробег до 150–200 тыс. км и отсутствие серьёзных отметок по кузову на схеме листа.</p>
+{$fig_interior}
 
 <h2>Цена «под ключ»</h2>
 <p>Итог складывается из цены лота, фрахта, пошлины и утилизационного сбора. Для Land Cruiser сильнее всего влияют объём двигателя и курс йены. Ориентиры по смете — в материале <a href="/skolko-stoit-privezti-avto-iz-yaponii/">сколько стоит привезти авто из Японии</a>; актуальные лоты — в <a href="/avto-iz-yaponii/catalog/">каталоге</a>.</p>
+{$fig_offroad}
 
 <h2>На что обратить внимание на листе</h2>
 <ul>
@@ -350,17 +414,42 @@ HTML;
 }
 
 function proauc_blog_article_obzor_palisade() {
-	return <<<'HTML'
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-hyundai-palisade-iz-korei-exterior.jpg',
+			'Hyundai Palisade тёмно-синего цвета — вид сбоку в городе',
+			'Palisade — крупный семейный кроссовер с тремя рядами сидений.'
+		)
+		: '';
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-hyundai-palisade-iz-korei-interior.jpg',
+			'Салон Hyundai Palisade: панорамная крыша и цифровая панель приборов',
+			'Интерьер Palisade — просторный салон с современной мультимедиа.'
+		)
+		: '';
+	$fig_family = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-hyundai-palisade-iz-korei-family.jpg',
+			'Hyundai Palisade на парковке — вид сзади-три четверти',
+			'Третий ряд сидений делает Palisade удобным для большой семьи.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Hyundai Palisade — крупный семейный кроссовер, который часто заказывают из Кореи. Три ряда сидений, богатые комплектации и современные системы безопасности делают модель популярной у семей с детьми. Разбираем, стоит ли брать Palisade с корейского рынка.</p>
 
 <h2>Почему Palisade из Кореи</h2>
 <p>На внутреннем рынке Кореи широкий выбор комплектаций и пробегов. Проверяем историю, страховые случаи и соответствие заявленному состоянию до оплаты — логика отличается от японского аукционного листа, подробнее в <a href="/kak-kupit-avto-iz-korei/">как купить авто из Кореи</a>.</p>
+{$fig_exterior}
 
 <h2>Комплектации и моторы</h2>
 <p>Чаще встречаются бензиновые V6 и дизель — выбор зависит от бюджета и сценария эксплуатации. Для дальних поездок важны полный привод, адаптивный круиз и качество салона.</p>
+{$fig_interior}
 
 <h2>Сравнение с японскими аналогами</h2>
 <p>Если рассматриваете Toyota Highlander или Nissan Pathfinder с аукциона — сравните итог «под ключ», а не только цену лота. Материал <a href="/chem-avto-iz-korei-otlichaetsya-ot-yaponii/">Корея vs Япония</a> поможет определиться с форматом покупки.</p>
+{$fig_family}
 
 <h2>Где смотреть предложения</h2>
 <p>Актуальные варианты — в <a href="/avto-iz-korei/catalog/">каталоге авто из Кореи</a>. Менеджер подберёт Palisade под ваш бюджет и сроки доставки.</p>
@@ -572,17 +661,42 @@ HTML;
 }
 
 function proauc_blog_article_obzor_byd_seal() {
-	return <<<'HTML'
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-byd-seal-iz-kitaya-interior.jpg',
+			'Салон BYD Seal: центральный сенсорный экран и цифровая приборная панель',
+			'Интерьер BYD Seal — крупный тачскрин и минималистичная панель приборов.'
+		)
+		: '';
+	$fig_charging = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-byd-seal-iz-kitaya-charging.jpg',
+			'BYD Seal на станции быстрой DC-зарядки',
+			'Быстрая зарядка — один из ключевых аргументов в пользу Seal.'
+		)
+		: '';
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-byd-seal-iz-kitaya-exterior.jpg',
+			'BYD Seal голубого цвета — вид сзади-три четверти в городе',
+			'Силуэт Seal — аэродинамичный седан с узнаваемой линией крыши.'
+		)
+		: '';
+
+	return <<<HTML
 <p>BYD Seal — один из самых востребованных электроседанов из Китая. Модель сочетает запас хода, быструю зарядку и богатые комплектации. Разбираем, кому подходит Seal и как заказать его «под ключ» через Proauc.</p>
 
 <h2>Почему Seal из Китая</h2>
 <p>На внутреннем рынке Китая широкий выбор комплектаций и годов выпуска. Проверяем состояние батареи, пробег и соответствие заявленной комплектации до оплаты — логика описана в материале <a href="/elektromobili-iz-kitaya-byd-zeekr/">электромобили BYD и Zeekr</a>.</p>
+{$fig_interior}
 
 <h2>Запас хода и зарядка</h2>
 <p>Уточняйте версию батареи и поддержку DC-зарядки. Для эксплуатации в России важны зимняя дальность и наличие теплового насоса — обсуждаем на этапе подбора.</p>
+{$fig_charging}
 
 <h2>Цена «под ключ»</h2>
 <p>Итог складывается из цены на площадке, доставки, таможни и оформления. Актуальные предложения — в <a href="/avto-iz-kitaya/catalog/">каталоге авто из Китая</a>.</p>
+{$fig_exterior}
 
 <p>Готовы обсудить BYD Seal — оставьте заявку с желаемым годом и комплектацией.</p>
 HTML;
@@ -612,17 +726,42 @@ HTML;
 }
 
 function proauc_blog_article_obzor_komatsu_pc200() {
-	return <<<'HTML'
+	$fig_worksite = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-komatsu-pc200-iz-yaponii-worksite.jpg',
+			'Экскаватор Komatsu PC200 на строительной площадке',
+			'PC200 — один из самых ликвидных экскаваторов на японских аукционах.'
+		)
+		: '';
+	$fig_cabin = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-komatsu-pc200-iz-yaponii-cabin.jpg',
+			'Кабина экскаватора Komatsu PC200 с пультами управления',
+			'Состояние кабины и гидравлики — ключевые критерии при подборе.'
+		)
+		: '';
+	$fig_side = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-komatsu-pc200-iz-yaponii-side.jpg',
+			'Komatsu PC200 жёлтого цвета — вид сбоку с ковшом',
+			'PC200 востребован в строительстве и дорожных работах.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Komatsu PC200 — один из самых ликвидных экскаваторов на японских аукционах. Модель востребована в строительстве и дорожных работах. Ниже — на что смотреть при подборе и чем PC200 отличается от аналогов.</p>
 
 <h2>Почему PC200 с аукциона</h2>
 <p>На торгах регулярно появляются машины с документированными моточасами и фото состояния. Это удобнее, чем покупать технику на вторичном рынке без истории эксплуатации в Японии.</p>
+{$fig_worksite}
 
 <h2>Моточасы и состояние</h2>
 <p>Целевой диапазон для «без сюрпризов» — до 8–10 тыс. моточасов при хороших отчётах по гидравлике и ходовой. Сверяем фото ковша, стрелы и кабины.</p>
+{$fig_cabin}
 
 <h2>Цена «под ключ»</h2>
 <p>Итог зависит от года выпуска, комплектации и таможенной стоимости. Ориентиры по этапам — в <a href="/kak-kupit-spectehniku-s-aukcziona-yaponii/">как купить спецтехнику с аукциона</a>; актуальные группы — в <a href="/spectehnika/catalog/">каталоге спецтехники</a>.</p>
+{$fig_side}
 
 <p>Нужен подбор PC200 под бюджет — оставьте заявку с желаемым годом и навесным оборудованием.</p>
 HTML;
@@ -653,68 +792,168 @@ HTML;
 }
 
 function proauc_blog_article_obzor_alphard() {
-	return <<<'HTML'
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-toyota-alphard-iz-yaponii-exterior.jpg',
+			'Toyota Alphard чёрного цвета — вид спереди-три четверти',
+			'Alphard — премиальный минивэн с высокой ликвидностью на аукционах Японии.'
+		)
+		: '';
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-toyota-alphard-iz-yaponii-interior.jpg',
+			'Салон Toyota Alphard: капитанские кресла второго ряда',
+			'Просторный салон Alphard — ключевое преимущество для семьи и бизнеса.'
+		)
+		: '';
+	$fig_door = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-toyota-alphard-iz-yaponii-door.jpg',
+			'Toyota Alphard с открытой сдвижной дверью',
+			'Две сдвижные двери и богатые комплектации — стандарт для Alphard.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Toyota Alphard — премиальный минивэн, который часто берут с японских аукционов для семьи и бизнеса. Просторный салон, надёжные моторы и высокая ликвидность делают модель одной из самых востребованных в сегменте. Разбираем, на что смотреть при подборе.</p>
 
 <h2>Почему Alphard с аукциона</h2>
 <p>На торгах USS и других площадок регулярно появляются Alphard 30 и 40 серии с прозрачной историей. Состояние фиксируется в <a href="/kak-chitat-aukczionnyj-list/">аукционном листе</a> — оценка кузова, салона, пробег.</p>
+{$fig_exterior}
 
 <h2>Комплектации</h2>
 <p>Чаще встречаются 7- и 8-местные версии с кожаным салоном, двумя сдвижными дверями и пакетами безопасности. Для Дальнего Востока важны полный привод и подогревы — уточняем на этапе подбора.</p>
+{$fig_interior}
 
 <h2>Цена «под ключ»</h2>
 <p>Итог зависит от года, объёма двигателя и курса йены. Актуальные лоты — в <a href="/avto-iz-yaponii/catalog/">каталоге Японии</a>; ориентиры по смете — в <a href="/skolko-stoit-privezti-avto-iz-yaponii/">статье о стоимости привоза</a>.</p>
+{$fig_door}
 
 <p>Нужен подбор Alphard — оставьте заявку с желаемым годом и комплектацией.</p>
 HTML;
 }
 
 function proauc_blog_article_obzor_xtrail() {
-	return <<<'HTML'
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-nissan-x-trail-iz-yaponii-exterior.jpg',
+			'Nissan X-Trail серебристого цвета — вид спереди-три четверти',
+			'X-Trail — практичный кроссовер с полным приводом на японских аукционах.'
+		)
+		: '';
+	$fig_awd = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-nissan-x-trail-iz-yaponii-awd.jpg',
+			'Nissan X-Trail на зимней дороге',
+			'Полный привод X-Trail — важный аргумент для эксплуатации на Дальнем Востоке.'
+		)
+		: '';
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-nissan-x-trail-iz-yaponii-interior.jpg',
+			'Салон Nissan X-Trail: мультимедиа и панель приборов',
+			'Интерьер X-Trail — удобный салон для города и поездок.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Nissan X-Trail — практичный кроссовер с полным приводом, популярный на японских аукционах. Подходит для города и поездок по Дальнему Востоку. Ниже — критерии выбора и типичные комплектации.</p>
 
 <h2>Почему X-Trail с аукциона</h2>
 <p>Широкий выбор годов и пробегов, понятные оценки на листе. Модель сопоставима по классу с Toyota RAV4 и Honda CR-V — сравните итог «под ключ», а не только цену лота.</p>
+{$fig_exterior}
 
 <h2>Моторы и привод</h2>
 <p>Встречаются бензиновые 2.0–2.5 и гибридные версии. Для снега и грунтовок важен полный привод — проверяем по комплектации и отчёту.</p>
+{$fig_awd}
 
 <h2>Где смотреть предложения</h2>
 <p>Актуальные лоты — в <a href="/avto-iz-yaponii/catalog/">каталоге авто из Японии</a>. Менеджер подберёт X-Trail под бюджет и сроки доставки во Владивосток.</p>
+{$fig_interior}
 
 <p>Готовы обсудить X-Trail — оставьте заявку с желаемым годом и пробегом.</p>
 HTML;
 }
 
 function proauc_blog_article_obzor_vezel() {
-	return <<<'HTML'
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-honda-vezel-iz-yaponii-exterior.jpg',
+			'Honda Vezel белого цвета — компактный кроссовер, вид сбоку',
+			'Vezel — популярный компактный кроссовер на японских аукционах.'
+		)
+		: '';
+	$fig_hybrid = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-honda-vezel-iz-yaponii-hybrid.jpg',
+			'Приборная панель Honda Vezel Hybrid с индикаторами',
+			'Гибридные версии Vezel экономичны в городской эксплуатации.'
+		)
+		: '';
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-honda-vezel-iz-yaponii-interior.jpg',
+			'Салон Honda Vezel: передние сиденья и центральная консоль',
+			'Компактный салон Vezel удобен для города и парковки.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Honda Vezel (на некоторых рынках — HR-V) — компактный кроссовер, часто с гибридной силовой установкой. На японских аукционах много вариантов с низким пробегом. Разбираем плюсы формата и на что смотреть на листе.</p>
 
 <h2>Гибрид vs бензин</h2>
 <p>Гибридные Vezel экономичны в городе; бензиновые проще в обслуживании. Выбор зависит от пробега в год и условий эксплуатации на Дальнем Востоке.</p>
+{$fig_exterior}
 
 <h2>Оценка на аукционном листе</h2>
 <p>Целевой диапазон 4.0–4.5, пробег до 80–100 тыс. км для «без сюрпризов». Расшифровка оценок — в <a href="/kak-chitat-aukczionnyj-list/">гайде по аукционному листу</a>.</p>
+{$fig_hybrid}
 
 <h2>Цена и сроки</h2>
 <p>Полный цикл «под ключ» — см. <a href="/kak-kupit-avto-s-aukcziona-yaponii/">этапы покупки с аукциона</a>. Лоты в <a href="/avto-iz-yaponii/catalog/">каталоге</a>.</p>
+{$fig_interior}
 
 <p>Ищете Vezel под бюджет — опишите параметры в заявке.</p>
 HTML;
 }
 
 function proauc_blog_article_obzor_carnival() {
-	return <<<'HTML'
+	$fig_exterior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-kia-carnival-iz-korei-exterior.jpg',
+			'Kia Carnival серебристого цвета — вид спереди-три четверти',
+			'Carnival — просторный минивэн для большой семьи из Кореи.'
+		)
+		: '';
+	$fig_interior = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-kia-carnival-iz-korei-interior.jpg',
+			'Салон Kia Carnival: второй ряд сидений и панорамная крыша',
+			'Богатые комплектации Carnival часто включают панораму и ADAS.'
+		)
+		: '';
+	$fig_seating = function_exists( 'proauc_blog_content_figure' )
+		? proauc_blog_content_figure(
+			'obzor-kia-carnival-iz-korei-seating.jpg',
+			'Kia Carnival — просторный салон с тремя рядами сидений',
+			'Три ряда сидений делают Carnival альтернативой премиальным минивэнам.'
+		)
+		: '';
+
+	return <<<HTML
 <p>Kia Carnival (в Корее также известен как Staria в новом кузове, но Carnival остаётся хитом сегмента) — просторный минивэн для большой семьи. С корейского рынка часто заказывают богатые комплектации с панорамой и пакетами ADAS.</p>
 
 <h2>Почему Carnival из Кореи</h2>
 <p>Широкий выбор на внутреннем рынке, проверка истории и страховых случаев до оплаты. Логика подбора — в <a href="/kak-kupit-avto-iz-korei/">как купить авто из Кореи</a>.</p>
+{$fig_exterior}
 
 <h2>Сравнение с Alphard</h2>
 <p>Carnival часто дешевле «под ключ», чем премиальный Alphard с аукциона Японии. Сравните оба формата под ваш бюджет — у нас есть <a href="/obzor-toyota-alphard-iz-yaponii/">обзор Alphard</a> и кейсы по Корее.</p>
+{$fig_interior}
 
 <h2>Каталог</h2>
 <p>Актуальные предложения — в <a href="/avto-iz-korei/catalog/">каталоге авто из Кореи</a>.</p>
+{$fig_seating}
 
 <p>Нужен Carnival — оставьте заявку с желаемым годом и числом мест.</p>
 HTML;
@@ -734,5 +973,86 @@ function proauc_blog_article_byd_zeekr_sravnenie() {
 <p>Итог зависит от комплектации и курса. Актуальные варианты — в <a href="/avto-iz-kitaya/catalog/">каталоге Китая</a>.</p>
 
 <p>Не можете выбрать между Seal и Zeekr 001 — опишите бюджет и сценарий в заявке, подберём вариант.</p>
+HTML;
+}
+
+function proauc_blog_article_sravnenie_stran() {
+	return <<<'HTML'
+<p>Покупатели часто выбирают между тремя направлениями: <a href="/avto-iz-yaponii/">авто из Японии</a>, <a href="/avto-iz-korei/">из Кореи</a> и <a href="/avto-iz-kitaya/">из Китая</a>. У каждого рынка своя логика подбора, сроки и типичный ассортимент. Ниже — сравнение для тех, кто только начинает разбираться.</p>
+
+<h2>Япония: аукционы и прозрачная история</h2>
+<p>Классический сценарий — торги на USS, TAA и других площадках. Состояние фиксируется в <a href="/kak-chitat-aukczionnyj-list/">аукционном листе</a>. Сильные стороны: широкий выбор б/у, понятные оценки, популярные Toyota, Nissan, Honda. Подробнее — в <a href="/kak-kupit-avto-s-aukcziona-yaponii/">инструкции по покупке с аукциона</a>.</p>
+
+<h2>Корея: внутренний рынок и европейские марки</h2>
+<p>Чаще покупают Hyundai, Kia, Genesis и американские/европейские авто, собранные для корейского рынка. Проверка идёт по базам и отчётам, а не по японскому листу. Сравнение форматов — в <a href="/chem-avto-iz-korei-otlichaetsya-ot-yaponii/">статье про отличия Кореи и Японии</a>.</p>
+
+<h2>Китай: новые модели и электромобили</h2>
+<p>Актуально для BYD, Zeekr, Li Auto и других EV. Часто заказывают новые или почти новые машины с богатыми комплектациями. Стартовая точка — <a href="/kak-kupit-avto-iz-kitaya/">как купить авто из Китая</a> и <a href="/elektromobili-iz-kitaya-byd-zeekr/">обзор электромобилей</a>.</p>
+
+<h2>Цена «под ключ» и сроки</h2>
+<p>Итог зависит не от цены лота, а от пошлины, фрахта и маршрута. Ориентиры по Японии — в материале <a href="/skolko-stoit-privezti-avto-iz-yaponii/">сколько стоит привезти авто</a>. Для сравнения трёх стран лучше запросить три сметы под один запрос — менеджер Proauc рассчитает варианты.</p>
+
+<h2>Кому что подходит</h2>
+<ul>
+<li><strong>Япония</strong> — проверенный б/у с аукциона, внедорожники, минивэны, редкие комплектации.</li>
+<li><strong>Корея</strong> — свежие Hyundai/Kia, семейные кроссоверы, европейские марки с корейского рынка.</li>
+<li><strong>Китай</strong> — электромобили и новые модели, которых мало на вторичном рынке РФ.</li>
+</ul>
+
+<p>Не уверены в выборе страны — опишите модель и бюджет в заявке или начните с <a href="/avto-iz-yaponii/catalog/">каталога</a> по интересующему направлению.</p>
+HTML;
+}
+
+function proauc_blog_article_statistika_aukcionov() {
+	return <<<'HTML'
+<p>На <a href="/avto-iz-yaponii/statistika/">странице статистики аукционов Японии</a> собраны данные о продажах: цены, пробеги, популярные модели. Это помогает оценить рынок до торгов и не переплатить за лот. Разбираем, как пользоваться инструментом при подборе.</p>
+
+<h2>Зачем смотреть статистику до покупки</h2>
+<p>Цена на аукционе — не финальная «под ключ». Но статистика показывает диапазон, в котором проходят торги по марке, модели, году и пробегу. Это аргумент на переговорах с менеджером и фильтр «слишком дорого / подозрительно дёшево».</p>
+
+<h2>На что смотреть в отчёте</h2>
+<ul>
+<li><strong>Средняя цена</strong> по модели и году — ориентир для бюджета.</li>
+<li><strong>Пробег</strong> — типичный диапазон для выбранного возраста авто.</li>
+<li><strong>Объём продаж</strong> — насколько модель ликвидна и часто встречается на торгах.</li>
+<li><strong>Оценки на листе</strong> — связка «цена ↔ состояние»; расшифровка в <a href="/kak-chitat-aukczionnyj-list/">гайде по листу</a>.</li>
+</ul>
+
+<h2>Связь со сметой «под ключ»</h2>
+<p>К цене лота добавляются фрахт, пошлина, брокер и доставка по РФ. Полная картина — в <a href="/skolko-stoit-privezti-avto-iz-yaponii/">статье про стоимость привоза</a>. Статистика отвечает на вопрос «сколько стоит сам лот», смета Proauc — «сколько выйдет на руки во Владивостоке».</p>
+
+<h2>Когда статистики недостаточно</h2>
+<p>Редкие комплектации и единичные лоты могут не попадать в усреднённые цифры. Тогда подбор идёт через <a href="/avto-iz-yaponii/catalog/">каталог</a> и живые листы на ближайших торгах.</p>
+
+<p>Нужна помощь с интерпретацией цифр — оставьте заявку с моделью и годом, подберём лоты и рассчитаем «под ключ».</p>
+HTML;
+}
+
+function proauc_blog_article_habarovsk() {
+	return <<<'HTML'
+<p>Многие клиенты Proauc из Хабаровска и Хабаровского края заказывают <a href="/avto-iz-yaponii/">авто с аукционов Японии</a>. Схема стандартная: растаможка во Владивостоке, затем перегон в Хабаровск. Ниже — сроки, варианты доставки и на что обратить внимание.</p>
+
+<h2>Этапы: от аукциона до Хабаровска</h2>
+<ol>
+<li>Подбор и торги — см. <a href="/kak-kupit-avto-s-aukcziona-yaponii/">как купить с аукциона</a>.</li>
+<li>Морская доставка во Владивосток — обычно 2–3 недели.</li>
+<li>Таможня и выдача документов — несколько рабочих дней; детали в <a href="/rastamozka-avto-iz-yaponii/">статье про растаможку</a>.</li>
+<li>Перегон автовозом в Хабаровск — чаще 1–2 дня после погрузки.</li>
+</ol>
+
+<h2>Автовоз vs самостоятельный перегон</h2>
+<p>Автовоз удобен, если не хотите ехать во Владивосток лично. Самостоятельный перегон возможен после получения ЭПТС и страховки — маршрут по трассе Р-487 и далее по региону. Общая логика доставки по ДВ — в <a href="/dostavka-avto-v-regiony-dalnego-vostoka/">статье про регионы Дальнего Востока</a>.</p>
+
+<h2>Сроки и сезонность</h2>
+<p>Полный цикл «под ключ» от заявки до Хабаровска чаще занимает 6–8 недель. Зимой закладывайте запас на погоду и загрузку перевозчиков. Точные сроки зависят от модели, линии и очереди на таможне.</p>
+
+<h2>Что подготовить заранее</h2>
+<ul>
+<li>Бюджет «под ключ» с запасом на перегон.</li>
+<li>Понимание, нужен ли полный привод — для региона это частый запрос.</li>
+<li>Контакт для связи на этапе выдачи во Владивостоке.</li>
+</ul>
+
+<p>Живёте в Хабаровске и ищете авто с аукциона — оставьте заявку или посмотрите лоты в <a href="/avto-iz-yaponii/catalog/">каталоге Японии</a>.</p>
 HTML;
 }

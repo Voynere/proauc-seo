@@ -263,6 +263,15 @@ section{margin:1.5rem 0 0rem; padding:.5rem 0}
 	display:block;width:72px;height:72px;border-radius:50%;
 	background:#e8e8e8 url(../images/icon-star-g.svg) center/40% no-repeat;
 }
+.single #container-content-single .proauc-blog-figure{
+	margin:1.5rem 0;
+}
+.single #container-content-single .proauc-blog-figure img{
+	display:block;max-width:100%;height:auto;border-radius:8px;
+}
+.single #container-content-single .proauc-blog-figure__caption{
+	color:#666;
+}
 .inner-page .proauc-auction-list-related{
 	background:#232222;border-color:#525252;
 }

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Корея">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#141418"/>
+      <stop offset="100%" stop-color="#252530"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <path d="M820 0L1200 380V630H520L820 0Z" fill="#C62828" opacity="0.92"/>
+  <path d="M900 0L1200 300V630H680L900 0Z" fill="#ffffff" opacity="0.06"/>
+  <text x="72" y="84" fill="#C62828" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">Корея</text>
+  <text fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" letter-spacing="-0.5"><tspan x="72" y="271">Обзор Kia Carnival из Кореи:</tspan><tspan x="72" y="329">семейный минивэн</tspan></text>
+  <text x="72" y="582" fill="#888888" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600">proauc.ru</text>
+</svg>

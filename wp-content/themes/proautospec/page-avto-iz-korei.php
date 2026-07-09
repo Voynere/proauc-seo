@@ -116,6 +116,8 @@ echo "<script>var course = ".$options->korea->course.";</script>";
 	</div>
 	</section>
 
+	<?php get_template_part( 'template-parts/landing/b-blog-links', null, array( 'cluster' => 'koreya' ) ); ?>
+
 </article>
 <?php
 $models = $wp_filesystem->get_contents( get_home_path().'/api/cache/model_kr.js');

@@ -103,6 +103,8 @@ echo "<script>var course = ".$options->japan->course.";</script>";
 <p>Когда таможенные процедуры будут пройдены, машина вновь собирается, что делает удобной её транспортировку по территории РФ до конечного покупателя.</p>
 <p>Конструктор на сегодняшний день один из самых популярных типов ввоза запчастей на территорию РФ. Для рамных автомобилей конструктор используется для перестановки кузова и двигателя, в таком случае номер рамы остается прежним.</p>
 	</section>
+
+	<?php get_template_part( 'template-parts/landing/b-blog-links', null, array( 'cluster' => 'yaponiya' ) ); ?>
 </article>
 <?php
 $models = $wp_filesystem->get_contents( get_home_path().'/api/cache/MODEL_ST.js');
