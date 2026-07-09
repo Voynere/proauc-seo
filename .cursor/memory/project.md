@@ -36,6 +36,15 @@ Tables: `wp_api_vendors`, `wp_api_models`, `wp_api_hdm_groups`, `wp_api_hdm_type
 
 - `/assets/` on production (~2.5 GB static) — **not in Git**, sync separately
 
-## Git exclusions
+## Git scope (custom-code repo)
 
-See root `.gitignore`: wp-config.php, .htaccess, uploads, cache, assets/, api/
+Модель как у atk-ved / ferma-dv: в git только кастомный код.
+
+**Tracked:**
+- `wp-content/themes/proautospec/`
+- `.cursor/` (agent memory)
+- `scripts/`, `docs/`
+
+**Not tracked:** WP core, plugins, uploads, cache, `assets/`, `api/`, `seov/`, root static files.
+
+Deploy: GitHub Actions → rsync темы (кроме каталожных файлов). Secrets: `SERVER_HOST`, `SERVER_USER`, `SERVER_PORT`, `SERVER_SSH_KEY`, `SERVER_PATH`.

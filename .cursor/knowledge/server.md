@@ -59,11 +59,15 @@ scp proauc:/var/www/proauc_ru_usr/data/www/proauc.ru/wp-content/themes/proautosp
 
 ## Deploy workflow
 
+Репозиторий — **custom-code only** (как atk-ved / ferma-dv). GitHub Actions при push в `main` rsync-ит тему `proautospec`, **кроме** каталожных файлов (`functions.php`, `page-48.php`, `js/api/cars-catalog.js`).
+
 1. Edit locally, commit to `main`
 2. If catalog files diverged — `scp` from prod first (see above), adapt SEO on top
-3. Upload **only our** changed files via `scp` (see README deploy list)
+3. Push → GitHub Actions deploy, или точечный `scp` (см. README)
 4. Clear Autoptimize cache if CSS/JS changed
 5. Verify Rank Math sitemap / robots if SEO files changed
+
+Secrets: `SERVER_HOST`, `SERVER_USER`, `SERVER_PORT`, `SERVER_SSH_KEY`, `SERVER_PATH`.
 
 SEO deploy example:
 

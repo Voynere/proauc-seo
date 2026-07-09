@@ -1,1 +1,0 @@
-ymaps.ready(function(){const map=new ymaps.Map('YMap',{center:[43.167333,131.903370],zoom:15,theme:"dark"});var placemark=new ymaps.Placemark([43.167333,131.903370],{},{preset:'islands#darkOrangeIcon'});map.geoObjects.add(placemark);});

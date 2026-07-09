@@ -1,0 +1,137 @@
+name: Deploy custom code
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Backup current theme
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            TIMESTAMP=$(date +%s)
+            BACKUP_DIR="/tmp/proauc-deploy-backups/$TIMESTAMP"
+            THEME_PATH="${{ secrets.SERVER_PATH }}/wp-content/themes/proautospec"
+            mkdir -p "$BACKUP_DIR"
+            if [ -d "$THEME_PATH" ]; then
+              rsync -a "$THEME_PATH/" "$BACKUP_DIR/" --exclude=node_modules --exclude=.git
+              echo "Backup saved to $BACKUP_DIR"
+            else
+              echo "Theme directory not found, skipping backup"
+            fi
+
+      - name: Upload custom code bundle
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "wp-content/themes/proautospec,scripts"
+          target: "/tmp/proauc-deploy-${{ github.run_id }}"
+
+      - name: Sync custom code into WordPress
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -euo pipefail
+
+            STAGING="/tmp/proauc-deploy-${{ github.run_id }}"
+            TARGET="${{ secrets.SERVER_PATH }}"
+            THEME_TARGET="$TARGET/wp-content/themes/proautospec"
+
+            if [ ! -d "$STAGING/wp-content/themes/proautospec" ]; then
+              echo "ERROR: staging bundle missing at $STAGING"
+              exit 1
+            fi
+
+            bash "$STAGING/scripts/verify-deploy-bundle.sh" "$STAGING" "staging"
+
+            mkdir -p "$TARGET/wp-content/themes"
+
+            # Catalog zone: do not overwrite files owned by another developer.
+            rsync -a --delete \
+              --exclude='functions.php' \
+              --exclude='page-48.php' \
+              --exclude='js/api/cars-catalog.js' \
+              "$STAGING/wp-content/themes/proautospec/" "$THEME_TARGET/"
+
+            if [ -f "$STAGING/scripts/robots.txt" ]; then
+              cp "$STAGING/scripts/robots.txt" "$TARGET/robots.txt"
+              chown proauc_ru_usr:proauc_ru_usr "$TARGET/robots.txt"
+              echo "Updated $TARGET/robots.txt"
+            fi
+
+            bash "$STAGING/scripts/verify-deploy-bundle.sh" "$TARGET" "production" || {
+              BACKUP_ROOT="/tmp/proauc-deploy-backups"
+              LATEST="$(ls -dt "$BACKUP_ROOT"/*/ 2>/dev/null | head -1 || true)"
+              if [ -n "$LATEST" ] && [ -d "$LATEST" ]; then
+                echo "Restoring theme from $LATEST"
+                rsync -a --delete "$LATEST/" "$THEME_TARGET/"
+                bash "$STAGING/scripts/verify-deploy-bundle.sh" "$TARGET" "production-after-restore"
+              else
+                exit 1
+              fi
+            }
+
+            chown -R proauc_ru_usr:proauc_ru_usr "$THEME_TARGET"
+
+            if [ -d "$STAGING/scripts" ]; then
+              mkdir -p "$TARGET/../proauc-scripts"
+              rsync -a "$STAGING/scripts/" "$TARGET/../proauc-scripts/"
+              chown -R proauc_ru_usr:proauc_ru_usr "$TARGET/../proauc-scripts"
+            fi
+
+            echo "::group::Autoptimize cache flush"
+            rm -rf "$TARGET/wp-content/cache/autoptimize/"* 2>/dev/null || true
+            rm -rf "$TARGET/cache/"* 2>/dev/null || true
+            echo "::endgroup::"
+
+            echo "::group::Cache warmup"
+            SITE_URL="https://proauc.ru"
+            curl -sS -o /dev/null "$SITE_URL/" || echo "[warn] warmup / skipped"
+            curl -sS -o /dev/null "$SITE_URL/avto-iz-yaponii/" || echo "[warn] warmup avto-iz-yaponii skipped"
+            curl -sS -o /dev/null "$SITE_URL/avto-iz-korei/" || echo "[warn] warmup avto-iz-korei skipped"
+            echo "::endgroup::"
+
+            rm -rf "$STAGING"
+            find /tmp -maxdepth 1 -type d -name 'proauc-deploy-*' -mtime +2 -exec rm -rf {} + 2>/dev/null || true
+
+      - name: Cleanup old backups (keep last 10)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            BACKUP_ROOT="/tmp/proauc-deploy-backups"
+            if [ -d "$BACKUP_ROOT" ]; then
+              ls -dt "$BACKUP_ROOT"/*/ 2>/dev/null | tail -n +11 | xargs -r rm -rf
+              echo "Backup cleanup done. Remaining:"
+              ls -d "$BACKUP_ROOT"/*/ 2>/dev/null | wc -l
+            else
+              echo "No backup directory found, skipping cleanup"
+            fi

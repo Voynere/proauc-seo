@@ -28,3 +28,7 @@ Motorhome import: внешний importer (adapters → normalizer → WP-CLI wr
 ## 2026-07-07 08:47 UTC
 
 Источники motorhome: Fujicars (JP, EN, Phase 2), Bobaedream (KR, camp filter, Phase 3), Encar (KR, camping car, Phase 4 — сначала проверить Korea API на проде).
+
+## 2026-07-09 03:41 UTC
+
+Репозиторий proauc-seo переведён на custom-code модель (как atk-ved/ferma-dv): в git только wp-content/themes/proautospec/, scripts/, .cursor/. WP core и плагины исключены. Deploy через GitHub Actions rsync, каталожные файлы (functions.php, page-48.php, cars-catalog.js) не перезаписываются.
