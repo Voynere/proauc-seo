@@ -211,6 +211,8 @@ section{margin:1.5rem 0 0rem; padding:.5rem 0}
 .single #container-content-single{
 	background:#fff;
 	color:#1c1c1c;
+	margin-top:2rem;
+	margin-bottom:3rem;
 }
 .single #container-content-single h1,
 .single #container-content-single h2,
