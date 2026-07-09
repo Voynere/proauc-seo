@@ -580,12 +580,8 @@ ins.flag-kr{background:url(../images/flag-korea.png) center center no-repeat;}
 .car-item__pic img{width:100%;height:100%; position: absolute;top:0;left:0;object-fit:cover}
 .car-item__desc{overflow:hidden; padding:1rem;position:relative;border:1px solid rgba(120,120,120, .5); border-width:0 1px 1px 1px;border-radius: 0 0 10px 10px;flex-grow: 1;display:flex;flex-direction:column}
 
-.car-item h3{font-size:1.125rem;font-weight:600;color:#fff;margin-bottom:.75rem;white-space: nowrap;position:relative;text-transform: uppercase}
-.car-item h3:after{ content: '';
-    display: block;position: absolute;width: 3rem;height: 100%;background: linear-gradient(to right, rgba(42, 42, 42, 0) 0%, rgba(42, 42, 42, 1) 80%);
-    bottom: 0;
-    right: -1rem;
-    top: 0;}
+.car-item h3{font-size:1.125rem;font-weight:600;color:#fff;margin-bottom:.75rem;position:relative;text-transform:uppercase;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;word-break:break-word;min-height:calc(1.125rem * 1.35 * 2)}
+.car-item h3:after{display:none}
 
 .car-item h3 a{text-decoration: none;}
 
@@ -632,6 +628,7 @@ background: none;border:1px solid rgba(78,78,78,.5);border-width: 0 0 1px 0; bor
 
 .car-item--row .car-item__lot a{text-decoration: none}
 #cars-listing .car-item--row.car-item h3{font-size: 14px;    height: auto;}
+.car-item--row h3{display:block;-webkit-line-clamp:unset;line-clamp:unset;overflow:visible;min-height:0}
 .car-item--row h3:after{display:none}
 
 .car-item--row p{margin-bottom: 0}
@@ -1307,7 +1304,7 @@ border-radius: 3px;
 
 #cars-listing div[class^="col-"] {margin-bottom:1.5rem}
 #cars-listing .car-item {height:100%;}
-#cars-listing .car-item h3{font-family: "Jost", sans-serif;font-size:1.2rem;white-space: normal;height:61px;overflow: hidden}
+#cars-listing .car-item h3{font-family:"Jost",sans-serif;font-size:1.2rem;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;word-break:break-word;min-height:calc(1.2rem * 1.35 * 2);height:auto}
 #cars-listing .car-item h3 span{display: block}
 #cars-listing .car-model-specification{font-size:.75rem}
 #cars-listing .car-item__desc{flex-grow: 1;display: flex;flex-direction: column}
