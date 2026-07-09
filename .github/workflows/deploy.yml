@@ -31,7 +31,7 @@ jobs:
             THEME_PATH="${{ secrets.SERVER_PATH }}/wp-content/themes/proautospec"
             mkdir -p "$BACKUP_DIR"
             if [ -d "$THEME_PATH" ]; then
-              rsync -a "$THEME_PATH/" "$BACKUP_DIR/" --exclude=node_modules --exclude=.git
+              cp -a "$THEME_PATH/." "$BACKUP_DIR/"
               echo "Backup saved to $BACKUP_DIR"
             else
               echo "Theme directory not found, skipping backup"
@@ -68,14 +68,15 @@ jobs:
 
             bash "$STAGING/scripts/verify-deploy-bundle.sh" "$STAGING" "staging"
 
-            mkdir -p "$TARGET/wp-content/themes"
+            mkdir -p "$TARGET/wp-content/themes" "$THEME_TARGET"
 
-            # Catalog zone: do not overwrite files owned by another developer.
-            rsync -a --delete \
-              --exclude='functions.php' \
-              --exclude='page-48.php' \
-              --exclude='js/api/cars-catalog.js' \
-              "$STAGING/wp-content/themes/proautospec/" "$THEME_TARGET/"
+            # Catalog zone: tar excludes files owned by another developer.
+            # Server has no rsync — use tar (see README sync section).
+            tar -C "$STAGING/wp-content/themes/proautospec" \
+              --exclude='./functions.php' \
+              --exclude='./page-48.php' \
+              --exclude='./js/api/cars-catalog.js' \
+              -cf - . | tar -xf - -C "$THEME_TARGET"
 
             if [ -f "$STAGING/scripts/robots.txt" ]; then
               cp "$STAGING/scripts/robots.txt" "$TARGET/robots.txt"
@@ -88,7 +89,7 @@ jobs:
               LATEST="$(ls -dt "$BACKUP_ROOT"/*/ 2>/dev/null | head -1 || true)"
               if [ -n "$LATEST" ] && [ -d "$LATEST" ]; then
                 echo "Restoring theme from $LATEST"
-                rsync -a --delete "$LATEST/" "$THEME_TARGET/"
+                cp -a "$LATEST/." "$THEME_TARGET/"
                 bash "$STAGING/scripts/verify-deploy-bundle.sh" "$TARGET" "production-after-restore"
               else
                 exit 1
@@ -99,7 +100,7 @@ jobs:
 
             if [ -d "$STAGING/scripts" ]; then
               mkdir -p "$TARGET/../proauc-scripts"
-              rsync -a "$STAGING/scripts/" "$TARGET/../proauc-scripts/"
+              cp -a "$STAGING/scripts/." "$TARGET/../proauc-scripts/"
               chown -R proauc_ru_usr:proauc_ru_usr "$TARGET/../proauc-scripts"
             fi
 
