@@ -26,6 +26,7 @@ $picostrap_includes = array(
 	'/content-filtering.php',				//for LC compatibility when shutting down plugin
 	'/blog-seo.php',                        // Blog bootstrap, CTA, FAQ (P3).
 	'/avto-display.php',                    // Avto price / motorhome display helpers.
+	'/avtodoma-filter.php',                 // /avtodoma/ mark/model/year filter.
 	'/seo-settings.php',                    // OAuth Метрики, SEO-настройки админки.
     //'/windpress-support.php'                    //for deep integration with the WindPress plugin, for optional use of TailWind
 );
