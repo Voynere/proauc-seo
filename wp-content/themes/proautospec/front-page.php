@@ -42,7 +42,7 @@ get_header();
 					<p>С уважением, генеральный директор, Хлопотов Виктор Денисович.</p>
 				</div>
 				<div class="col-lg-4">
-					<img src="/images/proautospec-director.png" class="img-fluid">
+					<img src="/images/proautospec-director.png" class="img-fluid" loading="lazy" decoding="async" alt="">
 				</div>
 			</div>
 			<div class="row" style="margin-top:-1rem">
@@ -171,7 +171,7 @@ get_header();
 					<a class="btn" href="#" data-bs-toggle="modal" data-bs-target="#order-dialog" data-title="Подобрать варианты техники">Подобрать варианты</a>
 				</div>
 				<div class="col-lg-6">
-					<img class="img-fluid" src="/images/cta-autos.png" alt="Подбор автомобилей и техники">
+					<img class="img-fluid" src="/images/cta-autos.png" alt="Подбор автомобилей и техники" loading="lazy" decoding="async">
 				</div>
 			</div>
 		</div>

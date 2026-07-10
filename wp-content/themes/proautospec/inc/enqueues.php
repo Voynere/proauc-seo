@@ -8,6 +8,8 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/performance.php';
+
 
 /*
 add_action( 'all', function ( $tag ) {
