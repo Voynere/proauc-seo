@@ -60,3 +60,10 @@ Motorhome translate: デリカ→Delica, ケイワークス→Keiworks, クル�
 ## 2026-07-09 22:22 UTC
 
 Motorhome polish 2026-07-10: /avtodoma/ (301 с /avto-v-nalichii/), меню «Автодома», цена «По запросу» cat1/_source, ACF photos fix через update_field (wp-cli двойная сериализация), backfill 23 постов, retranslate 21 title, sample post 1926 — 20 фото.
+
+## 2026-07-09 23:08 UTC
+
+Motorhome JP→RU translate.py: добавлены KANJI_MAP (暖房, 軽, 2段, 家), camping builders (Toyo Factory, Vantec, Hijet), latin fixes для частичных retranslate. retranslate --no-dry-run на prod: 5 заголовков fujicars исправлено, 0 JP осталось в 24 published avto.
+## 2026-07-10 08:22 UTC
+
+План 11.07 / чеклист 14.07: Яндекс.Вебмастер переобход post-sitemap; мониторинг волны 5 (18–31.07); первый съём позиций в seov/positions-weekly.md (seo.smyalichi.ru). In-body JPG для не-obzor статей — только по явному запросу клиента.

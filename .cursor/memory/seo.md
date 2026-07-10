@@ -158,3 +158,28 @@ Blog in-body images: images/blog/content/, proauc_blog_content_figure() in blog-
 ## 2026-07-09 22:18 UTC
 
 Чеклист ~14.07: переобход post-sitemap в Яндекс.Вебмастере; волна 4 (2/4 опубликовано, Komatsu 12.07, доставка ДВ 15.07); волна 5 (5 статей 18–31.07) по расписанию через WP future; post-sitemap ~14→21 URL; снимок позиций seov/positions-weekly.md
+
+## 2026-07-10 01:36 UTC
+
+10.07 отчёт заказчика обновлён: деплой JPG-обложек (24), in-body BYD Seal, landing→blog links, hero убран из single.php; post-sitemap 15 URL, волна 4 — 2/4 (Seal+Sorento), P3 ~76%, PDF пересобран
+
+## 2026-07-10 01:38 UTC
+
+Страница /avtodoma/: фильтр mark/model/year (GET), inc/avtodoma-filter.php парсит марку/модель из title, год из properties_year, только motorhome-посты (_source fujicars/bobaedream или title Автодом/キャンピングカー/Camroad). UI: template-parts/avtodoma-form-filter.php + js/onload.avtodoma.js
+
+## 2026-07-10 03:49 UTC
+
+Blog in-body JPGs: 21 файлов для 7 obzory в images/blog/content/ (1536x1024), commit 88ef833. proauc_sync_blog_post_content callbacks исправлены, migration obzory_v2. Prod sync через wp eval после деплоя. Land Cruiser и Palisade verified live.
+
+## 2026-07-10 04:35 UTC
+
+10.07 досрочно опубликованы Komatsu PC200 и доставка ДВ, волна 4 закрыта
+## 2026-07-10 08:22 UTC
+
+10.07 итог дня: волна 4 закрыта 4/4 (Komatsu + доставка ДВ досрочно 10.07). Деплои 8213b24 (JPG-обложки, BYD in-body, landing→blog), 2204ee8 (hero убран из single), 88ef833 (21 in-body JPG × 7 obzory, obzory_v2), c65946e (performance.php, lazy-load). post-sitemap 17 URL (16 published + 8 future). P3 ~78%. Чеклист ~14.07: Вебмастер post-sitemap, съём позиций, волна 5 18–31.07. Отчёт+PDF seov обновлены.
+
+**Завтра / ~14.07:** переобход post-sitemap в Яндекс.Вебмастере; волна 5 (Alphard, X-Trail, Vezel, Carnival, BYD vs Zeekr); positions-weekly.md; опционально in-body для гайдов/кейсов по запросу клиента.
+
+## 2026-07-10 08:22 UTC
+
+10.07 итог дня: волна 4 закрыта 4/4 (Komatsu+доставка ДВ досрочно), 21 in-body JPG для обзоров, hero убран из single, деплои 8213b24/2204ee8/88ef833/c65946e, post-sitemap 17 URL, P3 ~78%, чеклист 14.07 Вебмастер
