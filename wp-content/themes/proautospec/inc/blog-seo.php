@@ -441,7 +441,14 @@ function proauc_sync_blog_post_content( $slug ) {
 	}
 
 	$callbacks = array(
-		'obzor-byd-seal-iz-kitaya' => 'proauc_blog_article_obzor_byd_seal',
+		'obzor-byd-seal-iz-kitaya'              => 'proauc_blog_article_obzor_byd_seal',
+		'obzor-toyota-land-cruiser-iz-yaponii'  => 'proauc_blog_article_obzor_land_cruiser',
+		'obzor-hyundai-palisade-iz-korei'       => 'proauc_blog_article_obzor_palisade',
+		'obzor-komatsu-pc200-iz-yaponii'        => 'proauc_blog_article_obzor_komatsu_pc200',
+		'obzor-toyota-alphard-iz-yaponii'       => 'proauc_blog_article_obzor_alphard',
+		'obzor-nissan-x-trail-iz-yaponii'       => 'proauc_blog_article_obzor_xtrail',
+		'obzor-honda-vezel-iz-yaponii'          => 'proauc_blog_article_obzor_vezel',
+		'obzor-kia-carnival-iz-korei'           => 'proauc_blog_article_obzor_carnival',
 	);
 	if ( empty( $callbacks[ $slug ] ) || ! function_exists( $callbacks[ $slug ] ) ) {
 		if ( ! function_exists( 'proauc_get_blog_article_seeds' ) ) {
@@ -1673,6 +1680,21 @@ add_action(
 				proauc_sync_blog_post_content( $slug );
 			}
 			update_option( 'proauc_blog_content_obzory_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_content_obzory_v2' ) ) {
+			$obzory_slugs = array(
+				'obzor-toyota-land-cruiser-iz-yaponii',
+				'obzor-hyundai-palisade-iz-korei',
+				'obzor-komatsu-pc200-iz-yaponii',
+				'obzor-toyota-alphard-iz-yaponii',
+				'obzor-nissan-x-trail-iz-yaponii',
+				'obzor-honda-vezel-iz-yaponii',
+				'obzor-kia-carnival-iz-korei',
+			);
+			foreach ( $obzory_slugs as $slug ) {
+				proauc_sync_blog_post_content( $slug );
+			}
+			update_option( 'proauc_blog_content_obzory_v2', 1 );
 		}
 		if ( ! get_option( 'proauc_blog_sitemap_flush_v1' ) ) {
 			proauc_invalidate_rank_math_post_sitemap();
