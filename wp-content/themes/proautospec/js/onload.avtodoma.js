@@ -1,41 +1,61 @@
-(function () {
+(function ($) {
 	'use strict';
 
-	var markSelect = document.getElementById('avtodoma-mark');
-	var modelSelect = document.getElementById('avtodoma-model');
-	var modelsNode = document.getElementById('avtodoma-filter-models');
-
-	if (!markSelect || !modelSelect || !modelsNode) {
-		return;
-	}
-
-	var modelsByMark = {};
-	try {
-		modelsByMark = JSON.parse(modelsNode.textContent || '{}');
-	} catch (error) {
-		modelsByMark = {};
-	}
-
-	function fillModels(markSlug, selectedModel) {
-		while (modelSelect.options.length > 1) {
-			modelSelect.remove(1);
+	function readModelsByMark() {
+		var modelsNode = document.getElementById('avtodoma-filter-models');
+		if (!modelsNode) {
+			return {};
 		}
 
-		var models = modelsByMark[markSlug] || [];
-		models.forEach(function (item) {
-			var option = document.createElement('option');
-			option.value = item.id;
-			option.textContent = item.text;
-			if (selectedModel && selectedModel === item.id) {
-				option.selected = true;
-			}
-			modelSelect.appendChild(option);
-		});
+		try {
+			return JSON.parse(modelsNode.textContent || '{}');
+		} catch (error) {
+			return {};
+		}
 	}
 
-	markSelect.addEventListener('change', function () {
-		fillModels(markSelect.value, '');
-	});
+	function fillModels($markSelect, $modelSelect, modelsByMark, selectedModel) {
+		var markSlug = $markSelect.val();
 
-	fillModels(markSelect.value, modelSelect.value);
-})();
+		$modelSelect.empty();
+		$modelSelect.append(
+			$('<option>', {
+				value: '',
+				text: 'Все модели',
+			})
+		);
+
+		(modelsByMark[markSlug] || []).forEach(function (item) {
+			$modelSelect.append(
+				$('<option>', {
+					value: item.id,
+					text: item.text,
+					selected: selectedModel === item.id,
+				})
+			);
+		});
+
+		if ($modelSelect.data('select2')) {
+			$modelSelect.trigger('change.select2');
+		} else {
+			$modelSelect.trigger('change');
+		}
+	}
+
+	$(function () {
+		var $markSelect = $('#avtodoma-mark');
+		var $modelSelect = $('#avtodoma-model');
+
+		if (!$markSelect.length || !$modelSelect.length) {
+			return;
+		}
+
+		var modelsByMark = readModelsByMark();
+
+		$markSelect.on('change', function () {
+			fillModels($markSelect, $modelSelect, modelsByMark, '');
+		});
+
+		fillModels($markSelect, $modelSelect, modelsByMark, $modelSelect.val());
+	});
+})(jQuery);

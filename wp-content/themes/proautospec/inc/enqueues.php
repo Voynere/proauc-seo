@@ -136,7 +136,13 @@ add_action( 'wp_enqueue_scripts', function() {
 	}else if (is_post_type_archive('reviews')){
 		wp_enqueue_script( "onload-reviews", get_template_directory_uri() . "/js/onload.reviews.js", array(), null, array( 'in_footer' => true) );
 	}else if ( is_page( 'avtodoma' ) ) {
-		wp_enqueue_script( 'onload-avtodoma', get_template_directory_uri() . '/js/onload.avtodoma.js', array(), null, array( 'in_footer' => true ) );
+		wp_enqueue_script(
+			'onload-avtodoma',
+			get_template_directory_uri() . '/js/onload.avtodoma.js',
+			array( 'jquery' ),
+			null,
+			array( 'in_footer' => true )
+		);
 	}
 	
 	if (is_page('car-lot') || is_page('moto-lot') || is_page('hdm-lot')){

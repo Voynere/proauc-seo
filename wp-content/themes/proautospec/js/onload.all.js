@@ -11,10 +11,14 @@ jQuery(document).ready(function (e) {
 			$(this).next().collapse('toggle');
 		});
 		
-        $('select').select2({
-            theme: "bootstrap5-dark",
-            minimumResultsForSearch: -1
-        });
+        if ($('select').length && $.fn.select2) {
+            $('select')
+                .not('#avtodoma-mark, #avtodoma-model, #avtodoma-year')
+                .select2({
+                theme: "bootstrap5-dark",
+                minimumResultsForSearch: -1
+            });
+        }
 		
 		
 		
