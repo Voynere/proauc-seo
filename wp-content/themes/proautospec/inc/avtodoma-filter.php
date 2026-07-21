@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-/** Category ID for «Автодома в наличии». */
+/** Category ID for «Автодома». */
 const PROAUTOSPEC_AVTODOMA_CATEGORY_ID = 1;
 
 /**

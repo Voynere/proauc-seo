@@ -21,7 +21,7 @@ $has_active_filters = ! empty( $filters['mark'] ) || ! empty( $filters['model'] 
 		<?php if(function_exists('bcn_display')): echo bcn_display(true); endif; ?>
 	</div>  
 	<div class="section-title">
-		<h1>Автодома в наличии</h1>
+		<h1>Автодома</h1>
 	</div>
   </div>
 </section>
