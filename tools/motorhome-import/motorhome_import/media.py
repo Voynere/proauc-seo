@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 import shlex
 import shutil
@@ -21,6 +22,13 @@ from .schema import NormalizedListing
 logger = logging.getLogger(__name__)
 
 SAFE_FILENAME_RE = re.compile(r"[^\w.\-]+", re.UNICODE)
+
+
+def _wp_allow_root() -> bool:
+    try:
+        return os.geteuid() == 0
+    except AttributeError:
+        return False
 
 
 class MediaSideloader:
@@ -105,8 +113,11 @@ class MediaSideloader:
         if not self.wp.wp_path:
             return False
         try:
+            cmd = ["wp", "--info", f"--path={self.wp.wp_path}"]
+            if _wp_allow_root():
+                cmd.append("--allow-root")
             result = subprocess.run(
-                ["wp", "--info", f"--path={self.wp.wp_path}"],
+                cmd,
                 capture_output=True,
                 text=True,
                 check=False,
@@ -126,6 +137,8 @@ class MediaSideloader:
                 f"--path={self.wp.wp_path}",
                 "--porcelain",
             ]
+            if _wp_allow_root():
+                cmd.append("--allow-root")
             if index == 0:
                 cmd.append("--featured_image")
             result = subprocess.run(cmd, capture_output=True, text=True, check=False)

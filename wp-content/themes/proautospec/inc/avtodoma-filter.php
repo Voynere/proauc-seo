@@ -65,7 +65,7 @@ function proautospec_avtodoma_is_listing( $post ) {
 	}
 
 	$source = get_post_meta( $post->ID, '_source', true );
-	if ( in_array( $source, array( 'fujicars', 'bobaedream' ), true ) ) {
+	if ( in_array( $source, array( 'fujicars', 'bobaedream', 'encar' ), true ) ) {
 		return true;
 	}
 

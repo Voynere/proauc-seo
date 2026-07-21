@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import shlex
 import subprocess
 from typing import Any
@@ -16,6 +17,14 @@ from .media import MediaSideloader
 from .schema import NormalizedListing
 
 logger = logging.getLogger(__name__)
+
+
+def _wp_allow_root() -> bool:
+    """wp-cli refuses root unless --allow-root (CI/prod SSH often runs as root)."""
+    try:
+        return os.geteuid() == 0
+    except AttributeError:
+        return False
 
 
 class WordPressWriter:
@@ -224,7 +233,7 @@ class WordPressWriter:
 
     def _wp_cmd(self, *args: str) -> list[str]:
         cmd = ["wp", *args, f"--path={self.wp.wp_path}"]
-        if self.wp.ssh_host:
+        if self.wp.ssh_host or _wp_allow_root():
             cmd.append("--allow-root")
         return cmd
 
@@ -254,8 +263,11 @@ class WordPressWriter:
             except FileNotFoundError:
                 return False
         try:
+            cmd = ["wp", "--info", f"--path={self.wp.wp_path}"]
+            if _wp_allow_root():
+                cmd.append("--allow-root")
             result = subprocess.run(
-                ["wp", "--info", f"--path={self.wp.wp_path}"],
+                cmd,
                 capture_output=True,
                 text=True,
                 check=False,

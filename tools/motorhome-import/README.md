@@ -88,7 +88,7 @@ python -m motorhome_import probe-encar
 |--------|--------|-------|
 | **fujicars** | List + detail | `body=9` camping cars at `/search/list_en` |
 | **bobaedream** | List + detail | Camp filter `?features=camp`, UTF-8, ~70/page, `?page=N` |
-| **encar** | API list (beta) | Ryvuss API via `api.encar.com`; camping filter TBD |
+| **encar** | API list + detail | Ryvuss list + readside detail; Badge.캠핑카 server filter |
 
 ### Fujicars discovery (2026-07-09)
 
@@ -108,16 +108,20 @@ python -m motorhome_import probe-encar
 - Pagination: server-side `?page=N` (~70 listings/page)
 - **Playwright not required** for list or detail pages
 
-### Encar discovery (2026-07-09)
+### Encar discovery (2026-07-09, detail 2026-07-21)
 
 - List UI: `https://www.encar.com/dc/dc_carsearchlist.do` — EUC-KR JS shell
-- **API (works without Playwright):** `GET https://api.encar.com/search/car/list/general`
-  - Params: `count=true`, `q=(And.Hidden.N._.CarType.N.)`, `sr=|ModifiedDate|offset|limit`
-  - Images: `https://ci.encar.com` + `Photos[].location`
-  - Detail URL: `https://www.encar.com/dc/dc_cardetailview.do?carid={Id}`
-- **Camping filter blocker:** no confirmed Ryvuss node for `캠핑카` (Keyword/BadgeGroup/Category queries return 0 or 404)
-- **Workaround:** `camping_only` + client filter on Badge/Model containing `캠핑`, or `model_groups` (스타리아, 그랜드스타렉스, 카운티, …)
-- Detail page specs: not implemented (may need Playwright)
+- **List API (no Playwright):** `GET https://api.encar.com/search/car/list/general`
+  - Params: `count=true`, `q=…`, `sr=|ModifiedDate|offset|limit`
+  - Images: `https://ci.encar.com` + `Photos[].location` (list) / `photos[].path` (detail)
+  - Detail URL: `https://fem.encar.com/cars/detail/{Id}`
+- **Detail API (no Playwright):** `GET https://api.encar.com/v1/readside/vehicle/{Id}`
+  - Specs: mileage, displacement, fuel, color, seats, body
+  - Gallery: up to ~30 photos; description in `contents.text`
+- **Camping filter (server-side):** exact Badge nodes
+  - `(And.Hidden.N._.(Or.Badge.캠핑카._.Badge.4WD 캠핑카._.Badge.캠핑카/이동사무차.))` ≈ 229 listings
+  - Keyword/Category nodes still 404/0; `camping_only` keeps client `캠핑` safety net
+  - Optional `use_model_groups: true` broadens to van platforms (off by default)
 
 ## ACF mapping
 
@@ -164,10 +168,11 @@ See `config.example.yaml`:
 - `wordpress.user` / `app_password` — REST API fallback
 - `import.pricing` — landed-cost API settings
 - `import.sideload_images` — enable/disable media pipeline
-- `import.fetch_details` — fetch detail pages (Fujicars, Bobaedream)
+- `import.fetch_details` — fetch detail pages/API (Fujicars, Bobaedream, Encar)
 - `sources.fujicars.body_type` — `9` = camping cars
-- `sources.encar.api_query` — Ryvuss query string
-- `sources.encar.camping_only` — filter to campers
+- `sources.encar.api_query` — Ryvuss query (default: camping Badge Or)
+- `sources.encar.camping_only` — client `캠핑` safety net
+- `sources.encar.use_model_groups` — optional van-platform broaden (off by default)
 
 ## Dedup
 
@@ -177,8 +182,7 @@ Post meta: `_source` + `_source_id` (Fujicars detail ID, e.g. `5181`).
 
 1. **End-to-end prod import** — run `--no-dry-run` on prod with wp-cli + SSH tested
 2. **ACF parameters repeater** — flat properties/photos work; repeater rows need `update_field()` or eval-file
-3. **Encar camping filter** — no server-side filter confirmed; using model-group heuristic
-4. **Encar detail** — list-only from API; detail specs not fetched yet
+3. **Encar** — list+detail via API done; end-to-end `--no-dry-run` still pending
 
 ## Layout
 
@@ -200,5 +204,5 @@ tools/motorhome-import/
     └── adapters/
         ├── fujicars.py     # List + detail
         ├── bobaedream.py   # List + detail
-        └── encar.py        # API list + probe
+        └── encar.py        # API list + readside detail + probe
 ```

@@ -51,21 +51,24 @@ sources:
 
   encar:
     enabled: false
-    # Ryvuss API query — domestic cars: (And.Hidden.N._.CarType.N.)
-    api_query: "(And.Hidden.N._.CarType.N.)"
-    max_pages: 3
+    # Server-side camping grades (exact Badge match). ~229 listings.
+    api_query: "(And.Hidden.N._.(Or.Badge.캠핑카._.Badge.4WD 캠핑카._.Badge.캠핑카/이동사무차.))"
+    max_pages: 5
     page_size: 50
-    # Filter: Badge/Model contains 캠핑 OR model in model_groups
+    # Safety net: keep only Badge/Model containing 캠핑
     camping_only: true
+    # Broader van platforms (off by default — pulls regular Staria/Carnival)
+    use_model_groups: false
     model_groups:
       - 스타리아
       - 그랜드스타렉스
       - 스타렉스
       - 카운티
-      - e-카운티
+      - e카운티
       - 포터
       - 봉고
       - 카니발
+      - 마스터
 
 logging:
   level: INFO

@@ -67,3 +67,7 @@ Motorhome JP→RU translate.py: добавлены KANJI_MAP (暖房, 軽, 2段,
 ## 2026-07-10 08:22 UTC
 
 План 11.07 / чеклист 14.07: Яндекс.Вебмастер переобход post-sitemap; мониторинг волны 5 (18–31.07); первый съём позиций в seov/positions-weekly.md (seo.smyalichi.ru). In-body JPG для не-obzor статей — только по явному запросу клиента.
+
+## 2026-07-21 05:20 UTC
+
+Encar Phase 4: list via Ryvuss `Badge.캠핑카|4WD 캠핑카|캠핑카/이동사무차` (~229); detail via `api.encar.com/v1/readside/vehicle/{id}` (gallery/specs/description). Playwright не нужен. `use_model_groups` по умолчанию off (иначе обычные Staria/Carnival).

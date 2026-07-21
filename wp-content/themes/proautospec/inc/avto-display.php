@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Whether to show «По запросу» instead of a numeric RUB price.
  *
- * Applies to imported motorhomes (fujicars/bobaedream) and category 1 listings
+ * Applies to imported motorhomes (fujicars/bobaedream/encar) and category 1 listings
  * that are not legacy archive posts (no old-id).
  */
 function proautospec_avto_price_on_request( $post_id = null ) {
@@ -18,7 +18,7 @@ function proautospec_avto_price_on_request( $post_id = null ) {
 	}
 
 	$source = get_post_meta( $post_id, '_source', true );
-	if ( in_array( $source, array( 'fujicars', 'bobaedream' ), true ) ) {
+	if ( in_array( $source, array( 'fujicars', 'bobaedream', 'encar' ), true ) ) {
 		return true;
 	}
 

@@ -2,7 +2,7 @@
 
 Planning doc for importing motorhomes / camping cars from Korean and Japanese marketplaces into the **«Авто в наличии»** section on proauc.ru.
 
-**Status:** Phase 1–3 in progress (2026-07-09). Skeleton + Fujicars + Bobaedream detail + Encar API probe in `tools/motorhome-import/`.
+**Status:** Phase 1–4 adapters ready (2026-07-21). Fujicars + Bobaedream + Encar (list+detail API). End-to-end WP import still pending.
 
 ## Target section
 
@@ -38,7 +38,7 @@ Card loop (`avto.php`) reads `properties` + featured thumbnail or legacy `old-*`
 |--------|--------|--------------|----------|-------|
 | **Fujicars** | Japan | `/search/list_en?body=9` (camping cars) | JA/EN list | Inventory NOT on `/english/` marketing pages |
 | **Bobaedream** | Korea | Camp / camping filter | KO | Korean marketplace, camp category |
-| **Encar** | Korea | Camping car filter | KO | Strategy **TBD**: check prod `/api/` Korea endpoints first; scraper only if API unsuitable |
+| **Encar** | Korea | Badge.캠핑카 Ryvuss + readside detail | KO | List+detail via `api.encar.com` (no Playwright) |
 
 **No existing scrapers** for these sources in this repo.
 
@@ -97,9 +97,10 @@ Separate **external importer** (not inside WordPress theme, not inside `/api/` a
 ### Phase 4 — Encar adapter
 
 - [x] API probe: `api.encar.com/search/car/list/general` works without Playwright
-- [ ] Decision: reuse Korea API vs dedicated scraper — **no camping Ryvuss node confirmed**; client filter on `캠핑` / `model_groups`
-- [x] Basic list parser (beta) with `camping_only` heuristic
-- [ ] Detail page specs (may need Playwright)
+- [x] Server camping filter: `Badge.캠핑카` / `4WD 캠핑카` / `캠핑카/이동사무차` (~229)
+- [x] List parser + `camping_only` safety net
+- [x] Detail via `api.encar.com/v1/readside/vehicle/{id}` (gallery, specs, description; no Playwright)
+- [ ] First end-to-end import to staging/local WP
 
 ### Phase 5 — Ops
 
@@ -135,7 +136,6 @@ ACF field updates are easier via a small PHP bootstrap (`wp eval-file`) than raw
 
 ## Open questions
 
-1. **Encar** — does prod Korea `/api/` already expose camping cars?
-2. **Pricing** — RUB «цена в РФ»: fixed formula from source price or manual?
-3. **Category** — motorhomes only in cat 1, or dedicated subcategory/archive later?
-4. **Staging** — local Docker WP vs import directly to prod (prefer staging first).
+1. **Pricing** — RUB «цена в РФ»: fixed formula from source price or manual? (UI shows «По запросу» for imported `_source`)
+2. **Category** — motorhomes only in cat 1, or dedicated subcategory/archive later?
+3. **Staging** — local Docker WP vs import directly to prod (prefer staging first).

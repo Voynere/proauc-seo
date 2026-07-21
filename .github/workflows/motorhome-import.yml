@@ -1,0 +1,76 @@
+name: Motorhome import
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: Source adapter
+        required: true
+        default: encar
+        type: choice
+        options:
+          - encar
+          - bobaedream
+          - fujicars
+      limit:
+        description: Max listings (0 = unlimited)
+        required: true
+        default: "10"
+        type: string
+      dry_run:
+        description: Dry run (no WP writes)
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: motorhome-import-production
+      cancel-in-progress: false
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Upload importer + theme helpers
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "tools/motorhome-import,wp-content/themes/proautospec/inc/avto-display.php,wp-content/themes/proautospec/inc/avtodoma-filter.php"
+          target: "/tmp/motorhome-import-bundle-${{ github.run_id }}"
+
+      - name: Install, configure, run import
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          command_timeout: 60m
+          script: |
+            set -euo pipefail
+            ROOT="${{ secrets.SERVER_PATH }}"
+            BUNDLE="/tmp/motorhome-import-bundle-${{ github.run_id }}"
+            DEST="$ROOT/../proauc-scripts/motorhome-import"
+            THEME_INC="$ROOT/wp-content/themes/proautospec/inc"
+
+            mkdir -p "$DEST"
+            rsync -a --delete "$BUNDLE/tools/motorhome-import/" "$DEST/"
+            cp -a "$BUNDLE/wp-content/themes/proautospec/inc/avto-display.php" "$THEME_INC/avto-display.php"
+            cp -a "$BUNDLE/wp-content/themes/proautospec/inc/avtodoma-filter.php" "$THEME_INC/avtodoma-filter.php"
+            chown -R proauc_ru_usr:proauc_ru_usr "$DEST" "$THEME_INC/avto-display.php" "$THEME_INC/avtodoma-filter.php"
+
+            chmod +x "$DEST/scripts/ci-run.sh"
+            cd "$DEST"
+            ./scripts/ci-run.sh \
+              "${{ inputs.source }}" \
+              "${{ inputs.limit }}" \
+              "${{ inputs.dry_run }}" \
+              "$ROOT"
+
+            rm -rf "$BUNDLE"
