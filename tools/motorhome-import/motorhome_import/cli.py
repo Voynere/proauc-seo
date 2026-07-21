@@ -255,14 +255,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     retranslate_parser = sub.add_parser(
         "retranslate",
-        help="Retranslate titles/grades on existing WP posts (_source fujicars/bobaedream)",
+        help="Retranslate titles/grades on existing WP posts (_source fujicars/bobaedream/encar)",
     )
     retranslate_parser.add_argument("-c", "--config", default=str(DEFAULT_CONFIG))
     retranslate_parser.add_argument(
         "--sources",
         nargs="+",
-        default=["fujicars", "bobaedream"],
-        choices=["fujicars", "bobaedream"],
+        default=["fujicars", "bobaedream", "encar"],
+        choices=["fujicars", "bobaedream", "encar"],
     )
     retranslate_parser.add_argument(
         "--dry-run",

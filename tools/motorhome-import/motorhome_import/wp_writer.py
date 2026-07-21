@@ -43,17 +43,30 @@ class WordPressWriter:
         return self._media
 
     def upsert(self, listing: NormalizedListing) -> dict[str, Any]:
-        media_result: dict[str, Any] | None = None
-        if self.config.import_.sideload_images and listing.photos:
-            media_result = self._get_media().process(listing)
-
         if self.dry_run:
+            media_result: dict[str, Any] | None = None
+            if self.config.import_.sideload_images and listing.photos:
+                media_result = self._get_media().process(listing)
             result = self._dry_run(listing)
             if media_result:
                 result["media"] = media_result
             return result
 
         existing = self.find_existing(listing.source, listing.source_id)
+        media_result = None
+        # Skip re-sideload on update when gallery already present (major speed-up).
+        need_media = bool(self.config.import_.sideload_images and listing.photos)
+        if existing and need_media and self._post_has_photos(existing):
+            need_media = False
+            logger.info(
+                "Skip media sideload for existing post %s (%s/%s)",
+                existing,
+                listing.source,
+                listing.source_id,
+            )
+        if need_media:
+            media_result = self._get_media().process(listing)
+
         if existing:
             result = self._update(existing, listing)
         else:
@@ -62,6 +75,14 @@ class WordPressWriter:
         if media_result:
             result["media"] = media_result
         return result
+
+    def _post_has_photos(self, post_id: int) -> bool:
+        """True if ACF photos / thumbnail already set on the post."""
+        thumb = self._get_post_meta(post_id, "_thumbnail_id")
+        if thumb and str(thumb).isdigit() and int(thumb) > 0:
+            return True
+        photos = self._get_post_meta(post_id, "photos")
+        return bool(photos and str(photos).strip() not in ("", "a:0:{}"))
 
     def _dry_run(self, listing: NormalizedListing) -> dict[str, Any]:
         acf_meta = build_wp_meta_updates(listing)
@@ -187,6 +208,14 @@ class WordPressWriter:
                 check=False,
             )
 
+        # Clear stale «Оценка» when importer intentionally leaves grade empty
+        # (Encar badges were previously written as Автодом).
+        if not listing.properties.grade:
+            self._run_wp(
+                self._wp_cmd("post", "meta", "delete", str(post_id), "properties_grade"),
+                check=False,
+            )
+
         if attachment_ids:
             self._apply_photos_field(post_id, attachment_ids)
 
@@ -279,11 +308,11 @@ class WordPressWriter:
     def retranslate_existing_posts(
         self,
         *,
-        sources: tuple[str, ...] = ("fujicars", "bobaedream"),
+        sources: tuple[str, ...] = ("fujicars", "bobaedream", "encar"),
         dry_run: bool | None = None,
     ) -> list[dict[str, Any]]:
         """Retranslate post_title and properties_grade for imported motorhome posts."""
-        from .translate import translate_grade, translate_title
+        from .translate import is_non_grade_value, translate_grade, translate_title
 
         effective_dry_run = self.dry_run if dry_run is None else dry_run
         results: list[dict[str, Any]] = []
@@ -294,21 +323,45 @@ class WordPressWriter:
                 title = self._get_post_field(post_id, "post_title")
                 grade = self._get_post_meta(post_id, "properties_grade")
                 new_title = translate_title(title)
-                new_grade = translate_grade(grade) if grade else grade
+                if grade and (is_non_grade_value(grade) or source == "encar"):
+                    # Encar badges / «Автодом» must not stay in Оценка.
+                    new_grade = translate_grade(grade)
+                    clear_grade = True
+                elif grade:
+                    new_grade = translate_grade(grade)
+                    clear_grade = new_grade is None and is_non_grade_value(grade)
+                else:
+                    new_grade = grade
+                    clear_grade = False
 
-                changed = new_title != title or (grade and new_grade != grade)
+                grade_changed = bool(grade) and (
+                    clear_grade or (new_grade is not None and new_grade != grade)
+                )
+                changed = new_title != title or grade_changed
                 entry = {
                     "post_id": post_id,
                     "source": source,
                     "title_before": title,
                     "title_after": new_title,
                     "grade_before": grade,
-                    "grade_after": new_grade,
+                    "grade_after": None if clear_grade else new_grade,
                     "changed": changed,
                 }
                 if changed and not effective_dry_run:
-                    self._update_post_title(post_id, new_title)
-                    if grade and new_grade and new_grade != grade:
+                    if new_title != title:
+                        self._update_post_title(post_id, new_title)
+                    if clear_grade and grade:
+                        self._run_wp(
+                            self._wp_cmd(
+                                "post",
+                                "meta",
+                                "delete",
+                                str(post_id),
+                                "properties_grade",
+                            ),
+                            check=False,
+                        )
+                    elif grade and new_grade and new_grade != grade:
                         self._run_wp(
                             self._wp_cmd(
                                 "post",

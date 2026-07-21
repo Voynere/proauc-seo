@@ -17,19 +17,19 @@ cp config.example.yaml config.yaml
 
 Run on **architect** (local or prod SSH) per project convention.
 
-## Translation (JP → RU)
+## Translation (JP / KO → RU)
 
-Fujicars and Bobaedream titles/grades are translated in `finalize_listing()` via `motorhome_import/translate.py` (dictionary + katakana transliteration, no external API).
+Titles/grades are translated in `finalize_listing()` via `motorhome_import/translate.py` (dictionary maps, no external API):
 
-| JP | RU |
-|----|-----|
-| キャンピングカー | Автодом |
-| キャブコン | кабина-кон |
-| バンコン | ван-кон |
-| バスコン | автобус-кон |
-| 無 (grade) | — |
-| 5点 / 4.5点 | 5 / 4.5 |
-| R / RA / S | R / RA / S |
+- **Fujicars** — JP dictionary + katakana transliteration → `Автодом ван-кон/кабина-кон …`
+- **Encar** — KO brand/model/badge map → `Автодом ван-кон Grand Starex` / `Staria` (filter-friendly)
+- **Bobaedream** — uses the same helpers when JP/KO text is present
+
+| Source | Example in | Example out |
+|--------|------------|-------------|
+| JP | キャンピングカー バンコン ハイエース | Автодом ван-кон Hiace |
+| KO | 현대 더 뉴 그랜드 스타렉스 캠핑카 | Автодом ван-кон Grand Starex |
+| KO grade | 캠핑카 / 4WD 캠핑카 | Автодом / Автодом 4WD |
 
 Demo one title/grade:
 
@@ -37,16 +37,20 @@ Demo one title/grade:
 python -m motorhome_import translate-demo \
   --title 'キャンピングカー キャブコンｶﾑﾛｰﾄﾞ ﾅｯﾂRV ｸﾚｿﾝﾎﾞﾔｰｼﾞｭX 4WD' \
   --grade '無'
+
+python -m motorhome_import translate-demo \
+  --title '현대 더 뉴 그랜드 스타렉스 4WD 캠핑카' \
+  --grade '캠핑카'
 ```
 
-Retranslate existing prod posts (`_source` fujicars/bobaedream):
+Retranslate existing prod posts (`_source` fujicars/bobaedream/encar):
 
 ```bash
-python -m motorhome_import retranslate --config config.yaml --dry-run
-python -m motorhome_import retranslate --config config.yaml --no-dry-run
+python -m motorhome_import retranslate --config config.yaml --sources encar --dry-run
+python -m motorhome_import retranslate --config config.yaml --sources encar --no-dry-run
 ```
 
-Uses wp-cli over SSH (`wordpress.ssh_host`) to update `post_title` and `properties_grade`.
+Uses wp-cli (`wordpress.wp_path` or SSH) to update `post_title` and `properties_grade`.
 
 ## Usage
 

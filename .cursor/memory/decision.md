@@ -75,3 +75,7 @@ Encar Phase 4: list via Ryvuss `Badge.캠핑카|4WD 캠핑카|캠핑카/이동�
 ## 2026-07-21 06:53 UTC
 
 После волны 7 и robots Googlebot следующий приоритет: волна 8 блога, снимок позиций seov/positions-weekly.md, опционально Rank Math OG из медиа.
+
+## 2026-07-21 07:19 UTC
+
+Encar motorhomes: 50 on prod (_source=encar). KO→RU titles «Автодом ван-кон Grand Starex/Staria». properties.grade must stay empty (badge 캠핑카 ≠ Оценка). Filter: Grand Starex/Staria/Master in avtodoma-filter.php; Unicode boundaries for multi-word models. Upsert skips media re-sideload when gallery exists.

@@ -34,8 +34,16 @@ function proautospec_avtodoma_model_mark_map() {
 		'Serena'         => 'Nissan',
 		'Stepwgn'        => 'Honda',
 		'Freed'          => 'Honda',
+		'Grand Starex'   => 'Hyundai',
+		'Starex'         => 'Hyundai',
 		'Staria'         => 'Hyundai',
+		'Porter II'      => 'Hyundai',
 		'Porter'         => 'Hyundai',
+		'County'         => 'Hyundai',
+		'e-County'       => 'Hyundai',
+		'Solati'         => 'Hyundai',
+		'Carnival'       => 'Kia',
+		'Master'         => 'Renault',
 	);
 }
 
@@ -46,10 +54,11 @@ function proautospec_avtodoma_model_mark_map() {
  */
 function proautospec_avtodoma_model_aliases() {
 	return array(
-		'HiaceRV'  => 'Hiace',
-		'Haiesu'   => 'Hiace',
-		'Kamroad'  => 'Camroad',
-		'Baneto'   => 'Bongo',
+		'HiaceRV'     => 'Hiace',
+		'Haiesu'      => 'Hiace',
+		'Kamroad'     => 'Camroad',
+		'Baneto'      => 'Bongo',
+		'GrandStarex' => 'Grand Starex',
 	);
 }
 
@@ -109,6 +118,53 @@ function proautospec_avtodoma_normalize_model_token( $token ) {
 }
 
 /**
+ * Known model names sorted longest-first (for multi-word match).
+ *
+ * @return string[]
+ */
+function proautospec_avtodoma_known_models_longest() {
+	$models = array_keys( proautospec_avtodoma_model_mark_map() );
+	usort(
+		$models,
+		static function ( $a, $b ) {
+			return strlen( $b ) - strlen( $a );
+		}
+	);
+	return $models;
+}
+
+/**
+ * Find the first known chassis model inside free text.
+ *
+ * @return array{mark: string, model: string}
+ */
+function proautospec_avtodoma_match_known_model( $text ) {
+	$text = trim( (string) $text );
+	if ( '' === $text ) {
+		return array(
+			'mark'  => '',
+			'model' => '',
+		);
+	}
+
+	foreach ( proautospec_avtodoma_known_models_longest() as $model ) {
+		// Unicode-safe boundaries: PHP \b is ASCII-only and breaks near Cyrillic.
+		$pattern = '/(?<![\p{L}\p{N}])' . preg_quote( $model, '/' ) . '(?![\p{L}\p{N}])/iu';
+		if ( preg_match( $pattern, $text ) ) {
+			return array(
+				'mark'  => proautospec_avtodoma_model_to_mark( $model ),
+				'model' => $model,
+			);
+		}
+	}
+
+	return array(
+		'mark'  => '',
+		'model' => '',
+	);
+}
+
+/**
  * Parse Japanese camping-car listing titles.
  *
  * @return array{mark: string, model: string}
@@ -128,6 +184,48 @@ function proautospec_avtodoma_parse_japanese_title( $title ) {
 		if ( preg_match( $pattern, $title ) ) {
 			return array(
 				'mark'  => proautospec_avtodoma_model_to_mark( $model ),
+				'model' => $model,
+			);
+		}
+	}
+
+	return array(
+		'mark'  => '',
+		'model' => '',
+	);
+}
+
+/**
+ * Parse Korean Encar camping-car listing titles (fallback before KO→RU translate).
+ *
+ * @return array{mark: string, model: string}
+ */
+function proautospec_avtodoma_parse_korean_title( $title ) {
+	$patterns = array(
+		'Grand Starex' => '/그랜드\s*스타렉스/u',
+		'Starex'       => '/스타렉스/u',
+		'Staria'       => '/스타리아/u',
+		'Porter'       => '/포터/u',
+		'Bongo'        => '/봉고/u',
+		'Carnival'     => '/카니발/u',
+		'County'       => '/카운티/u',
+		'Solati'       => '/쏠라티/u',
+		'Master'       => '/마스터/u',
+		'Sprinter'     => '/스프린터/u',
+	);
+
+	foreach ( $patterns as $model => $pattern ) {
+		if ( preg_match( $pattern, $title ) ) {
+			$mark = proautospec_avtodoma_model_to_mark( $model );
+			if ( preg_match( '/기아/u', $title ) ) {
+				$mark = 'Kia';
+			} elseif ( preg_match( '/현대/u', $title ) ) {
+				$mark = 'Hyundai';
+			} elseif ( preg_match( '/벤츠|메르세데스/u', $title ) ) {
+				$mark = 'Mercedes-Benz';
+			}
+			return array(
+				'mark'  => $mark,
 				'model' => $model,
 			);
 		}
@@ -167,6 +265,11 @@ function proautospec_avtodoma_parse_model_rest( $rest ) {
 		);
 	}
 
+	$known = proautospec_avtodoma_match_known_model( $rest );
+	if ( '' !== $known['model'] ) {
+		return $known;
+	}
+
 	$parts = preg_split( '/\s+/u', $rest );
 	$token = proautospec_avtodoma_normalize_model_token( $parts[0] ?? '' );
 
@@ -190,9 +293,17 @@ function proautospec_avtodoma_parse_title( $title ) {
 		);
 	}
 
-	if ( preg_match( '/^(Toyota|Hino|Mitsubishi|Nissan|Honda|Hyundai|Mazda|Daihatsu|Suzuki|Mercedes-Benz|Isuzu|Kia)\s+(.+)$/iu', $title, $matches ) ) {
+	if ( preg_match( '/^(Toyota|Hino|Mitsubishi|Nissan|Honda|Hyundai|Mazda|Daihatsu|Suzuki|Mercedes-Benz|Isuzu|Kia|Renault)\s+(.+)$/iu', $title, $matches ) ) {
+		$brand  = ucwords( strtolower( $matches[1] ) );
+		$parsed = proautospec_avtodoma_parse_model_rest( $matches[2] );
+		if ( '' !== $parsed['model'] ) {
+			return array(
+				'mark'  => $parsed['mark'] ? $parsed['mark'] : $brand,
+				'model' => $parsed['model'],
+			);
+		}
 		return array(
-			'mark'  => ucwords( strtolower( $matches[1] ) ),
+			'mark'  => $brand,
 			'model' => trim( $matches[2] ),
 		);
 	}
@@ -201,8 +312,21 @@ function proautospec_avtodoma_parse_title( $title ) {
 		return proautospec_avtodoma_parse_model_rest( $matches[1] );
 	}
 
+	if ( preg_match( '/^Автодом\s+(.+)$/iu', $title, $matches ) ) {
+		return proautospec_avtodoma_parse_model_rest( $matches[1] );
+	}
+
 	if ( preg_match( '/^キャンピングカー/u', $title ) ) {
 		return proautospec_avtodoma_parse_japanese_title( $title );
+	}
+
+	if ( preg_match( '/[가-힣]/u', $title ) ) {
+		return proautospec_avtodoma_parse_korean_title( $title );
+	}
+
+	$known = proautospec_avtodoma_match_known_model( $title );
+	if ( '' !== $known['model'] ) {
+		return $known;
 	}
 
 	return array(

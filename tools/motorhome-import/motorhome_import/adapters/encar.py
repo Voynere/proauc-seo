@@ -501,12 +501,14 @@ class EncarAdapter(BaseAdapter):
         mileage = _as_int(item.get("Mileage"))
         drive_raw = _extract_drive(f"{badge} {badge_detail}")
 
+        # Badge / gradeName on Encar is body type (캠핑카), not auction «Оценка».
+        # Keep badges in parameters only; leave properties.grade empty.
         properties = ListingProperties(
             year=year,
             mileage=mileage,
             engine_type=map_engine_type(str(item.get("FuelType") or "")),
             drive_type=map_drive_type(drive_raw) if drive_raw else None,
-            grade=badge_detail or badge or None,
+            grade=None,
         )
 
         price_krw = _encar_price_krw(item)
@@ -568,8 +570,8 @@ class EncarAdapter(BaseAdapter):
             props.engine_type = map_engine_type(parsed["fuel"])
         if parsed.get("drive_type"):
             props.drive_type = map_drive_type(parsed["drive_type"])
-        if parsed.get("grade_detail") or parsed.get("grade"):
-            props.grade = parsed.get("grade_detail") or parsed.get("grade")
+        # Do not map Encar gradeName/gradeDetailName into properties.grade —
+        # those are trim/badge labels (often 캠핑카), shown wrongly as «Оценка».
 
         listing.properties = props
 

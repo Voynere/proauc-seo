@@ -12,3 +12,7 @@
 ## 2026-07-07 08:47 UTC
 
 В репо нет scrapers для Fujicars/Bobaedream/Encar. Следующая сессия Phase 0: sync /api с прода, export ACF avto, sample listings, Encar API vs scraper.
+
+## 2026-07-21 05:40 UTC
+
+Encar motorhome: 10 posts imported to prod 2026-07-21 via GH Actions (limit=10). SSH alias proauc=root@188.120.251.205. Titles still KO. Detail API readside + Badge.캠핑카 filter.
