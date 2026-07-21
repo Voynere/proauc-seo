@@ -285,6 +285,37 @@ function proauc_migrate_blog_wave6_schedule() {
 	flush_rewrite_rules( false );
 }
 
+function proauc_migrate_blog_wave7_schedule() {
+	if ( ! function_exists( 'proauc_get_blog_article_seeds_wave7' ) ) {
+		require_once get_template_directory() . '/inc/blog-articles.php';
+	}
+
+	foreach ( proauc_get_blog_article_seeds_wave7() as $seed ) {
+		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
+			continue;
+		}
+
+		$post = get_page_by_path( $seed['slug'], OBJECT, 'post' );
+		if ( ! $post ) {
+			continue;
+		}
+
+		$gmt     = get_gmt_from_date( $seed['post_date'] );
+		$publish = strtotime( $gmt ) <= time();
+
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_status'   => $publish ? 'publish' : 'future',
+				'post_date'     => $seed['post_date'],
+				'post_date_gmt' => $gmt,
+			)
+		);
+	}
+
+	flush_rewrite_rules( false );
+}
+
 function proauc_get_blog_posts_page_title() {
 	$posts_page = (int) get_option( 'page_for_posts' );
 	if ( $posts_page ) {
@@ -449,6 +480,7 @@ function proauc_sync_blog_post_content( $slug ) {
 		'obzor-nissan-x-trail-iz-yaponii'       => 'proauc_blog_article_obzor_xtrail',
 		'obzor-honda-vezel-iz-yaponii'          => 'proauc_blog_article_obzor_vezel',
 		'obzor-kia-carnival-iz-korei'           => 'proauc_blog_article_obzor_carnival',
+		'obzor-toyota-prado-iz-yaponii'         => 'proauc_blog_article_obzor_prado',
 	);
 	if ( empty( $callbacks[ $slug ] ) || ! function_exists( $callbacks[ $slug ] ) ) {
 		if ( ! function_exists( 'proauc_get_blog_article_seeds' ) ) {
@@ -1252,6 +1284,62 @@ function proauc_get_blog_post_faq( $slug = '' ) {
 				'a' => 'Чаще 6–8 недель от заявки — зависит от модели, линии и очереди на таможне.',
 			),
 		),
+		'rastamozka-avto-iz-korei' => array(
+			array(
+				'q' => 'Чем растаможка из Кореи отличается от Японии?',
+				'a' => 'Платежи похожи, но пакет документов и проверка истории другие: вместо аукционного листа — экспортный пакет и отчёты по Корее.',
+			),
+			array(
+				'q' => 'Сколько длится растаможка во Владивостоке?',
+				'a' => 'Обычно несколько рабочих дней после прибытия в порт — досмотр, платежи и выдача ЭПТС.',
+			),
+			array(
+				'q' => 'Можно ли заранее узнать сумму платежей?',
+				'a' => 'Да. Смету «под ключ» согласуем до отправки авто из Кореи.',
+			),
+		),
+		'avto-iz-yaponii-v-blagoveshchensk' => array(
+			array(
+				'q' => 'Сначала растаможка во Владивостоке?',
+				'a' => 'Да. После таможни и выдачи документов организуем перегон в Благовещенск.',
+			),
+			array(
+				'q' => 'Сколько едет автовоз до Благовещенска?',
+				'a' => 'Чаще 2–4 дня в пути после погрузки во Владивостоке — зависит от расписания перевозчика.',
+			),
+			array(
+				'q' => 'Сколько длится весь цикл до Благовещенска?',
+				'a' => 'Чаще 6–9 недель от заявки — зависит от модели, линии и очереди на таможне.',
+			),
+		),
+		'obzor-toyota-prado-iz-yaponii' => array(
+			array(
+				'q' => 'Какая оценка на листе оптимальна для Prado?',
+				'a' => 'Ориентир от 4.0 при пробеге, согласованном с бюджетом. Важны рама, днище и равномерность износа.',
+			),
+			array(
+				'q' => 'Нужен ли полный привод для Prado на ДВ?',
+				'a' => 'Для зимы и региональных дорог — да, 4WD обычно в приоритете при подборе.',
+			),
+			array(
+				'q' => 'Где смотреть лоты Prado?',
+				'a' => 'В каталоге авто из Японии или по заявке менеджеру Proauc.',
+			),
+		),
+		'kak-proverit-avto-iz-korei-pered-pokupkoj' => array(
+			array(
+				'q' => 'Что обязательно проверить до оплаты?',
+				'a' => 'Пробег, страховую историю, ДТП, число владельцев и свежие фото состояния.',
+			),
+			array(
+				'q' => 'Есть ли у корейских авто аукционный лист как в Японии?',
+				'a' => 'Нет в привычном виде. Прозрачность даёт связка баз, отчётов и осмотра.',
+			),
+			array(
+				'q' => 'Можно ли прислать VIN на проверку?',
+				'a' => 'Да — оставьте VIN или ссылку в заявке, менеджер проверит до бронирования.',
+			),
+		),
 	);
 
 	return isset( $faqs[ $slug ] ) ? $faqs[ $slug ] : array();
@@ -1448,6 +1536,10 @@ function proauc_get_landing_blog_links( $cluster ) {
 				'url'   => '/dostavka-avto-v-regiony-dalnego-vostoka/',
 				'title' => 'Доставка авто в регионы Дальнего Востока',
 			),
+			array(
+				'url'   => '/obzor-toyota-prado-iz-yaponii/',
+				'title' => 'Обзор Toyota Prado с аукциона Японии',
+			),
 		),
 		'koreya'      => array(
 			array(
@@ -1459,8 +1551,12 @@ function proauc_get_landing_blog_links( $cluster ) {
 				'title' => 'Чем авто из Кореи отличается от японского',
 			),
 			array(
-				'url'   => '/obzor-hyundai-palisade-iz-korei/',
-				'title' => 'Обзор Hyundai Palisade из Кореи',
+				'url'   => '/rastamozka-avto-iz-korei/',
+				'title' => 'Растаможка авто из Кореи: документы и платежи',
+			),
+			array(
+				'url'   => '/kak-proverit-avto-iz-korei-pered-pokupkoj/',
+				'title' => 'Как проверить авто из Кореи перед покупкой',
 			),
 			array(
 				'url'   => '/kejs-pokupka-kia-sorento-iz-korei/',
@@ -1653,6 +1749,18 @@ add_action(
 		if ( ! get_option( 'proauc_blog_wave6_schedule_v1' ) ) {
 			proauc_migrate_blog_wave6_schedule();
 			update_option( 'proauc_blog_wave6_schedule_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_seed_v7' ) ) {
+			if ( ! function_exists( 'proauc_get_blog_article_seeds_wave7' ) ) {
+				require_once get_template_directory() . '/inc/blog-articles.php';
+			}
+			proauc_seed_blog_posts( proauc_get_blog_article_seeds_wave7() );
+			update_option( 'proauc_blog_seed_v7', 1 );
+			flush_rewrite_rules( false );
+		}
+		if ( ! get_option( 'proauc_blog_wave7_schedule_v1' ) ) {
+			proauc_migrate_blog_wave7_schedule();
+			update_option( 'proauc_blog_wave7_schedule_v1', 1 );
 		}
 		if ( ! get_option( 'proauc_blog_covers_v1' ) ) {
 			proauc_migrate_blog_covers_v1();
