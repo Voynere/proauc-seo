@@ -25,10 +25,14 @@
 1. `scp` `blog-seo.php`, `blog-articles.php`, JPG обложек/in-body → document root.
 2. Seed через WP-CLI (`proauc_blog_seed_v7` + schedule); посты ID 2654–2657.
 3. Досрочная публикация `publish` (таймзона WP `+03:00`).
-4. IndexNow: 5 URL (4 статьи + `/blog/`) — HTTP 200.
+4. IndexNow: 5 URL (4 статьи + `/blog/`) — HTTP 200 (повторный ping 21.07 вечером — снова HTTP 200).
 5. `?sitemap-create=1` — HTTP 200.
+6. `post-sitemap.xml` live: HTTP 200, **23** `<loc>` (все 4 статьи волны 7 + `/blog/` внутри).
 
-**Осталось вручную (по желанию):** переобход post-sitemap в Яндекс.Вебмастере.
+**Яндекс.Вебмастер / переобход post-sitemap (21.07):**
+- **Публичный ping sitemap** выполнен: `webmaster.yandex.ru/ping?sitemap=…` для `post-sitemap.xml` и `sitemap_index.xml` — оба **HTTP 200** (`rs_weight=1`).
+- **API/UI «Переобход»** — **недоступен из этой среды:** нет OAuth-токена Яндекс.Вебмастера (константы `PROAUC_WEBMASTER_OAUTH_TOKEN` нет; токен Метрики на проде пустой; в теме только IndexNow + Метрика, CLI/скрипта recrawl нет). Чеклист в памяти проекта и ранее подразумевал ручной шаг в UI: Индексирование → переобход `post-sitemap.xml`.
+- **Опционально вручную:** если нужен именно queue recrawl в кабинете Вебмастера — зайти под аккаунтом владельца сайта и поставить переобход `https://proauc.ru/post-sitemap.xml` (+ при желании 4 URL статей).
 
 ---
 
