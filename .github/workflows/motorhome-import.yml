@@ -59,6 +59,12 @@ jobs:
             DEST="$ROOT/../proauc-scripts/motorhome-import"
             THEME_INC="$ROOT/wp-content/themes/proautospec/inc"
 
+            if ! python3 -c "import venv, ensurepip" 2>/dev/null; then
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update -qq
+              apt-get install -y -qq python3-venv python3-pip
+            fi
+
             mkdir -p "$DEST"
             rm -rf "$DEST"/*
             cp -a "$BUNDLE/tools/motorhome-import/." "$DEST/"
