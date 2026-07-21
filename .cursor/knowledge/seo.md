@@ -43,7 +43,7 @@ Root files: `sitemap_japan.xml`, `sitemap_korea.xml`, `sitemap_china.xml`
 ## Blog (P3)
 
 - URL base: `/blog/` (`category_base=blog`)
-- Seeds: `proauc_blog_seed_v1` … `v7`, schedule migrations `proauc_blog_wave4_schedule_v1` … `proauc_blog_wave7_schedule_v1`
+- Seeds: `proauc_blog_seed_v1` … `v8`, schedule migrations `proauc_blog_wave4_schedule_v1` … `proauc_blog_wave8_schedule_v1`
 - Clusters: `yaponiya`, `koreya`, `kitaj`, `spectehnika`, `mototsikly`, `obzory`, `kejsy`
 - Schema: `CollectionPage` + `ItemList` on archive; `BlogPosting` + `BreadcrumbList` + `FAQPage` on single
 - Static `/blog/` title/description in `proauc_get_static_landing_seo()`

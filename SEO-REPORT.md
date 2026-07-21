@@ -4,7 +4,29 @@
 **Сайт:** proauc.ru  
 **Репозиторий:** [Voynere/proauc-seo](https://github.com/Voynere/proauc-seo) · ветка `main`
 
-> Техпакет 1–5, волна 7 блога и правка `robots.txt` (Googlebot) **уже на production** (21.07). Источник robots в репозитории: `scripts/robots.txt` → корень сайта.
+> Техпакет 1–5, волна 7 блога, правка `robots.txt` (Googlebot) и **волна 8 блога** — на production (21.07). Источник robots в репозитории: `scripts/robots.txt` → корень сайта.
+
+---
+
+## Новые статьи (волна 8 блога) — 21.07.2026
+
+Добавлены **4 статьи** (seed `proauc_blog_seed_v8`). **Задеплоены на прод 21.07**, досрочно опубликованы, IndexNow + `?sitemap-create=1`.
+
+| # | Заголовок | URL / slug | Основной ключ | Кластер | Обложка | In-body | Индексация |
+|---|-----------|------------|---------------|---------|---------|---------|------------|
+| 1 | Авто из Японии в Южно-Сахалинск: доставка и сроки | https://proauc.ru/avto-iz-yaponii-v-yuzhno-sahalinske/ | авто из Японии Южно-Сахалинск | yaponiya | `images/blog/avto-iz-yaponii-v-yuzhno-sahalinske.jpg` | — | live · IndexNow · HTTP 200 |
+| 2 | Сколько стоит привезти авто из Кореи в 2026 году | https://proauc.ru/skolko-stoit-privezti-avto-iz-korei/ | сколько стоит привезти авто из Кореи | koreya | `images/blog/skolko-stoit-privezti-avto-iz-korei.jpg` | — | live · IndexNow · HTTP 200 |
+| 3 | Обзор Hyundai Santa Fe из Кореи | https://proauc.ru/obzor-hyundai-santa-fe-iz-korei/ | Hyundai Santa Fe из Кореи | koreya / obzory | `images/blog/obzor-hyundai-santa-fe-iz-korei.jpg` | 3 JPG в `images/blog/content/` | live · IndexNow · HTTP 200 |
+| 4 | Оформление ЭПТС для авто из Японии | https://proauc.ru/oformlenie-epts-avto-iz-yaponii/ | оформление ЭПТС авто из Японии | yaponiya | `images/blog/oformlenie-epts-avto-iz-yaponii.jpg` | — | live · IndexNow · HTTP 200 |
+
+**Что входит в пакет:** тексты + Rank Math title/description, FAQ (FAQPage), внутренние ссылки, JPG-обложки 1536×1024, перелинковка с лендингов Японии/Кореи (`proauc_get_landing_blog_links`).
+
+**Сделано на проде 21.07:**
+1. `scp` `blog-seo.php`, `blog-articles.php`, JPG обложек/in-body → document root.
+2. Seed через тему (`proauc_blog_seed_v8` + schedule); досрочная `publish`.
+3. IndexNow: 5 URL (4 статьи + `/blog/`).
+4. `?sitemap-create=1` + ping Яндекс.Вебмастера для post-sitemap.
+5. `post-sitemap.xml` live: HTTP 200, **27** `<loc>` (4 статьи волны 8 внутри).
 
 ---
 
@@ -144,7 +166,7 @@
 
 ## Рекомендации дальше
 
-1. **Волна 8 блога** — следующие ключи из семантики (ДВ / сравнения / обзоры), обложки, IndexNow, sitemap.
+1. **Волна 9 блога** — следующие ключи (Якутск / модели JP-KR-CN / процесс), обложки, IndexNow, sitemap.
 2. **Снимок позиций** — `seo.smyalichi.ru` → `seov/positions-weekly.md` (сравнение с базой 30.06).
 3. **По желанию:** в админке Rank Math назначить дефолтную OG-картинку из медиабиблиотеки (сейчас файловый fallback в теме).
 4. **Опционально:** расширить SSR/превью других JS-блоков; полный SSR пагинации каталога — низкий приоритет.

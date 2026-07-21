@@ -316,6 +316,37 @@ function proauc_migrate_blog_wave7_schedule() {
 	flush_rewrite_rules( false );
 }
 
+function proauc_migrate_blog_wave8_schedule() {
+	if ( ! function_exists( 'proauc_get_blog_article_seeds_wave8' ) ) {
+		require_once get_template_directory() . '/inc/blog-articles.php';
+	}
+
+	foreach ( proauc_get_blog_article_seeds_wave8() as $seed ) {
+		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
+			continue;
+		}
+
+		$post = get_page_by_path( $seed['slug'], OBJECT, 'post' );
+		if ( ! $post ) {
+			continue;
+		}
+
+		$gmt     = get_gmt_from_date( $seed['post_date'] );
+		$publish = strtotime( $gmt ) <= time();
+
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_status'   => $publish ? 'publish' : 'future',
+				'post_date'     => $seed['post_date'],
+				'post_date_gmt' => $gmt,
+			)
+		);
+	}
+
+	flush_rewrite_rules( false );
+}
+
 function proauc_get_blog_posts_page_title() {
 	$posts_page = (int) get_option( 'page_for_posts' );
 	if ( $posts_page ) {
@@ -481,6 +512,7 @@ function proauc_sync_blog_post_content( $slug ) {
 		'obzor-honda-vezel-iz-yaponii'          => 'proauc_blog_article_obzor_vezel',
 		'obzor-kia-carnival-iz-korei'           => 'proauc_blog_article_obzor_carnival',
 		'obzor-toyota-prado-iz-yaponii'         => 'proauc_blog_article_obzor_prado',
+		'obzor-hyundai-santa-fe-iz-korei'       => 'proauc_blog_article_obzor_santa_fe',
 	);
 	if ( empty( $callbacks[ $slug ] ) || ! function_exists( $callbacks[ $slug ] ) ) {
 		if ( ! function_exists( 'proauc_get_blog_article_seeds' ) ) {
@@ -1340,6 +1372,62 @@ function proauc_get_blog_post_faq( $slug = '' ) {
 				'a' => 'Да — оставьте VIN или ссылку в заявке, менеджер проверит до бронирования.',
 			),
 		),
+		'avto-iz-yaponii-v-yuzhno-sahalinske' => array(
+			array(
+				'q' => 'Сначала растаможка во Владивостоке?',
+				'a' => 'Да. После таможни и ЭПТС организуем доставку на Сахалин с учётом расписания переправы.',
+			),
+			array(
+				'q' => 'Сколько длится доставка на остров?',
+				'a' => 'Чаще несколько суток после готовности авто во Владивостоке — зависит от парома и погоды.',
+			),
+			array(
+				'q' => 'Сколько длится весь цикл до Южно-Сахалинска?',
+				'a' => 'Чаще 7–10 недель от заявки — зависит от модели, линии, таможни и переправы.',
+			),
+		),
+		'skolko-stoit-privezti-avto-iz-korei' => array(
+			array(
+				'q' => 'Что входит в цену «под ключ» из Кореи?',
+				'a' => 'Стоимость авто, расходы в Корее, фрахт, таможенные платежи и оформление во Владивостоке.',
+			),
+			array(
+				'q' => 'Можно ли узнать сумму до оплаты?',
+				'a' => 'Да. Смету согласуем до бронирования выбранного автомобиля.',
+			),
+			array(
+				'q' => 'От чего сильнее всего меняется итог?',
+				'a' => 'От года, объёма двигателя, курса валют и комплектации.',
+			),
+		),
+		'obzor-hyundai-santa-fe-iz-korei' => array(
+			array(
+				'q' => 'Что проверить у Santa Fe до оплаты?',
+				'a' => 'Пробег, страховую историю, ДТП, комплектацию и свежие фото состояния.',
+			),
+			array(
+				'q' => 'Чем Santa Fe отличается от Palisade?',
+				'a' => 'Palisade крупнее и чаще с третьим рядом; Santa Fe — более компактный семейный кроссовер.',
+			),
+			array(
+				'q' => 'Где смотреть предложения Santa Fe?',
+				'a' => 'В каталоге авто из Кореи или по заявке менеджеру Proauc.',
+			),
+		),
+		'oformlenie-epts-avto-iz-yaponii' => array(
+			array(
+				'q' => 'Когда оформляют ЭПТС?',
+				'a' => 'После прибытия авто во Владивосток и прохождения таможенных процедур.',
+			),
+			array(
+				'q' => 'Какие данные нужны от покупателя?',
+				'a' => 'Паспортные данные владельца и контакты для связи на этапе таможни.',
+			),
+			array(
+				'q' => 'Сколько занимает оформление ЭПТС?',
+				'a' => 'Обычно несколько рабочих дней вместе с таможенным оформлением при готовом пакете документов.',
+			),
+		),
 	);
 
 	return isset( $faqs[ $slug ] ) ? $faqs[ $slug ] : array();
@@ -1540,6 +1628,10 @@ function proauc_get_landing_blog_links( $cluster ) {
 				'url'   => '/obzor-toyota-prado-iz-yaponii/',
 				'title' => 'Обзор Toyota Prado с аукциона Японии',
 			),
+			array(
+				'url'   => '/oformlenie-epts-avto-iz-yaponii/',
+				'title' => 'Оформление ЭПТС для авто из Японии',
+			),
 		),
 		'koreya'      => array(
 			array(
@@ -1555,12 +1647,16 @@ function proauc_get_landing_blog_links( $cluster ) {
 				'title' => 'Растаможка авто из Кореи: документы и платежи',
 			),
 			array(
+				'url'   => '/skolko-stoit-privezti-avto-iz-korei/',
+				'title' => 'Сколько стоит привезти авто из Кореи',
+			),
+			array(
 				'url'   => '/kak-proverit-avto-iz-korei-pered-pokupkoj/',
 				'title' => 'Как проверить авто из Кореи перед покупкой',
 			),
 			array(
-				'url'   => '/kejs-pokupka-kia-sorento-iz-korei/',
-				'title' => 'Кейс: покупка Kia Sorento из Кореи',
+				'url'   => '/obzor-hyundai-santa-fe-iz-korei/',
+				'title' => 'Обзор Hyundai Santa Fe из Кореи',
 			),
 		),
 		'kitaj'       => array(
@@ -1761,6 +1857,22 @@ add_action(
 		if ( ! get_option( 'proauc_blog_wave7_schedule_v1' ) ) {
 			proauc_migrate_blog_wave7_schedule();
 			update_option( 'proauc_blog_wave7_schedule_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_seed_v8' ) ) {
+			if ( ! function_exists( 'proauc_get_blog_article_seeds_wave8' ) ) {
+				require_once get_template_directory() . '/inc/blog-articles.php';
+			}
+			proauc_seed_blog_posts( proauc_get_blog_article_seeds_wave8() );
+			update_option( 'proauc_blog_seed_v8', 1 );
+			flush_rewrite_rules( false );
+		}
+		if ( ! get_option( 'proauc_blog_wave8_schedule_v1' ) ) {
+			proauc_migrate_blog_wave8_schedule();
+			update_option( 'proauc_blog_wave8_schedule_v1', 1 );
+		}
+		if ( ! get_option( 'proauc_blog_content_santa_fe_v1' ) ) {
+			proauc_sync_blog_post_content( 'obzor-hyundai-santa-fe-iz-korei' );
+			update_option( 'proauc_blog_content_santa_fe_v1', 1 );
 		}
 		if ( ! get_option( 'proauc_blog_covers_v1' ) ) {
 			proauc_migrate_blog_covers_v1();
