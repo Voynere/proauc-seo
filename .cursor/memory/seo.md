@@ -183,3 +183,11 @@ Blog in-body JPGs: 21 файлов для 7 obzory в images/blog/content/ (1536
 ## 2026-07-10 08:22 UTC
 
 10.07 итог дня: волна 4 закрыта 4/4 (Komatsu+доставка ДВ досрочно), 21 in-body JPG для обзоров, hero убран из single, деплои 8213b24/2204ee8/88ef833/c65946e, post-sitemap 17 URL, P3 ~78%, чеклист 14.07 Вебмастер
+
+## 2026-07-21 05:38 UTC
+
+SEO-REPORT.md обновлён для заказчика 2026-07-21, коммит с OG/meta/SSR
+
+## 2026-07-21 06:32 UTC
+
+21.07 волна 7 блога (4 статьи): rastamozka-avto-iz-korei, avto-iz-yaponii-v-blagoveshchensk, obzor-toyota-prado-iz-yaponii, kak-proverit-avto-iz-korei-pered-pokupkoj. seed proauc_blog_seed_v7, JPG covers+Prado in-body, деплой scp, досрочная publish 21.07, IndexNow 5 URL HTTP 200, sitemap-create OK. WP timezone +03:00.

@@ -315,7 +315,7 @@ function proauc_get_blog_article_seeds_wave7() {
 	return array(
 		array(
 			'slug'            => 'rastamozka-avto-iz-korei',
-			'post_date'       => '2026-08-16 06:00:00',
+			'post_date'       => '2026-07-21 05:31:00',
 			'title'           => 'Растаможка авто из Кореи: документы и платежи',
 			'category'        => 'koreya',
 			'cluster'         => 'koreya',
@@ -326,7 +326,7 @@ function proauc_get_blog_article_seeds_wave7() {
 		),
 		array(
 			'slug'            => 'avto-iz-yaponii-v-blagoveshchensk',
-			'post_date'       => '2026-08-20 06:00:00',
+			'post_date'       => '2026-07-21 06:31:00',
 			'title'           => 'Авто из Японии в Благовещенск: доставка и сроки',
 			'category'        => 'yaponiya',
 			'cluster'         => 'yaponiya',
@@ -337,7 +337,7 @@ function proauc_get_blog_article_seeds_wave7() {
 		),
 		array(
 			'slug'            => 'obzor-toyota-prado-iz-yaponii',
-			'post_date'       => '2026-08-24 06:00:00',
+			'post_date'       => '2026-07-21 07:31:00',
 			'title'           => 'Обзор Toyota Land Cruiser Prado с аукциона Японии',
 			'category'        => 'obzory',
 			'cluster'         => 'yaponiya',
@@ -348,7 +348,7 @@ function proauc_get_blog_article_seeds_wave7() {
 		),
 		array(
 			'slug'            => 'kak-proverit-avto-iz-korei-pered-pokupkoj',
-			'post_date'       => '2026-08-28 06:00:00',
+			'post_date'       => '2026-07-21 08:31:00',
 			'title'           => 'Как проверить авто из Кореи перед покупкой',
 			'category'        => 'koreya',
 			'cluster'         => 'koreya',

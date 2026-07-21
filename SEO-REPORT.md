@@ -10,22 +10,25 @@
 
 ## Новые статьи (волна 7 блога) — 21.07.2026
 
-Добавлены **4 статьи** в seed темы (`proauc_blog_seed_v7`, расписание `proauc_blog_wave7_schedule_v1`). Публикация по датам через WP `future` → `publish`; IndexNow пингуется хуком `transition_post_status` в `inc/seo-indexing.php`.
+Добавлены **4 статьи** (seed `proauc_blog_seed_v7`). **Задеплоены на прод 21.07**, досрочно опубликованы (как Komatsu/доставка ДВ), IndexNow + `?sitemap-create=1` отработаны.
 
 | # | Заголовок | URL / slug | Основной ключ | Кластер | Обложка | In-body | Индексация |
 |---|-----------|------------|---------------|---------|---------|---------|------------|
-| 1 | Растаможка авто из Кореи: документы и платежи | `/rastamozka-avto-iz-korei/` | растаможка авто из Кореи | koreya | `images/blog/rastamozka-avto-iz-korei.jpg` | — | pending deploy (дата 16.08.2026) |
-| 2 | Авто из Японии в Благовещенск: доставка и сроки | `/avto-iz-yaponii-v-blagoveshchensk/` | авто из Японии Благовещенск | yaponiya | `images/blog/avto-iz-yaponii-v-blagoveshchensk.jpg` | — | pending deploy (дата 20.08.2026) |
-| 3 | Обзор Toyota Land Cruiser Prado с аукциона Японии | `/obzor-toyota-prado-iz-yaponii/` | Toyota Prado с аукциона Японии | yaponiya / obzory | `images/blog/obzor-toyota-prado-iz-yaponii.jpg` | 3 JPG в `images/blog/content/` | pending deploy (дата 24.08.2026) |
-| 4 | Как проверить авто из Кореи перед покупкой | `/kak-proverit-avto-iz-korei-pered-pokupkoj/` | проверка авто из Кореи | koreya | `images/blog/kak-proverit-avto-iz-korei-pered-pokupkoj.jpg` | — | pending deploy (дата 28.08.2026) |
+| 1 | Растаможка авто из Кореи: документы и платежи | https://proauc.ru/rastamozka-avto-iz-korei/ | растаможка авто из Кореи | koreya | `images/blog/rastamozka-avto-iz-korei.jpg` | — | live · IndexNow HTTP 200 · HTTP 200 |
+| 2 | Авто из Японии в Благовещенск: доставка и сроки | https://proauc.ru/avto-iz-yaponii-v-blagoveshchensk/ | авто из Японии Благовещенск | yaponiya | `images/blog/avto-iz-yaponii-v-blagoveshchensk.jpg` | — | live · IndexNow HTTP 200 · HTTP 200 |
+| 3 | Обзор Toyota Land Cruiser Prado с аукциона Японии | https://proauc.ru/obzor-toyota-prado-iz-yaponii/ | Toyota Prado с аукциона Японии | yaponiya / obzory | `images/blog/obzor-toyota-prado-iz-yaponii.jpg` | 3 JPG в `images/blog/content/` | live · IndexNow HTTP 200 · HTTP 200 |
+| 4 | Как проверить авто из Кореи перед покупкой | https://proauc.ru/kak-proverit-avto-iz-korei-pered-pokupkoj/ | проверка авто из Кореи | koreya | `images/blog/kak-proverit-avto-iz-korei-pered-pokupkoj.jpg` | — | live · IndexNow HTTP 200 · HTTP 200 |
 
 **Что входит в пакет:** тексты + Rank Math title/description, FAQ (FAQPage), внутренние ссылки на посадочные/каталоги/смежные статьи, JPG-обложки 1536×1024, перелинковка с лендингов Кореи/Японии (`proauc_get_landing_blog_links`).
 
-**После деплоя на прод:**
-1. Убедиться, что отработали опции `proauc_blog_seed_v7` и `proauc_blog_wave7_schedule_v1` (посты созданы, статусы future/publish по датам).
-2. `https://proauc.ru/?sitemap-create=1` (и при необходимости переобход post-sitemap в Яндекс.Вебмастере).
-3. Админка → IndexNow: «Отправить опубликованные» для уже live URL; будущие даты уйдут автоматически при публикации.
-4. Сбросить кэш Autoptimize, если затронут CSS (для этой волны не обязателен).
+**Сделано на проде 21.07:**
+1. `scp` `blog-seo.php`, `blog-articles.php`, JPG обложек/in-body → document root.
+2. Seed через WP-CLI (`proauc_blog_seed_v7` + schedule); посты ID 2654–2657.
+3. Досрочная публикация `publish` (таймзона WP `+03:00`).
+4. IndexNow: 5 URL (4 статьи + `/blog/`) — HTTP 200.
+5. `?sitemap-create=1` — HTTP 200.
+
+**Осталось вручную (по желанию):** переобход post-sitemap в Яндекс.Вебмастере.
 
 ---
 
