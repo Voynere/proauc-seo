@@ -26,7 +26,9 @@ Root files: `sitemap_japan.xml`, `sitemap_korea.xml`, `sitemap_china.xml`
 
 ## robots.txt highlights
 
+- Source of truth in repo: `scripts/robots.txt` → document root `/robots.txt` on prod (`scp`)
 - Disallow `/wp-`, search, feeds, xmlrpc, UTM params
+- **Googlebot:** no blanket `Disallow: *?*` — only filter/tracking/sitemap-create query params (aligned with `proauc_catalog_has_noncanonical_query()`)
 - Yandex: `Clean-Param` for filters (year, mileage, category, etc.)
 - Allow static assets and `admin-ajax.php`
 
