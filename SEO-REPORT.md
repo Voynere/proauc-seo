@@ -8,6 +8,19 @@
 
 ---
 
+## Обложки блога: wave 7 SVG meta + X-Trail T33 — 21.07.2026
+
+**Проблема:** на `/blog/` у 4 постов волны 7 в карточках показывались логотипы Λ (`bg-alpha-*.svg` / `bg-recently-bought-card.svg`), хотя JPG уже лежали в `images/blog/{slug}.jpg` на проде. Причина: seed/meta `proauc_blog_thumbnail` записан до появления JPG; миграция `covers_v2` уже была отмечена и не перепривязала meta.
+
+**Что сделали:**
+1. Runtime: `proauc_blog_card_image_url` / `proauc_get_post_schema_image` предпочитают `images/blog/{slug}.jpg` и игнорируют cluster SVG-заглушки.
+2. Миграция `proauc_blog_covers_v3` → `proauc_refresh_blog_cover_meta()`.
+3. Nissan X-Trail: новая обложка + exterior/awd (модель **2023–2025 / T33**, вместо T30 на cover и старых in-body). Interior уже был современный.
+
+**Посты с исправленной meta:** `kak-proverit-avto-iz-korei-pered-pokupkoj`, `avto-iz-yaponii-v-blagoveshchensk`, `rastamozka-avto-iz-korei`, `obzor-toyota-prado-iz-yaponii`.
+
+---
+
 ## Новые статьи (волна 8 блога) — 21.07.2026
 
 Добавлены **4 статьи** (seed `proauc_blog_seed_v8`). **Задеплоены на прод 21.07**, досрочно опубликованы, IndexNow + `?sitemap-create=1`.

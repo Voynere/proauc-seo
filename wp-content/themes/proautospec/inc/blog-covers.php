@@ -250,6 +250,14 @@ function proauc_migrate_blog_covers_v2() {
 	proauc_refresh_blog_cover_meta();
 }
 
+/**
+ * Re-bind post meta to photorealistic JPG covers added after wave seeds
+ * (wave 7 had SVG fallbacks while images/blog/{slug}.jpg already on disk).
+ */
+function proauc_migrate_blog_covers_v3() {
+	proauc_refresh_blog_cover_meta();
+}
+
 function proauc_get_blog_content_dir() {
 	return get_template_directory() . '/images/blog/content';
 }

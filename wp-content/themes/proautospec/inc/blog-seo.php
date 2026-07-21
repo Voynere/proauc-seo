@@ -579,8 +579,16 @@ function proauc_get_post_schema_image( $post = null ) {
 		}
 	}
 
+	// Prefer photorealistic theme cover by slug over stale SVG meta.
+	if ( function_exists( 'proauc_get_blog_cover_url' ) ) {
+		$cover = proauc_get_blog_cover_url( $post->post_name );
+		if ( $cover && ! preg_match( '/\.(svg)(?:\?|$)/i', $cover ) ) {
+			return $cover;
+		}
+	}
+
 	$meta_thumb = get_post_meta( $post->ID, 'proauc_blog_thumbnail', true );
-	if ( $meta_thumb ) {
+	if ( $meta_thumb && ! preg_match( '/\.(svg)(?:\?|$)/i', $meta_thumb ) ) {
 		return $meta_thumb;
 	}
 
@@ -1882,6 +1890,11 @@ add_action(
 			proauc_migrate_blog_covers_v2();
 			update_option( 'proauc_blog_covers_v2', 1 );
 		}
+		// Wave 7 JPGs landed after covers_v2: refresh meta from disk (JPG over SVG fallbacks).
+		if ( ! get_option( 'proauc_blog_covers_v3' ) ) {
+			proauc_migrate_blog_covers_v3();
+			update_option( 'proauc_blog_covers_v3', 1 );
+		}
 		if ( ! get_option( 'proauc_blog_content_byd_seal_v1' ) ) {
 			proauc_sync_blog_post_content( 'obzor-byd-seal-iz-kitaya' );
 			update_option( 'proauc_blog_content_byd_seal_v1', 1 );
@@ -1962,8 +1975,20 @@ function proauc_blog_card_image_url( $post = null ) {
 		return (string) get_the_post_thumbnail_url( $post, 'medium_large' );
 	}
 
+	// Prefer images/blog/{slug}.jpg when present (fixes stale SVG meta after wave seeds).
+	if ( function_exists( 'proauc_get_blog_cover_url' ) ) {
+		$cover = proauc_get_blog_cover_url( $post->post_name );
+		if ( $cover && ! preg_match( '/\.(svg)(?:\?|$)/i', $cover ) ) {
+			return $cover;
+		}
+	}
+
 	$meta_thumb = get_post_meta( $post->ID, 'proauc_blog_thumbnail', true );
-	if ( $meta_thumb ) {
+	if ( $meta_thumb && ! preg_match( '/(?:bg-alpha|bg-recently-bought|bg-intro).*\.svg|(?:^|\/)images\/[^\/]+\.svg$/i', $meta_thumb ) ) {
+		return $meta_thumb;
+	}
+	// Allow branded blog/{slug}.svg only if no JPG; skip cluster logo SVGs in /images/*.svg.
+	if ( $meta_thumb && preg_match( '#/images/blog/[^/]+\.svg$#i', $meta_thumb ) ) {
 		return $meta_thumb;
 	}
 
