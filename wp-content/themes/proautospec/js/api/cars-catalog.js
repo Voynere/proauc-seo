@@ -60,10 +60,6 @@ Promise.all([domLoaded]).then((results) => {
 		apiParams.append( 'stat', 1);
 	}
 
-	console.log ('initial API request... ');
-	loadData(apiParams.toString(), 1);
-	
-	
 	function loadData(params, pageNumber){
 
 		
@@ -214,7 +210,7 @@ Promise.all([domLoaded]).then((results) => {
 
 
 	let pagination; let params;
-	function renderPagination(count, page_size){
+	function renderPagination(count, page_size, skipInitCallback){
 
 		var itemsCount = count;
 		var itemsOnPage = page_size;
@@ -256,7 +252,7 @@ Promise.all([domLoaded]).then((results) => {
 		pagination = new Pagination({
 			container: jQuery('#car-listing-pagination'),
 			pageClickUrl: tmpBaseUrl + '?' + ( tmpPath ? tmpPath + "&" : "") + "pn={{page}}",
-			callPageClickCallbackOnInit: true,
+			callPageClickCallbackOnInit: !skipInitCallback,
 			pageClickCallback: function (pageNumber, event) {
 				try{
 					event.preventDefault();
@@ -278,6 +274,29 @@ Promise.all([domLoaded]).then((results) => {
 		pagination.make(itemsCount, itemsOnPage, currentPage);
 	}
 
+	// Preserve SSR lot cards for crawlers / first paint when no client filters.
+	var ssrLots = jQuery('#cars-listing .car-loaded').length;
+	var clientFilterKeys = ['year-start','year-end','mileage-start','mileage-end','engine-start','engine-end','price-start','price-end','rate','auction_date','category','mark-id','model-id','s'];
+	var hasClientFilters = false;
+	clientFilterKeys.forEach(function(k){
+		if (urlParams.has(k) && urlParams.get(k) !== '') {
+			hasClientFilters = true;
+		}
+	});
+	if (urlParams.has('pn') && parseInt(urlParams.get('pn'), 10) > 1) {
+		hasClientFilters = true;
+	}
 
+	if (ssrLots > 0 && !hasClientFilters) {
+		console.log('SSR lots present, skip initial API reload');
+		var totalRaw = (jQuery('.cars-listing__total var').first().text() || '').replace(/\s/g, '');
+		var total = parseInt(totalRaw, 10) || ssrLots;
+		if (jQuery('#car-listing-pagination').length > 0) {
+			renderPagination(total, 20, true);
+		}
+	} else {
+		console.log('initial API request... ');
+		loadData(apiParams.toString(), 1);
+	}
 
 });

@@ -43,7 +43,7 @@ echo "<script>".$models."</script>";
 					<a class="btn btn-lg" href="#" data-bs-toggle="modal" data-bs-target="#order-dialog">Бесплатная консультация</a>
 				</div>
 				<div class="col-lg-6 align-self-end">
-					<img src="/images/gruzoviki-i-spectehnika-iz-yaponii.png" class="b-intro__img" alt="Грузовики и спецтехника из Кореи">
+					<img src="/images/gruzoviki-i-spectehnika-iz-yaponii.png" class="b-intro__img" alt="Грузовики и спецтехника из Японии">
 				</div>
 			</div>
 		</div>
@@ -170,7 +170,7 @@ foreach ($pinnedCategories as $catName => $values):
 						if (count($images) > 1){
 							foreach ($images as $image){
 								$thumbimg = str_replace( ['&h=50',"&w=320"], '', $image)."&w=320";
-								echo '<img class="car-img" src="'.$thumbimg.'" alt="Купить">';
+								echo '<img class="car-img" src="'.$thumbimg.'" alt="'.esc_attr( $car->title ).'">';
 							}
 						}
 						?>

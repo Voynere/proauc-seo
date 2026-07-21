@@ -4,23 +4,19 @@ defined('ABSPATH') || exit;
 
 ?>
 <!doctype html>
-<html <?php language_attributes(); ?> prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# fb: http://ogp.me/ns/fb#">
+<html <?php language_attributes(); ?>>
 <head>
-
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>	
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<?php wp_head(); ?>
 	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 	<meta name="apple-mobile-web-app-title" content="Автомобили с аукционов" />
-	<meta name="robots" content="max-image-preview:large" />
-
-<meta charset="utf-8">
-
 </head>
 <?php 
 
@@ -86,6 +82,7 @@ $options = json_decode('{
 					<li><a class="nav-link" href="/avto-iz-korei/">Из Кореи</a></li>
 					<li><a class="nav-link" href="/avto-iz-kitaya/">Из Китая</a></li>
 					<li><a class="nav-link" href="/motorcycles/">Мотоциклы</a></li>
+					<li><a class="nav-link" href="/blog/">Блог</a></li>
 					<li class="dropdown"><a class="nav-link dropdown-toggle" data-bs-hover="dropdown" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false" href="/spectehnika/">Спецтехника</a>
 						<ul class="dropdown-menu  depth_0 spectehnika">
 							<li><a href="/spectehnika/" class="dropdown-item nav-link--highlighted">Полный каталог</a></li>

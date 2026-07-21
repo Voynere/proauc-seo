@@ -40,6 +40,7 @@ if (typeof renderingType === 'undefined'){
 				itemHtml.find('.car-model-name').html(name);
 				let itemTitleFull = name;
 				itemHtml.find('.car-link').attr({'href': itemDetailedUrl});
+				itemHtml.find('.car-img').attr('alt', name);
 				if (car.grade){
 					itemHtml.find('.car-model-specification').html(car.grade);
 					itemTitleFull += ' ' + car.grade.replace(/&#(\d+);/g, function(match, number){ /* console.log(match + ' ' + number);*/ return String.fromCharCode(number); });
@@ -112,6 +113,7 @@ if (typeof renderingType === 'undefined'){
 			}else{
 				itemDetailedUrl = '/avto-iz-yaponii/'+ car.id + '-' + nameInUrl + '/';
 				itemHtml.find('.car-link').attr({'href': itemDetailedUrl});
+				itemHtml.find('.car-img').attr('alt', name);
 				
 				if (car.lot){
 					itemHtml.find('.car-lot').html(car.lot);

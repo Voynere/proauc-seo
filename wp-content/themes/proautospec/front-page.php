@@ -42,7 +42,7 @@ get_header();
 					<p>С уважением, генеральный директор, Хлопотов Виктор Денисович.</p>
 				</div>
 				<div class="col-lg-4">
-					<img src="/images/proautospec-director.png" class="img-fluid" loading="lazy" decoding="async" alt="">
+					<img src="/images/proautospec-director.png" class="img-fluid" loading="lazy" decoding="async" alt="Генеральный директор Proauc — Хлопотов Виктор Денисович">
 				</div>
 			</div>
 			<div class="row" style="margin-top:-1rem">

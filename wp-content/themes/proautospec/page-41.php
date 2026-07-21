@@ -213,7 +213,7 @@ echo "<script>".$models."</script>";
 			<div class="col-lg-3 car-loaded">
 				<div class="car-item">
 					<div class="car-item__pic">
-						<a class="car-link" href="<?php echo $car->canonicalUrl;?>" target="_blank"><img class="car-img" src="<?php echo $thumbimg;?>" alt="Купить"></a>
+						<a class="car-link" href="<?php echo $car->canonicalUrl;?>" target="_blank"><img class="car-img" src="<?php echo $thumbimg;?>" alt="<?php echo esc_attr( $car->title ); ?>"></a>
 					</div>
 					<div class="car-item__desc">
 						<h3><a href="<?php echo $car->canonicalUrl;?>" class="car-model-name car-link">

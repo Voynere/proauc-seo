@@ -200,6 +200,10 @@ function proauc_build_catalog_auto_description() {
  */
 function proauc_get_static_landing_seo() {
 	return array(
+		'/' => array(
+			'title'       => 'Автомобили и спецтехника под заказ — Владивосток и Дальний Восток',
+			'description' => 'Автомобили и спецтехника из Японии, Кореи и Китая под заказ: подбор, выкуп, таможня и доставка во Владивосток и по Дальнему Востоку. Прозрачные условия и сопровождение сделки.',
+		),
 		'/kak-chitat-aukczionnyj-list/' => array(
 			'title'       => 'Как читать аукционный лист: оценки и расшифровка обозначений',
 			'description' => 'Расшифровка аукционного листа японского авто: оценки кузова и салона, листы USS, JAA, TAA, обозначения A1–W3. Подбор и доставка авто с аукциона под ключ.',
@@ -492,25 +496,44 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
 
 		
 		$mark = '';
+		$country = '';
 		if (array_key_exists('country', $wp->query_vars) && isset($wp->query_vars['country'])){ 
 			$country = $wp->query_vars['country']; 
 		}
 		if (array_key_exists('mark', $wp->query_vars) && isset($wp->query_vars['mark'])){ 
 			$mark = str_replace('-', ' ', strtoupper($wp->query_vars['mark'])); 
-			$query =  "SELECT id, seo_title, seo_description, seo_h1, seo_text FROM wp_api_vendors WHERE vendor_label = '$mark' AND country = '$country'" ;
-			
-			$res = $wpdb->get_row( $query );
+			$res = $wpdb->get_row(
+				$wpdb->prepare(
+					'SELECT id, seo_title, seo_description, seo_h1, seo_text FROM wp_api_vendors WHERE vendor_label = %s AND country = %s',
+					$mark,
+					$country
+				)
+			);
 			
 			if (array_key_exists('model', $wp->query_vars) && isset($wp->query_vars['model'])){ 
 				$model = str_replace('-', ' ', strtoupper($wp->query_vars['model'])); 
 		
-				$query = "SELECT seo_title, seo_description, seo_h1, seo_text FROM wp_api_models WHERE model_label = '$model' AND country = '$country'";
-				if(!empty($res)) {
-					$query .= " AND vendor_id = '".$res->id."'";
+				if ( ! empty( $res ) ) {
+					$result = $wpdb->get_row(
+						$wpdb->prepare(
+							'SELECT seo_title, seo_description, seo_h1, seo_text FROM wp_api_models WHERE model_label = %s AND country = %s AND vendor_id = %d',
+							$model,
+							$country,
+							(int) $res->id
+						)
+					);
+				} else {
+					$result = $wpdb->get_row(
+						$wpdb->prepare(
+							'SELECT seo_title, seo_description, seo_h1, seo_text FROM wp_api_models WHERE model_label = %s AND country = %s',
+							$model,
+							$country
+						)
+					);
 				}
+			} else {
+				$result = $res;
 			}
-			
-			$result = $wpdb->get_row( $query );
 
 			if ( $result){
 				$post->api_meta = $result;
@@ -522,12 +545,16 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
 	} else if ($post->ID == 40){
 		if (array_key_exists('hdm-group', $wp->query_vars) && isset($wp->query_vars['hdm-group'])){ 
 			$hdmGroup = $wp->query_vars['hdm-group']; 
-			$query =  "SELECT * FROM wp_api_hdm_groups WHERE slug = '$hdmGroup'" ;
 			if (array_key_exists('hdm-type', $wp->query_vars) && isset($wp->query_vars['hdm-type'])){ 	
 				$hdmType = $wp->query_vars['hdm-type']; 	
-				$query =  "SELECT * FROM wp_api_hdm_types WHERE slug = '$hdmType'" ;
+				$result = $wpdb->get_row(
+					$wpdb->prepare( 'SELECT * FROM wp_api_hdm_types WHERE slug = %s', $hdmType )
+				);
+			} else {
+				$result = $wpdb->get_row(
+					$wpdb->prepare( 'SELECT * FROM wp_api_hdm_groups WHERE slug = %s', $hdmGroup )
+				);
 			}
-			$result = $wpdb->get_row( $query );
 			if ( $result){
 				$post->api_meta = $result;
 			}			
@@ -535,12 +562,16 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
 	} else if (($post->ID == 41)||($post->ID == 43)){
 		if (array_key_exists('hdm-group', $wp->query_vars) && isset($wp->query_vars['hdm-group'])){ 
 			$hdmGroup = $wp->query_vars['hdm-group']; 
-			$query =  "SELECT * FROM wp_api_hdm_groups WHERE slug = '$hdmGroup'" ;
 			if (array_key_exists('hdm-type', $wp->query_vars) && isset($wp->query_vars['hdm-type'])){ 	
 				$hdmType = $wp->query_vars['hdm-type']; 	
-				$query =  "SELECT * FROM wp_api_hdm_types WHERE slug = '$hdmType'" ;
+				$result = $wpdb->get_row(
+					$wpdb->prepare( 'SELECT * FROM wp_api_hdm_types WHERE slug = %s', $hdmType )
+				);
+			} else {
+				$result = $wpdb->get_row(
+					$wpdb->prepare( 'SELECT * FROM wp_api_hdm_groups WHERE slug = %s', $hdmGroup )
+				);
 			}
-			$result = $wpdb->get_row( $query );
 			if ( $result){
 				$post->api_meta = $result;
 				if ( ! empty( $post->api_meta->seo_title ) ) {
@@ -562,6 +593,9 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
     }
 
 	$static_title = proauc_get_static_landing_meta( 'title' );
+	if ( ! $static_title && is_front_page() ) {
+		$static_title = proauc_get_static_landing_seo()['/']['title'] ?? '';
+	}
 	if ( $static_title ) {
 		$title = $static_title;
 	}
@@ -604,6 +638,9 @@ add_filter( 'rank_math/frontend/description', function( $description ) {
     }
 
 	$static_description = proauc_get_static_landing_meta( 'description' );
+	if ( ! $static_description && is_front_page() ) {
+		$static_description = proauc_get_static_landing_seo()['/']['description'] ?? '';
+	}
 	if ( $static_description ) {
 		$description = $static_description;
 	}
@@ -1005,6 +1042,59 @@ add_filter( 'rank_math/json_ld', function( $data ) {
 
 	return $data;
 }, 25 );
+
+/**
+ * Default Open Graph / Twitter image (1200×630).
+ * File: theme images/og-default.jpg (center-crop from brand blog cover).
+ * Singular posts keep featured/cover image when Rank Math already has one.
+ */
+function proauc_get_default_og_image_url() {
+	$relative = '/images/og-default.jpg';
+	$path     = get_template_directory() . $relative;
+	if ( ! file_exists( $path ) ) {
+		return '';
+	}
+	return get_template_directory_uri() . $relative;
+}
+
+add_action( 'rank_math/opengraph/facebook/add_images', function( $images ) {
+	if ( ! is_object( $images ) || ! method_exists( $images, 'has_images' ) || $images->has_images() ) {
+		return;
+	}
+	$url = proauc_get_default_og_image_url();
+	if ( $url && method_exists( $images, 'add_image_by_url' ) ) {
+		$images->add_image_by_url( $url );
+	}
+}, 20 );
+
+add_action( 'rank_math/opengraph/twitter/add_images', function( $images ) {
+	if ( ! is_object( $images ) || ! method_exists( $images, 'has_images' ) || $images->has_images() ) {
+		return;
+	}
+	$url = proauc_get_default_og_image_url();
+	if ( $url && method_exists( $images, 'add_image_by_url' ) ) {
+		$images->add_image_by_url( $url );
+	}
+}, 20 );
+
+add_filter( 'rank_math/opengraph/facebook/image', function( $url ) {
+	return $url ? $url : proauc_get_default_og_image_url();
+}, 20 );
+
+add_filter( 'rank_math/opengraph/twitter/image', function( $url ) {
+	return $url ? $url : proauc_get_default_og_image_url();
+}, 20 );
+
+add_filter( 'rank_math/settings', function( $settings ) {
+	$url = proauc_get_default_og_image_url();
+	if ( ! $url || ! is_array( $settings ) ) {
+		return $settings;
+	}
+	if ( empty( $settings['titles']['open_graph_image'] ) ) {
+		$settings['titles']['open_graph_image'] = $url;
+	}
+	return $settings;
+} );
 
 add_filter( 'rank_math/frontend/remove_credit_notice', '__return_true' );
 

@@ -11,7 +11,7 @@
 				<div class="col-lg-3 swiper-slide">
 					<div class="team-item">
 						<div class="team-item__pic">
-							<img src="/images/proautospec-hlopotov-viktor.jpg" alt="">
+							<img src="/images/proautospec-hlopotov-viktor.jpg" alt="Хлопотов Виктор — генеральный директор">
 						</div>
 						<div class="team-item__desc">
 							<p class="team-item__name">Хлопотов Виктор</p>
@@ -23,7 +23,7 @@
 				<div class="col-lg-3 swiper-slide">
 					<div class="team-item">
 						<div class="team-item__pic">
-							<img src="/images/proautospec-aleksandr.jpg" alt="">
+							<img src="/images/proautospec-aleksandr.jpg" alt="Александр — менеджер Proauc">
 						</div>
 						<div class="team-item__desc">
 							<p class="team-item__name">Александр</p>
@@ -35,7 +35,7 @@
 				<div class="col-lg-3 swiper-slide">
 					<div class="team-item">
 						<div class="team-item__pic">
-							<img src="/images/proautospec-ivan.jpg" alt="">
+							<img src="/images/proautospec-ivan.jpg" alt="Иван — менеджер Proauc">
 						</div>
 						<div class="team-item__desc">
 							<p class="team-item__name">Иван</p>
@@ -47,7 +47,7 @@
 				<div class="col-lg-3 swiper-slide">
 					<div class="team-item">
 						<div class="team-item__pic">
-							<img src="/images/proautospec-evgeniy.jpg" alt="">
+							<img src="/images/proautospec-evgeniy.jpg" alt="Евгений — менеджер Proauc">
 						</div>
 						<div class="team-item__desc">
 							<p class="team-item__name">Евгений</p>

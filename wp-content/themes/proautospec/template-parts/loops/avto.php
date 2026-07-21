@@ -48,7 +48,7 @@
 
 	<div class="car-item">
 		<div class="car-item__pic">
-			<a href="<?php echo $car->permalink;?>"><img src="<?php echo esc_url( $car->image ); ?>" alt="Купить <?php echo esc_attr( $car->title );?>"<?php echo $img_attrs; ?>></a>
+			<a href="<?php echo $car->permalink;?>"><img src="<?php echo esc_url( $car->image ); ?>" alt="<?php echo esc_attr( $car->title );?>"<?php echo $img_attrs; ?>></a>
 		</div>
 		<div class="car-item__desc">
 			<h3><a href="<?php echo $car->permalink;?>"><?php echo $car->title;?></a></h3>
