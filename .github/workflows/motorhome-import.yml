@@ -60,7 +60,8 @@ jobs:
             THEME_INC="$ROOT/wp-content/themes/proautospec/inc"
 
             mkdir -p "$DEST"
-            rsync -a --delete "$BUNDLE/tools/motorhome-import/" "$DEST/"
+            rm -rf "$DEST"/*
+            cp -a "$BUNDLE/tools/motorhome-import/." "$DEST/"
             cp -a "$BUNDLE/wp-content/themes/proautospec/inc/avto-display.php" "$THEME_INC/avto-display.php"
             cp -a "$BUNDLE/wp-content/themes/proautospec/inc/avtodoma-filter.php" "$THEME_INC/avtodoma-filter.php"
             chown -R proauc_ru_usr:proauc_ru_usr "$DEST" "$THEME_INC/avto-display.php" "$THEME_INC/avtodoma-filter.php"
