@@ -10,11 +10,13 @@ WP_PATH="${4:?wp_path required}"
 
 cd "$(dirname "$0")/.."
 
-if [[ ! -d .venv ]]; then
+if [[ ! -x .venv/bin/python ]]; then
+  rm -rf .venv
   python3 -m venv .venv
 fi
 # shellcheck disable=SC1091
 source .venv/bin/activate
+pip install -q -U pip
 pip install -q -r requirements.txt
 
 python3 - "$WP_PATH" <<'PY'
