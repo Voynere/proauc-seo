@@ -65,8 +65,8 @@ jobs:
               apt-get install -y -qq python3-venv python3-pip
             fi
 
+            rm -rf "$DEST"
             mkdir -p "$DEST"
-            rm -rf "$DEST"/*
             cp -a "$BUNDLE/tools/motorhome-import/." "$DEST/"
             cp -a "$BUNDLE/wp-content/themes/proautospec/inc/avto-display.php" "$THEME_INC/avto-display.php"
             cp -a "$BUNDLE/wp-content/themes/proautospec/inc/avtodoma-filter.php" "$THEME_INC/avtodoma-filter.php"
