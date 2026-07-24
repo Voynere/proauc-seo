@@ -347,6 +347,37 @@ function proauc_migrate_blog_wave8_schedule() {
 	flush_rewrite_rules( false );
 }
 
+function proauc_migrate_blog_wave9_schedule() {
+	if ( ! function_exists( 'proauc_get_blog_article_seeds_wave9' ) ) {
+		require_once get_template_directory() . '/inc/blog-articles.php';
+	}
+
+	foreach ( proauc_get_blog_article_seeds_wave9() as $seed ) {
+		if ( empty( $seed['slug'] ) || empty( $seed['post_date'] ) ) {
+			continue;
+		}
+
+		$post = get_page_by_path( $seed['slug'], OBJECT, 'post' );
+		if ( ! $post ) {
+			continue;
+		}
+
+		$gmt     = get_gmt_from_date( $seed['post_date'] );
+		$publish = strtotime( $gmt ) <= time();
+
+		wp_update_post(
+			array(
+				'ID'            => (int) $post->ID,
+				'post_status'   => $publish ? 'publish' : 'future',
+				'post_date'     => $seed['post_date'],
+				'post_date_gmt' => $gmt,
+			)
+		);
+	}
+
+	flush_rewrite_rules( false );
+}
+
 function proauc_get_blog_posts_page_title() {
 	$posts_page = (int) get_option( 'page_for_posts' );
 	if ( $posts_page ) {
@@ -1640,6 +1671,18 @@ function proauc_get_landing_blog_links( $cluster ) {
 				'url'   => '/oformlenie-epts-avto-iz-yaponii/',
 				'title' => 'Оформление ЭПТС для авто из Японии',
 			),
+			array(
+				'url'   => '/avto-iz-yaponii-v-habarovsk/',
+				'title' => 'Авто из Японии в Хабаровске: доставка и сроки',
+			),
+			array(
+				'url'   => '/avto-iz-yaponii-v-blagoveshchensk/',
+				'title' => 'Авто из Японии в Благовещенске: доставка и сроки',
+			),
+			array(
+				'url'   => '/avto-iz-yaponii-v-yuzhno-sahalinske/',
+				'title' => 'Авто из Японии в Южно-Сахалинске: доставка и сроки',
+			),
 		),
 		'koreya'      => array(
 			array(
@@ -1878,6 +1921,18 @@ add_action(
 			proauc_migrate_blog_wave8_schedule();
 			update_option( 'proauc_blog_wave8_schedule_v1', 1 );
 		}
+		if ( ! get_option( 'proauc_blog_seed_v9' ) ) {
+			if ( ! function_exists( 'proauc_get_blog_article_seeds_wave9' ) ) {
+				require_once get_template_directory() . '/inc/blog-articles.php';
+			}
+			proauc_seed_blog_posts( proauc_get_blog_article_seeds_wave9() );
+			update_option( 'proauc_blog_seed_v9', 1 );
+			flush_rewrite_rules( false );
+		}
+		if ( ! get_option( 'proauc_blog_wave9_schedule_v1' ) ) {
+			proauc_migrate_blog_wave9_schedule();
+			update_option( 'proauc_blog_wave9_schedule_v1', 1 );
+		}
 		if ( ! get_option( 'proauc_blog_content_santa_fe_v1' ) ) {
 			proauc_sync_blog_post_content( 'obzor-hyundai-santa-fe-iz-korei' );
 			update_option( 'proauc_blog_content_santa_fe_v1', 1 );
@@ -2070,3 +2125,65 @@ add_filter(
 	},
 	30
 );
+
+/**
+ * Перелинковка каталог → блог: выводит блок «Полезные статьи» внизу страниц каталога.
+ * Определяет кластер по текущему пути и выводит 5 релевантных ссылок.
+ */
+function proauc_render_catalog_blog_sidebar() {
+	if ( ! function_exists( 'proauc_request_path' ) || ! function_exists( 'proauc_get_landing_blog_links' ) ) {
+		return;
+	}
+
+	$path = proauc_request_path();
+
+	$cluster_map = array(
+		'/avto-iz-yaponii/'     => 'yaponiya',
+		'/avto-iz-yaponii/catalog/' => 'yaponiya',
+		'/avto-iz-korei/'       => 'koreya',
+		'/avto-iz-korei/catalog/'   => 'koreya',
+		'/avto-iz-kitaya/'      => 'kitaj',
+		'/avto-iz-kitaya/catalog/'  => 'kitaj',
+		'/spectehnika/'         => 'spectehnika',
+		'/spectehnika/catalog/'     => 'spectehnika',
+		'/motorcycles/'         => 'mototsikly',
+	);
+
+	$cluster = '';
+	foreach ( $cluster_map as $prefix => $cl ) {
+		if ( str_starts_with( $path, $prefix ) ) {
+			$cluster = $cl;
+			break;
+		}
+	}
+
+	if ( empty( $cluster ) ) {
+		return;
+	}
+
+	$links = proauc_get_landing_blog_links( $cluster );
+	if ( empty( $links ) ) {
+		return;
+	}
+
+	$links = array_slice( $links, 0, 5 );
+	?>
+	<section class="mt-4 mb-4">
+		<div class="container">
+			<aside class="proauc-catalog-blog-links p-4 p-lg-5 rounded border">
+				<h2 class="h5 mb-3">Полезные статьи</h2>
+				<ul class="mb-0">
+					<?php foreach ( $links as $link ) : ?>
+						<li class="mb-2">
+							<a href="<?php echo esc_url( home_url( $link['url'] ) ); ?>"><?php echo esc_html( $link['title'] ); ?></a>
+						</li>
+					<?php endforeach; ?>
+					<li class="mb-0 mt-3">
+						<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>">Все статьи Proauc &rarr;</a>
+					</li>
+				</ul>
+			</aside>
+		</div>
+	</section>
+	<?php
+}

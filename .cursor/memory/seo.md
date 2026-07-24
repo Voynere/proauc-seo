@@ -244,3 +244,18 @@ SEO-анализ proauc.ru — точки роста и исправления.
 - Контент-план волна 9–10: автодома блог, гео-лендинги (9 городов ДВ без dedicated страниц)
 - PageSpeed/CWV оптимизация
 - Внутренняя перелинковка каталог→блог
+
+## 2026-07-24 05:30 UTC
+
+### Wave 9: гео-лендинги (8 городов ДВ)
+8 гео-статей: Уссурийск, Находка, П-Камчатский, Комсомольск-на-Амуре, Чита, Якутск, Магадан, Артём.
+Slugs: avto-iz-yaponii-v-{ussurijske,nahodke,petropavlovsk-kamchatskij,komsomolske-na-amure,chite,yakutske,magadane,arteme}.
+IDs 4223–4230, publish 24.07, IndexNow 9 URL HTTP 200.
+
+### Перелинковка каталог → блог
+Функция proauc_render_catalog_blog_sidebar() — выводит 5 релевантных ссылок из proauc_get_landing_blog_links().
+Вставлена в page-45, page-48, page-51, page-41, page-gruzoviki, page-motorcycles.
+Кластер определяется по URL-пути: /avto-iz-yaponii/ → yaponiya, /avto-iz-korei/ → koreya и т.д.
+
+### Обновлена карта перелинковки
+proauc_get_landing_blog_links('yaponiya') — добавлены 3 гео-ссылки: Хабаровск, Благовещенск, Южно-Сахалинск.

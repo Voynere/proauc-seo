@@ -84,7 +84,15 @@ def cmd_run(args: argparse.Namespace) -> int:
                 )
                 continue
 
-        wp_result = writer.upsert(listing)
+        try:
+            wp_result = writer.upsert(listing)
+        except Exception:
+            logger.exception(
+                "Failed to upsert %s/%s, skipping",
+                listing.source,
+                listing.source_id,
+            )
+            continue
         count += 1
         if args.json or config.import_.dry_run:
             print(writer.format_listing_json(listing, wp_result))

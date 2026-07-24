@@ -69,4 +69,5 @@ echo "<script>".$models."</script>";
 
 <?php get_template_part( 'template-parts/landing/b-blog-links', null, array( 'cluster' => 'mototsikly' ) ); ?>
 
-<?php get_footer(); ?>
+<?php if ( function_exists( 'proauc_render_catalog_blog_sidebar' ) ) { proauc_render_catalog_blog_sidebar(); }
+get_footer(); ?>

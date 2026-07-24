@@ -101,10 +101,16 @@ class MediaSideloader:
         filename = SAFE_FILENAME_RE.sub("_", f"{index:03d}{ext}")
         dest = work_dir / filename
 
-        with open(dest, "wb") as fh:
-            for chunk in response.iter_content(chunk_size=65536):
-                if chunk:
-                    fh.write(chunk)
+        # Download to memory first — /tmp may be cleaned between iterations
+        data = response.content
+        for attempt in range(2):
+            try:
+                with open(dest, "wb") as fh:
+                    fh.write(data)
+                break
+            except FileNotFoundError:
+                logger.warning("Work dir disappeared, recreating %s", work_dir)
+                work_dir.mkdir(parents=True, exist_ok=True)
 
         logger.debug("Downloaded %s → %s", url, dest)
         return dest
@@ -166,12 +172,30 @@ class MediaSideloader:
         remote_files: list[str] = []
         for path in files:
             remote_path = f"{remote_dir}/{path.name}"
-            subprocess.run(
-                ["scp", str(path), f"{ssh_host}:{remote_path}"],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
+            for attempt in range(3):
+                result = subprocess.run(
+                    ["scp", str(path), f"{ssh_host}:{remote_path}"],
+                    capture_output=True,
+                    text=True,
+                )
+                if result.returncode == 0:
+                    break
+                logger.warning(
+                    "SCP failed (attempt %s/3) for %s: %s",
+                    attempt + 1, path.name, result.stderr.strip(),
+                )
+                if attempt < 2:
+                    import time
+                    time.sleep(2)
+                    # Re-create remote dir in case it was cleaned
+                    subprocess.run(
+                        ["ssh", ssh_host, f"mkdir -p {remote_dir}"],
+                        capture_output=True,
+                        text=True,
+                    )
+            else:
+                logger.error("SCP failed after 3 attempts for %s, skipping", path.name)
+                continue
             remote_files.append(remote_path)
 
         ids: list[int] = []

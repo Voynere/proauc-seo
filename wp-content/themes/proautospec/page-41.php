@@ -410,4 +410,5 @@ echo "<script>".$models."</script>";
 </section>		
 <?php endif;?>	
 
-<?php get_footer();
+<?php if ( function_exists( 'proauc_render_catalog_blog_sidebar' ) ) { proauc_render_catalog_blog_sidebar(); }
+get_footer();

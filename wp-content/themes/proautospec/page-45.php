@@ -324,4 +324,5 @@ if(!empty($seo_title) && !empty($seo_text)) { ?>
 </div>
 </section>
 <?php
+if ( function_exists( 'proauc_render_catalog_blog_sidebar' ) ) { proauc_render_catalog_blog_sidebar(); }
 get_footer();

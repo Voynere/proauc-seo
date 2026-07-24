@@ -266,3 +266,38 @@
 2. **PageSpeed/CWV**: jQuery → vanilla, CSS merge, Swiper lazy-load
 3. **Внутренняя перелинковка**: каталог → блог, кросс-ссылки между статьями
 4. **Sitemap**: Rank Math кеширует sitemap — при публикации через SQL нужно вручную очищать transient + nginx cache
+
+---
+
+## Wave 9: гео-лендинги + перелинковка каталог→блог — 24.07.2026
+
+### Гео-статьи (8 городов ДВ)
+
+| # | Город | Slug | ID | Дата |
+|---|-------|------|----|------|
+| 1 | Уссурийск | avto-iz-yaponii-v-ussurijske | 4223 | 24.07 |
+| 2 | Находка | avto-iz-yaponii-v-nahodke | 4224 | 24.07 |
+| 3 | П-Камчатский | avto-iz-yaponii-v-petropavlovsk-kamchatskij | 4225 | 24.07 |
+| 4 | Комсомольск-на-Амуре | avto-iz-yaponii-v-komsomolske-na-amure | 4226 | 24.07 |
+| 5 | Чита | avto-iz-yaponii-v-chite | 4227 | 24.07 |
+| 6 | Якутск | avto-iz-yaponii-v-yakutske | 4228 | 24.07 |
+| 7 | Магадан | avto-iz-yaponii-v-magadane | 4229 | 24.07 |
+| 8 | Артём | avto-iz-yaponii-v-arteme | 4230 | 24.07 |
+
+**Итого постов в блоге:** 27 → **40** (wave1–9).
+
+### Перелинковка каталог → блог
+
+| Файл каталога | Кластер | Статус |
+|---------------|---------|--------|
+| page-45.php (Япония) | yaponiya | ✅ |
+| page-48.php (Корея) | koreya | ✅ |
+| page-51.php (Китай) | kitaj | ✅ |
+| page-41.php (Спецтехника) | spectehnika | ✅ |
+| page-gruzoviki.php | spectehnika | ✅ |
+| page-motorcycles.php | mototsikly | ✅ |
+
+Механизм: `proauc_render_catalog_blog_sidebar()` → 5 ссылок из `proauc_get_landing_blog_links()` + «Все статьи → /blog/».
+
+### IndexNow
+9 URL отправлены (8 статей + /blog/) — HTTP 200.
