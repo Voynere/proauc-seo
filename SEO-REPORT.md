@@ -206,3 +206,63 @@
 - `$update_seo` может перебить static meta главной (порядок в том же хуке).
 - Скрытые JS-шаблоны `#car-item` могут иметь пустой alt до клонирования — JS перезаписывает.
 - Репозиторий: `https://github.com/Voynere/proauc-seo.git`, ветка `main`.
+
+---
+
+## SEO-анализ и исправления — 24.07.2026
+
+### Аудит: состояние на 24.07
+
+| Параметр | Значение |
+|----------|----------|
+| Семантическое ядро | 831 ключ, 48 групп |
+| Блог-посты | 27 → **32** (опубликованы wave5–6) |
+| Каталог Япония | 1 295 лотов |
+| Каталог Корея | 294 лота |
+| Каталог Китай | 235 лотов |
+| Лоты (аукцион) | 784 лота |
+| HDM (автодома) | 281 лот |
+| Статические страницы | 19 |
+| Sitemap-файлов | 7 |
+
+### Что сделано (24.07)
+
+| № | Задача | Статус |
+|---|--------|--------|
+| 1 | Публикация 5 future-постов (wave5–6) | ✅ SQL UPDATE → publish |
+| 2 | Schema.org JSON-LD: главная (Organization + LocalBusiness + WebSite + FAQPage) | ✅ rank-math.php |
+| 3 | Schema.org JSON-LD: 6 лендингов (Organization + WebSite + WebPage) | ✅ rank-math.php |
+| 4 | Исправление битых URL в семантике (geely → geely-auto, ЭПТС slug) | ✅ seov/keywords-by-groups.csv |
+| 5 | IndexNow: 6 URL (5 статей + /blog/) | ✅ HTTP 200 |
+
+### Опубликованные статьи (24.07)
+
+| ID | Slug | Был статус | Дата |
+|----|------|-----------|------|
+| 866 | byd-seal-i-zeekr-001-sravnenie | future (31.07) | 24.07 |
+| 865 | obzor-kia-carnival-iz-korei | future (27.07) | 24.07 |
+| 872 | sravnenie-avto-iz-yaponii-korei-kitaya | future (04.08) | 24.07 |
+| 873 | kak-polzovatsya-statistikoj-aukcionov-yaponii | future (08.08) | 24.07 |
+| 874 | avto-iz-yaponii-v-habarovsk | future (12.08) | 24.07 |
+
+### Schema.org — что добавлено
+
+**Главная (`/`):**
+- `Organization` (name, url, logo, sameAs, contactPoint)
+- `LocalBusiness` (address, openingHours, telephone, email)
+- `WebSite` (SearchAction)
+- `FAQPage` (7 вопросов: наличие, цены, как привезти, доставка по РФ, сроки, НДС, лизинг)
+
+**Лендинги (`/avto-iz-yaponii/`, `/avto-iz-korei/`, `/avto-iz-kitaya/`, `/avtodoma/`, `/spectehnika/`, `/motorcycles/`):**
+- `Organization` + `WebSite` + `WebPage`
+
+### Nginx proxy_cache
+
+Обнаружен `proxy_cache proauc_html` (TTL 5 min, max 256m). Файл: `/etc/nginx/fastpanel2-available/proauc_ru_usr/proauc.ru.conf`. Кеш-зона: `/var/cache/nginx/proauc/`. Очистка: `rm -rf /var/cache/nginx/proauc/* && nginx -s reload`.
+
+### Точки роста (рекомендации)
+
+1. **Волна 9 блога**: автодома (модели Starex/Staria/Hiace), гео-лендинги (Уссурийск, П-Камчатский, Находка, Комсомольск, Якутск, Чита, Магадан, Артём)
+2. **PageSpeed/CWV**: jQuery → vanilla, CSS merge, Swiper lazy-load
+3. **Внутренняя перелинковка**: каталог → блог, кросс-ссылки между статьями
+4. **Sitemap**: Rank Math кеширует sitemap — при публикации через SQL нужно вручную очищать transient + nginx cache

@@ -1096,6 +1096,219 @@ add_filter( 'rank_math/settings', function( $settings ) {
 	return $settings;
 } );
 
+/**
+ * FAQ-массив для главной страницы (для Schema.org FAQPage).
+ */
+function proauc_get_homepage_faq_items() {
+	return array(
+		array(
+			'q' => 'Есть ли техника в наличии?',
+			'a' => 'Ежемесячно мы привозим несколько единиц техники для продажи из наличия. Список такой техники постоянно меняется, т.к. она довольно быстро распродается. По текущей технике в наличии вы можете уточнить, позвонив нам, или оставив заявку на сайте.',
+		),
+		array(
+			'q' => 'Цены указаны с ПТС?',
+			'a' => 'Да, в указанную цену входит сама техника, доставка в РФ, растаможка, пошлина, утилизационный сбор, прохождение лаборатории, получение электронного ПТС и постановка на учет.',
+		),
+		array(
+			'q' => 'Как привезти технику через вас?',
+			'a' => 'Для начала от вас нужна заявка с указанием, что именно вам нужно. Мы подбираем под ваш запрос несколько вариантов подходящей техники и делаем просчет её привоза в РФ. Обсуждаем с вами каждый вариант. Если есть техника, которая вам подходит, мы заключаем договор и осуществляем необходимые действия.',
+		),
+		array(
+			'q' => 'Есть ли доставка техники по РФ и СНГ?',
+			'a' => 'Да, мы осуществляем доставку техники в любой город РФ и СНГ. Стоимость доставки можем посчитать по вашему запросу.',
+		),
+		array(
+			'q' => 'В какие сроки поставляется техника?',
+			'a' => 'От 1 до 4-х месяцев. В зависимости от специфики техники и от того, откуда именно мы будем везти технику.',
+		),
+		array(
+			'q' => 'Работаете с НДС?',
+			'a' => 'Да, можем привезти для вас технику как с НДС, так и с УСН.',
+		),
+		array(
+			'q' => 'Можно привезти в лизинг?',
+			'a' => 'Да, мы можем привезти для вас технику в лизинг. Но не вся техника подходит под лизинг. Если хотите узнать подробнее, позвоните нам или оставьте заявку — мы проконсультируем вас.',
+		),
+	);
+}
+
+/**
+ * Schema.org FAQPage для главной страницы.
+ */
+function proauc_get_homepage_faq_schema() {
+	$faq_items = proauc_get_homepage_faq_items();
+	$entities  = array();
+	foreach ( $faq_items as $item ) {
+		$entities[] = array(
+			'@type'          => 'Question',
+			'name'           => $item['q'],
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => $item['a'],
+			),
+		);
+	}
+	return array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'@id'        => home_url( '/' ) . '#faq',
+		'url'        => home_url( '/' ),
+		'inLanguage' => 'ru-RU',
+		'mainEntity' => $entities,
+	);
+}
+
+/**
+ * Schema.org для главной страницы: Organization + LocalBusiness + WebSite + FAQPage.
+ */
+add_action( 'wp_head', function() {
+	if ( ! is_front_page() ) {
+		return;
+	}
+
+	$site_url  = home_url( '/' );
+	$site_name = get_bloginfo( 'name' );
+	$page_url  = home_url( '/' );
+
+	$schema = array(
+		'@context' => 'https://schema.org',
+		'@graph'   => array(
+			array(
+				'@type' => 'Organization',
+				'@id'   => $site_url . '#organization',
+				'name'  => $site_name,
+				'url'   => home_url( '/kompaniya/' ),
+				'logo'  => array(
+					'@type'     => 'ImageObject',
+					'url'       => home_url( '/images/logo.svg' ),
+					'width'     => 200,
+					'height'    => 60,
+				),
+				'sameAs' => array(
+					'https://t.me/proauc',
+					'https://vk.com/proautospec',
+					'https://www.youtube.com/@ProSpectekhnika',
+					'https://www.instagram.com/pro_auto_spec/',
+				),
+				'contactPoint' => array(
+					'@type'       => 'ContactPoint',
+					'telephone'   => '+7-800-201-43-40',
+					'contactType' => 'customer service',
+					'areaServed'  => 'RU',
+					'availableLanguage' => 'Russian',
+				),
+			),
+			array(
+				'@type'       => 'LocalBusiness',
+				'@id'         => $site_url . '#localbusiness',
+				'name'        => $site_name,
+				'url'         => $page_url,
+				'telephone'   => '+7-800-201-43-40',
+				'email'       => 'proauc@mail.ru',
+				'image'       => home_url( '/images/logo.svg' ),
+				'address'     => array(
+					'@type'           => 'PostalAddress',
+					'streetAddress'   => 'ул. Маковского, 95, офис 200',
+					'addressLocality' => 'Владивосток',
+					'addressCountry'  => 'RU',
+				),
+				'openingHoursSpecification' => array(
+					array(
+						'@type'     => 'OpeningHoursSpecification',
+						'dayOfWeek' => array( 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday' ),
+						'opens'     => '10:00',
+						'closes'    => '18:00',
+					),
+					array(
+						'@type'     => 'OpeningHoursSpecification',
+						'dayOfWeek' => 'Saturday',
+						'opens'     => '10:00',
+						'closes'    => '15:00',
+					),
+				),
+				'priceRange' => '$$',
+			),
+			array(
+				'@type'     => 'WebSite',
+				'@id'       => $site_url . '#website',
+				'url'       => $site_url,
+				'name'      => $site_name,
+				'publisher' => array( '@id' => $site_url . '#organization' ),
+				'potentialAction' => array(
+					'@type'       => 'SearchAction',
+					'target'      => array(
+						'@type'        => 'EntryPoint',
+						'urlTemplate'  => home_url( '/?s={search_term_string}' ),
+					),
+					'query-input' => 'required name=search_term_string',
+				),
+			),
+		),
+	);
+
+	proauc_print_json_ld( $schema );
+
+	// FAQPage отдельным блоком
+	proauc_print_json_ld( proauc_get_homepage_faq_schema() );
+}, 99 );
+
+/**
+ * Schema.org для лендингов: Organization + WebSite + WebPage.
+ * Покрывает /avto-iz-yaponii/, /avto-iz-korei/, /avto-iz-kitaya/,
+ * /avtodoma/, /spectehnika/, /motorcycles/.
+ */
+add_action( 'wp_head', function() {
+	$path = proauc_request_path();
+
+	$landing_slugs = array(
+		'/avto-iz-yaponii/' => 'Автомобили из Японии',
+		'/avto-iz-korei/'   => 'Автомобили из Кореи',
+		'/avto-iz-kitaya/'  => 'Автомобили из Китая',
+		'/avtodoma/'        => 'Автодома',
+		'/spectehnika/'     => 'Спецтехника',
+		'/motorcycles/'     => 'Мотоциклы',
+	);
+
+	if ( empty( $landing_slugs[ $path ] ) ) {
+		return;
+	}
+
+	$canonical = home_url( $path );
+
+	$site_url  = home_url( '/' );
+	$site_name = get_bloginfo( 'name' );
+	$title     = $landing_slugs[ $path ] . ' — ' . $site_name;
+
+	$schema = array(
+		'@context' => 'https://schema.org',
+		'@graph'   => array(
+			array(
+				'@type' => 'Organization',
+				'@id'   => $site_url . '#organization',
+				'name'  => $site_name,
+				'url'   => home_url( '/kompaniya/' ),
+			),
+			array(
+				'@type'     => 'WebSite',
+				'@id'       => $site_url . '#website',
+				'url'       => $site_url,
+				'name'      => $site_name,
+				'publisher' => array( '@id' => $site_url . '#organization' ),
+			),
+			array(
+				'@type'      => 'WebPage',
+				'@id'        => $canonical . '#webpage',
+				'url'        => $canonical,
+				'name'       => $title,
+				'isPartOf'   => array( '@id' => $site_url . '#website' ),
+				'inLanguage' => 'ru-RU',
+			),
+		),
+	);
+
+	proauc_print_json_ld( $schema );
+}, 99 );
+
 add_filter( 'rank_math/frontend/remove_credit_notice', '__return_true' );
 
 add_filter( 'rank_math/metabox/priority', function( $priority ) {
